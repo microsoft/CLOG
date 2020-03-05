@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Represents one trace line,  containing one event.  It's created during compilation and stored within a side car for future presentation
 
 --*/
 

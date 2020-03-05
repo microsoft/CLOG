@@ -1,12 +1,11 @@
 ﻿/*++
-
+s
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    This file contains the code to iterate across your C/C++ code looking for a regular expression describing an event
 
 --*/
 

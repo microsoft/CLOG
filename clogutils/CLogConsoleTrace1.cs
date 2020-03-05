@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Helpers for printing to the console (in color)
 
 --*/
 
@@ -17,7 +16,7 @@ using clogutils.ConfigFile;
 
 namespace clogutils
 {
-    public class CLogConsoleTrace
+    public partial class CLogConsoleTrace
     {
         public enum TraceType
         {
@@ -55,7 +54,7 @@ namespace clogutils
             Trace(type, msg + Environment.NewLine);
         }
 
-        public static void DecodeAndTraceToConsole(CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEvent> valueBag)
+        public static void DecodeAndTraceToConsole(CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
         {
             try
             {
@@ -97,7 +96,7 @@ namespace clogutils
 
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
 
-                        if (!valueBag.TryGetValue(arg.VariableInfo.SuggestedTelemetryName, out IClogEvent value))
+                        if (!valueBag.TryGetValue(arg.VariableInfo.SuggestedTelemetryName, out IClogEventArg value))
                         {
                             toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.VariableInfo.SuggestedTelemetryName}:{payload.EncodingType}>");
                         }
@@ -134,17 +133,6 @@ namespace clogutils
             {
                 Console.WriteLine($"Invalid TraceLine : {errorLine} " + e);
             }
-        }
-
-        public interface IClogEvent
-        {
-            string AsString { get; }
-
-            int AsInt32 { get; }
-
-            uint AsUInt32 { get; }
-
-            byte[] AsBinary { get; }
         }
     }
 }

@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Build heirarchy of encoding strings and types,  for example %foo vs %f  
 
 --*/
 
@@ -71,7 +70,7 @@ namespace clogutils.ConfigFile
             _traceEmittorX.CompileSource(nameSpace, code);
         }
 
-        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEvent value)
+        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value)
         {
             return _traceEmittorX.Decode(node, value);
         }

@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Interface for a CLOG output module {lttng, manifested, tracelogging, etc]
 
 --*/
 

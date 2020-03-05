@@ -5,8 +5,9 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    This class implements methods that emit C/C++ code that interacts with clog.h (which is used within your product code to define events)
+    
+    Should other lanaguages be desired (C# for example), this is the emission code that would likly need to be extended
 
 --*/
 

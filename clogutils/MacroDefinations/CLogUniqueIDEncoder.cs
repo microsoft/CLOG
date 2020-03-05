@@ -5,8 +5,16 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Defines how a CLOG event ID is encoded - presently we're using 'Basic' which just means that an event ID is the string
+
+    for example:
+        Trace(MESSAGEID, "Hello world");   
+
+        if you'd like to encode information within "MESSAGEID" this is how you'd do it - specifically StringAndNumerical (MESSAGE_12) could be worked 
+        such that 12 is the numerical representation of MESSAGE.
+
+
+    ***Pressently Unused and incomplete***
 
 --*/
 

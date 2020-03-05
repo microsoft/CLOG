@@ -14,9 +14,9 @@ using System.Collections.Generic;
 
 namespace clogutils
 {
-    public class CLogTypeSearchNode
+    public class CLogTypeSearchNodeX
     {
-        public Dictionary<char, CLogTypeSearchNode> Nodes = new Dictionary<char, CLogTypeSearchNode>();
+        public Dictionary<char, CLogTypeSearchNodeX> Nodes = new Dictionary<char, CLogTypeSearchNodeX>();
 
         public CLogEncodingCLogTypeSearch UserNode { get; set; }
     }

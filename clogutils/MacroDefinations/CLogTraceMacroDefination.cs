@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Describes a CLOG macro,  this class will be converted into JSON and stored within a CLOG configuration file
 
 --*/
 

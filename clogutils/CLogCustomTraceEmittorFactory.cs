@@ -5,8 +5,10 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    In some cases the human display of a CLOG event will require a type with custom formatting - 
+    for example, perhaps a BYTEARRAY needs to be printed in a special way
+
+    This class allows embedded C# to be include within a sidecar, and compiled on demand to do this formating
 
 --*/
 
@@ -76,7 +78,7 @@ namespace clog2text_lttng
             _codeAssembly = Assembly.Load(assembly);
         }
 
-        public string Decode(CLogEncodingCLogTypeSearch type, IClogEvent value)
+        public string Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value)
         {
             object[] args = new object[1];
 

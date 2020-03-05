@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Holds unique ID information for an individual trace line.  This code is what gurantees two events are not emitted with the same event ID across one config file.
 
 --*/
 

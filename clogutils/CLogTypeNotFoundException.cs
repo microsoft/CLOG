@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Describes the error which occurs should a type not be found (for example "%hello" is provided in a trace, but doesnt exist in configuration
 
 --*/
 

@@ -5,8 +5,8 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    This class both serves to contain one configuration file.   Becuase config files may be chained, this class may contain 
+    other instances of configuration files.
 
 --*/
 
@@ -217,7 +217,7 @@ namespace clogutils.ConfigFile
                 {
                     Console.WriteLine(
                         $"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
-                    throw new CLogInvalidInputConfigurationException("MultipleMacrosWithSameName");
+                    throw new CLogEnterReadOnlyModeException("MultipleMacrosWithSameName", null);
                 }
 
                 macros.Add(m.MacroName);

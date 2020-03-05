@@ -67,7 +67,7 @@ namespace clog2text_windows
 
                             try
                             {
-                                Dictionary<string, IClogEvent> fixedUpArgs = new Dictionary<string, IClogEvent>();
+                                Dictionary<string, IClogEventArg> fixedUpArgs = new Dictionary<string, IClogEventArg>();
                                 string errorString = "ERROR";
 
                                 if (null == e.Fields)
@@ -75,7 +75,7 @@ namespace clog2text_windows
                                     continue;
                                 }
 
-                                Dictionary<string, IClogEvent> args = new Dictionary<string, IClogEvent>();
+                                Dictionary<string, IClogEventArg> args = new Dictionary<string, IClogEventArg>();
 
                                 foreach (var f in e.Fields)
                                 {
@@ -177,7 +177,7 @@ namespace clog2text_windows
                 });
         }
 
-        public class ManifestedETWEvent : IClogEvent
+        public class ManifestedETWEvent : IClogEventArg
         {
             private readonly IGenericEventField _event;
 

@@ -5,8 +5,9 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    This class implements the main configuration and setup for reading clog config files, your source code, side cars etc.
+    
+    By implementing the main() for clog, it's mostly connecting up other clases
 
 --*/
 

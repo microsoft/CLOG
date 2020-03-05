@@ -23,10 +23,10 @@ namespace clog2text_lttng
 {
     internal class Program
     {
-        private static Dictionary<string, IClogEvent> SplitBabelTraceLine(string traceLine)
+        private static Dictionary<string, IClogEventArg> SplitBabelTraceLine(string traceLine)
         {
             int bracketCount = 0;
-            Dictionary<string, IClogEvent> ret = new Dictionary<string, IClogEvent>();
+            Dictionary<string, IClogEventArg> ret = new Dictionary<string, IClogEventArg>();
             string piece = "";
             int lastEqual = -1;
             int startIndex = 0;
@@ -91,7 +91,7 @@ namespace clog2text_lttng
 
                 while(!string.IsNullOrEmpty(line = file.ReadLine()))
                 {
-                    Dictionary<string, IClogEvent> valueBag;
+                    Dictionary<string, IClogEventArg> valueBag;
                     CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out valueBag);
                     DecodeAndTraceToConsole(bundle, line, config, valueBag);
                 }
@@ -118,7 +118,7 @@ namespace clog2text_lttng
                 _sidecar = sidecar;
             }
 
-            public CLogDecodedTraceLine DecodedTraceLine(string babbleTraceLine, out Dictionary<string, IClogEvent> args)
+            public CLogDecodedTraceLine DecodedTraceLine(string babbleTraceLine, out Dictionary<string, IClogEventArg> args)
             {
                 args = SplitBabelTraceLine(babbleTraceLine);
 
@@ -133,7 +133,7 @@ namespace clog2text_lttng
 
                 if(0 == fields.Length)
                 {
-                    args = new Dictionary<string, IClogEvent>();
+                    args = new Dictionary<string, IClogEventArg>();
                 }
                 else
                 {
@@ -144,7 +144,7 @@ namespace clog2text_lttng
             }
         }
 
-        public class LTTNGClogEvent : IClogEvent
+        public class LTTNGClogEvent : IClogEventArg
         {
             public LTTNGClogEvent(string value)
             {

@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Describes a handled exception that comes as a result of a traceline (in your C/C++) that is malformed
 
 --*/
 

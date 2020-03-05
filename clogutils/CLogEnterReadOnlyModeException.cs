@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Throwing a read only exception puts CLOG into a read only mode - this is the suggested way to terminate the program such that errors are produced and sent to the user
 
 --*/
 
