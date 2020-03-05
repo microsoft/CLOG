@@ -5,8 +5,9 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Reads from LTTNG (via babletrace output) and converts into CLOG property bag.  This bag is then sent into a generic CLOG function for output to STDOUT
+
+    LTTTNG -> babletrace -> clog2text_lttng -> generic clog
 
 --*/
 

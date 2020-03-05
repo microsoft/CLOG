@@ -5,8 +5,7 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    Contains commandline arguments and definations for clog2text_windows
 
 --*/
 
