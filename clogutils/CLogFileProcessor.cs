@@ -348,8 +348,9 @@ namespace clogutils
                                 CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, macro, match.Value, match.Value.Groups["args"].ToString(), splitArgs);
 
                                 callbacks.TraceLineDiscovered(traceLine, results);
-                                start = end = match.Value.Index + match.Value.Length;
                             }
+
+                            start = end = match.Value.Index + match.Value.Length;
                         }
                         catch (CLogHandledException)
                         {
