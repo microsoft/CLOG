@@ -65,9 +65,9 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public void InitCustomDecoder(string nameSpace, string code)
+        public void InitCustomDecoder(string code)
         {
-            _traceEmittorX.CompileSource(nameSpace, code);
+            _traceEmittorX.SetSourceCode(code);
         }
 
         public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value)
@@ -176,7 +176,7 @@ namespace clogutils.ConfigFile
             string sourceCode = File.ReadAllText(customTypeClogCSharpFile);
             string sourceHash = Path.GetFileName(configFile.FilePath);
 
-            _traceEmittorX.CompileSource(sourceHash, sourceCode);
+            _traceEmittorX.SetSourceCode(sourceCode);
         }
     }
 }

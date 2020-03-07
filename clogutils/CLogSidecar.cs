@@ -157,7 +157,7 @@ namespace clogutils
                 {
                     if (null != assembly.Value && 0 != assembly.Value.Length)
                     {
-                        ret.TypeEncoder.InitCustomDecoder(assembly.Key, assembly.Value);
+                        ret.TypeEncoder.InitCustomDecoder(assembly.Value);
                     }
                 }
             }

@@ -38,9 +38,17 @@ namespace clog2text_lttng
 
         public string CustomTypeDecoder { get; private set; }
 
-        public void CompileSource(string sourceHash, string sourceCode)
+        public void SetSourceCode(string sourceCode)
         {
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+            CustomTypeDecoder = sourceCode;
+        }
+
+        private  void PrepareAssemblyCompileIfNecessary()
+        {
+            if (null != _codeAssembly)
+                return;
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(CustomTypeDecoder);
 
             string assemblyName = Path.GetRandomFileName();
             var refPaths = new[] {typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll")};
@@ -63,13 +71,12 @@ namespace clog2text_lttng
                     TraceLine(TraceType.Err, "Compiling customer trace renderer failed");
                     TraceLine(TraceType.Err, d.ToString());
                     TraceLine(TraceType.Err, "--------------------------------------------");
-                    TraceLine(TraceType.Err, sourceCode);
+                    TraceLine(TraceType.Err, CustomTypeDecoder);
                 }
 
                 throw new Exception("Unable to compile type converters");
             }
-
-            CustomTypeDecoder = sourceCode;
+            
             _codeAssembly = Assembly.Load(_compiledCode.GetBuffer());
         }
 
@@ -80,6 +87,11 @@ namespace clog2text_lttng
 
         public string Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value)
         {
+            //
+            // Compiling also caches the assembly
+            //
+            PrepareAssemblyCompileIfNecessary();
+
             object[] args = new object[1];
 
             switch (type.EncodingType)
