@@ -87,7 +87,7 @@ namespace clog
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
-                        CLogMTTNGOuputModule lttngOutput = new CLogMTTNGOuputModule(options.InputFile, options.OutputFile,
+                        CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(options.InputFile, options.OutputFile,
                             options.OutputFile + ".lttng.h");
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 

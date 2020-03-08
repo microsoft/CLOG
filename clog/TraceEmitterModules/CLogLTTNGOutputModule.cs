@@ -17,14 +17,14 @@ using clogutils;
 
 namespace clog.TraceEmitterModules
 {
-    public class CLogMTTNGOuputModule : ICLogOutputModule
+    public class CLogLTTNGOutputModule : ICLogOutputModule
     {
         private readonly string _clogFile;
         private readonly string _lttngHeaderFileName;
         private readonly string _lttngProviderName;
         private readonly StringBuilder lttngFile = new StringBuilder();
 
-        public CLogMTTNGOuputModule(string sourceFile, string clogFile, string lttngHeaderFileName)
+        public CLogLTTNGOutputModule(string sourceFile, string clogFile, string lttngHeaderFileName)
         {
             _clogFile = clogFile;
             _lttngHeaderFileName = lttngHeaderFileName;
