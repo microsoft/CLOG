@@ -161,7 +161,7 @@ namespace clog
                         }
                         else
                         {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID{existingTraceInfo.TraceID} is not unique - somewhere else in your library this unique ID has different");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{existingTraceInfo.TraceID}' is not unique - somewhere else in your library this unique ID has different");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    encoding string, or argument types.  You either need to back out your change, or use a different unique identifier");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    If you've made changes that wont impact tools (for example fixing a");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    typo in a trace string) - have two options to override/refresh the signature check");
