@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <stdio.h>
 #else
-#include <conio.h>
+#include <stdio.h>
 #endif
 
 int __cdecl main(int argc, char* argv[])
