@@ -11,7 +11,7 @@ add_custom_target(CLOG_GENERATED_FILES
 )
 
 # Include Files that need CLOG processing
-include("../../inc/CLog.make")
+include("${CLOG_INCLUDE_DIRECTORY}/CLog.make")
 include_directories(${CMAKE_CLOG_OUTPUT_DIRECTORY})
 
 set(SOURCES
