@@ -59,7 +59,9 @@ namespace clog
 
 
                         CLogSidecar sidecar;
-
+                        
+                        if(!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
 
                         if (!File.Exists(options.SidecarFile))
                         {
@@ -117,6 +119,11 @@ namespace clog
 
                         StringBuilder clogFile = new StringBuilder();
                         clogFile.AppendLine("#include \"clog.h\"");
+
+                        clogFile.AppendLine("#ifdef __cplusplus");
+                        clogFile.AppendLine("extern \"C\" {");                        
+                        clogFile.AppendLine("#endif");
+                      
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
 
                         foreach (var macro in processor.MacrosInUse)
@@ -129,7 +136,15 @@ namespace clog
                         }
 
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderFile);
+                        clogFile.AppendLine("#ifdef __cplusplus");
+                        clogFile.AppendLine("}");
+                        clogFile.AppendLine("#endif");
+
+
+                        if(!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
                         File.WriteAllText(options.OutputFile, clogFile.ToString());
+
                         File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
 
 

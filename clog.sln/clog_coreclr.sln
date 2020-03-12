@@ -5,15 +5,11 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog", "..\clog\clog.csproj", "{C35AA43B-DC28-4E5B-8414-176DAB5AB2C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wpp2clog", "..\wpp2clog\wpp2clog.csproj", "{30A5BB2C-CA2D-4DDC-BBC8-EFA259929197}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clogutils", "..\clogutils\clogutils.csproj", "{076A3AA5-DEB6-45AB-B834-5416178BAF44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "clog2text", "clog2text", "{C05DAADF-AA11-4B93-A0B9-CCA2849A6A06}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_lttng", "..\clog2text\clog2text_lttng\clog2text_lttng.csproj", "{B683F6AC-DEC3-4AFC-B156-77F303EE2986}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "quic2clog", "..\quic2clog\quic2clog.csproj", "{3D515EB3-0561-4E6E-BE62-C6E34134F9BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

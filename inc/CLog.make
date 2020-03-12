@@ -2,10 +2,10 @@ function(CLOG_ADD_SOURCEFILE)
 	set(library ${ARGV0})
 	list(REMOVE_AT ARGV 0)
     message(STATUS "****************<<<<<<<   CLOG(${library}))    >>>>>>>>>>>>>>>*******************")
-	
-	set(CMAKE_CLOG_BINS_DIRECTORY ${CMAKE_SOURCE_DIR}/artifacts/tools/bin/clog)
-	set(CMAKE_CLOG_SIDECAR_DIRECTORY ${CMAKE_SOURCE_DIR}/src/manifest)
+	 	
 
+    message(STATUS ">>>> CLOG_SOURCE_DIRECTORY = ${CLOG_SOURCE_DIRECTORY}")
+    message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
     message(STATUS ">>>> CMAKE_CLOG_BINS_DIRECTORY = ${CMAKE_CLOG_BINS_DIRECTORY}")
     message(STATUS ">>>> CMAKE_CLOG_SIDECAR_DIRECTORY = ${CMAKE_CLOG_SIDECAR_DIRECTORY}")
     message(STATUS ">>>> CLOG Library = ${library}")
@@ -19,10 +19,11 @@ function(CLOG_ADD_SOURCEFILE)
         message(STATUS ">>>>>>> CLOG Source File = ${arg}")
 
 		add_custom_command(
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/submodules/clog
+			WORKING_DIRECTORY ${CLOG_SOURCE_DIRECTORY}
 			COMMENT "Building CLOG and its support tooling"
+            COMMENT "dotnet build ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_coreclr.sln -o ${CMAKE_CLOG_BINS_DIRECTORY}"
 			OUTPUT ${CMAKE_CLOG_BINS_DIRECTORY}/clog.dll
-			COMMAND dotnet build ./clog.sln/clog_coreclr.sln -o ${CMAKE_CLOG_BINS_DIRECTORY}
+			COMMAND dotnet build ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_coreclr.sln -o ${CMAKE_CLOG_BINS_DIRECTORY}
 		)
 			
         add_custom_command(

@@ -1,0 +1,38 @@
+{
+  "Version": 0,
+  "CustomTypeClogCSharpFile": null,
+  "TypeEncoders": {
+    "Version": 0,
+    "TypeEncoder": []
+  },
+  "SourceCodeMacros": [
+    {
+      "MacroName": "TraceInfo",
+      "EncodedPrefix": "",
+      "EncodedArgNumber": 1,
+      "CustomSettings": {},
+      "CLogExportModules": [
+        "DTRACE"
+      ]
+    }
+  ],
+  "ChainedConfigFiles": [
+    "../inc/defaults.clog_config"
+  ],
+  "ModuleUniqueness": {
+    "TraceInformation": [
+      {
+        "UniquenessHash": "d6127982-722d-7c0f-5d48-98601e202a40",
+        "TraceID": "TraceLaunch"
+      },
+      {
+        "UniquenessHash": "e4eb832e-a57d-e843-a6b2-be89a7908f29",
+        "TraceID": "TraceLaunch2"
+      },
+      {
+        "UniquenessHash": "a34cfecc-b91f-5586-3c9b-b38123174ff0",
+        "TraceID": "Launched"
+      }
+    ]
+  }
+}
