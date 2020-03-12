@@ -84,11 +84,16 @@ namespace clog
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)
             {
                 implSignature += "const char *uniqueId, const char *encoded_arg_string";
-                argsString += "uniqueId, encoded_arg_string";
+                argsString += "uniqueId";// "encoded_arg_string";
 
+                int idx = 1;
                 foreach (var arg in decodedTraceLine.splitArgs)
                 {
                     CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg);
+
+                    if (idx == decodedTraceLine.macro.EncodedArgNumber)
+                        argsString += ", encoded_arg_string";
+                    ++idx;
 
                     if (!v.Synthesized)
                     {
