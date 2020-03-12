@@ -10,8 +10,4 @@ set(CLOG_INCLUDE_DIRECTORY ${CLOG_SOURCE_DIRECTORY}/inc)
 
 include_directories(${CLOG_INCLUDE_DIRECTORY})
 
-set(QUIC_COMMON_FLAGS "-fms-extensions -fPIC -pthread")
-set(QUIC_C_FLAGS "${QUIC_COMMON_FLAGS}")
-set(QUIC_CXX_FLAGS "${QUIC_COMMON_FLAGS} --std=c++17 -g -Wno-reorder -Wno-sign-compare -Wno-format")
-
 add_subdirectory (clogsample)
