@@ -14,6 +14,15 @@
       "CLogExportModules": [
         "DTRACE"
       ]
+    },
+    {
+      "MacroName": "TraceInstanceInfo",
+      "EncodedPrefix": "[%p]",
+      "EncodedArgNumber": 2,
+      "CustomSettings": {},
+      "CLogExportModules": [
+        "DTRACE"
+      ]
     }
   ],
   "ChainedConfigFiles": [
@@ -32,6 +41,22 @@
       {
         "UniquenessHash": "a34cfecc-b91f-5586-3c9b-b38123174ff0",
         "TraceID": "Launched"
+      },
+      {
+        "UniquenessHash": "6061fc87-013f-a146-aa2d-8d4b06018871",
+        "TraceID": "INSTANCE_LOOP_X"
+      },
+      {
+        "UniquenessHash": "22910be4-21ce-3dc6-2787-238e86e2259f",
+        "TraceID": "INSTANCE_LOOP"
+      },
+      {
+        "UniquenessHash": "5748736c-d9e9-e656-05b0-02e629d787a4",
+        "TraceID": "INSTANCE_TEST"
+      },
+      {
+        "UniquenessHash": "e01cc064-02fe-2e51-247c-ec279a54cab2",
+        "TraceID": "LAUNCHED"
       }
     ]
   }
