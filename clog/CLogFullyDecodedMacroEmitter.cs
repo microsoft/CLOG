@@ -83,7 +83,7 @@ namespace clog
 
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)
             {
-                implSignature += "const char *uniqueId, const char *encoded_arg_string";
+                implSignature += "const char *uniqueId";
                 argsString += "uniqueId";// "encoded_arg_string";
 
                 int idx = 1;
@@ -92,7 +92,11 @@ namespace clog
                     CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg);
 
                     if (idx == decodedTraceLine.macro.EncodedArgNumber)
+                    {
+                        implSignature += ", const char *encoded_arg_string";
                         argsString += ", encoded_arg_string";
+                    }
+
                     ++idx;
 
                     if (!v.Synthesized)
@@ -108,6 +112,12 @@ namespace clog
 
                         arg.MacroVariableName = $"{arg.VariableInfo.SuggestedTelemetryName}";
                     }
+                }
+
+                if (idx == decodedTraceLine.macro.EncodedArgNumber)
+                {
+                    implSignature += ", const char *encoded_arg_string";
+                    argsString += ", encoded_arg_string";
                 }
             }
             else
