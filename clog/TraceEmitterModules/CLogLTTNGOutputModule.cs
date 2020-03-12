@@ -172,6 +172,9 @@ namespace clog.TraceEmitterModules
 
                 case CLogEncodingType.Skip:
                     continue;
+                    
+                case CLogEncodingType.UNICODE_String:
+                    continue;
 
                 case CLogEncodingType.ByteArray:
                     lttngFile.AppendLine(
