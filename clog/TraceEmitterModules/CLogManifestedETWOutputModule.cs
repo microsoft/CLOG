@@ -22,7 +22,7 @@ namespace clog.TraceEmitterModules
 {
     public class CLogManifestedETWOutputModule : ICLogOutputModule
     {
-        private readonly bool _inited = false;
+        private bool _inited = false;
         private readonly Dictionary<Guid, ManifestInformation> _providerCache = new Dictionary<Guid, ManifestInformation>();
 
         public XmlDocument doc = new XmlDocument();
@@ -158,6 +158,7 @@ namespace clog.TraceEmitterModules
             {
                 newEvent = doc.CreateElement("event", manifest.events.NamespaceURI);
                 manifest.events.AppendChild(newEvent);
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix +hash} to ETW manifest {xmlFileName}");
             }
 
             int hashUInt;
@@ -287,6 +288,8 @@ namespace clog.TraceEmitterModules
                     }
                 }
             }
+
+            _inited = true;
         }
 
         private ManifestInformation FindProviderCache(Guid providerId)
