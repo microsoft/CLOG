@@ -60,7 +60,7 @@ Requiring a “side car” (external manifest) for event presentation to a human
 
 ## Work flow
 
-1. at build time, your c/cpp file will be read and processed using a config file.  clog.exe produces .c file and .h file that contains the OS specific code for your OS
+1. at build time, your c/cpp file will be read and processed using a config file.  clog.exe produces .c file and .h file that contains OS specific code
 2. Using your favorite OS collection mechanism, collect traces using the appropriate tools
 3. For debugging, convert your recorded traces into something human readable using one of the clog2text_{windows,lttng,etc} tools
 
@@ -77,7 +77,7 @@ Requiring a “side car” (external manifest) for event presentation to a human
 
 * clog2text_windows.exe
 
-    WINDOWS ONLY : Combines CLOG events that are stored with ETW into human readable text
+    WINDOWS ONLY : Combines CLOG events that are stored with ETW into human readable text 
     
 * clogutils.dll
 
