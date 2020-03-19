@@ -66,7 +66,7 @@ namespace clogutils
 
             foreach (var v in traceLine.splitArgs)
             {
-                TypeEncoder.AddType(traceLine.configFile.FindType(v));
+                TypeEncoder.AddType(traceLine.configFile.FindType(v, traceLine));
             }
 
             EventBundlesV2[hash] = traceLine;
@@ -88,10 +88,10 @@ namespace clogutils
         }
 
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch)
         {
             int idx = 0;
-            return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, null, ref idx);
+            return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, traceLine, traceLineMatch, ref idx);
         }
 
         public void SetTracelineMetadata(CLogDecodedTraceLine traceline, string module, Dictionary<string, string> values)

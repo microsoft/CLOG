@@ -16,7 +16,7 @@ namespace clogutils
 {
     public class CLogHandledException : Exception
     {
-        public CLogHandledException(string msg, Match traceLine, bool silent = false, Exception e = null) : base(msg)
+        public CLogHandledException(string msg, CLogLineMatch traceLine, bool silent = false, Exception e = null) : base(msg)
         {
             Exception = e;
             TraceLine = traceLine;
@@ -27,7 +27,7 @@ namespace clogutils
             }
         }
 
-        public Match TraceLine { get; set; }
+        public CLogLineMatch TraceLine { get; set; }
 
         public Exception Exception { get; set; }
 

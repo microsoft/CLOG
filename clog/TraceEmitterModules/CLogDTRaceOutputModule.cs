@@ -70,7 +70,7 @@ namespace clog.TraceEmitterModules
 
             foreach(var arg in decodedTraceLine.splitArgs)
             {
-                CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg);
+                CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 if(!v.Synthesized)
                 {

@@ -130,7 +130,7 @@ namespace clog2text_windows
                                 foreach (var type in types)
                                 {
                                     var arg = bundle.splitArgs[argIndex];
-                                    CLogEncodingCLogTypeSearch node = config.FindType(arg);
+                                    CLogEncodingCLogTypeSearch node = config.FindType(arg, null);
 
                                     switch (node.EncodingType)
                                     {

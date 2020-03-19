@@ -50,6 +50,21 @@ namespace clog
             set;
         }
 
+        [Option("LintMarkPhase", Required = false, HelpText = "Lint config files, mark phase")]
+        public string LintMarkPhase
+        {
+            get;
+            set;
+        }
+
+
+        [Option("LintSweepPhase", Required = false, HelpText = "Lint config files, sweep phase")]
+        public string LintSweepPhase
+        {
+            get;
+            set;
+        }
+
         [Option("overwriteHashCollsions", Required = false, Default = false, HelpText = "CAUTION: overwrite trace signatures should a collsion occur.  please read documentation before using this")]
         public bool OverwriteHashCollisions
         {

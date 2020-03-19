@@ -37,15 +37,16 @@ namespace clogutils
             get { return _inUseMacro.ToArray(); }
         }
 
-        private static SortedList<int, Match> UpdateMatches(string data, CLogTraceMacroDefination inspect)
+        private static SortedList<int, CLogLineMatch> UpdateMatches(string data, string sourceFileName, CLogTraceMacroDefination inspect)
         {
             string inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
             Regex r = new Regex(inspectToken, RegexOptions.Singleline);
-            SortedList<int, Match> matches = new SortedList<int, Match>();
+            SortedList<int, CLogLineMatch> matches = new SortedList<int, CLogLineMatch>();
 
             foreach (Match m in r.Matches(data))
             {
-                matches.Add(m.Groups["0"].Index, m);
+                CLogLineMatch lineMatch = new CLogLineMatch(sourceFileName, m);
+                matches.Add(m.Groups["0"].Index, lineMatch);
             }
 
             return matches;
@@ -128,7 +129,7 @@ namespace clogutils
             return ret.ToArray();
         }
 
-        public static CLogTypeContainer[] BuildTypes(CLogConfigurationFile configFile, Match traceLineMatch, string argString,
+        public static CLogTypeContainer[] BuildTypes(CLogConfigurationFile configFile, CLogLineMatch traceLineMatch, string argString,
             string traceLine,
             out string cleanedString)
         {
@@ -166,7 +167,7 @@ namespace clogutils
                     try
                     {
                         // 'i' will point to the final character on a match (such that i+1 is the next fresh character)
-                        t = configFile.FindTypeAndAdvance(argString, traceLine, traceLineMatch, ref i);
+                        t = configFile.FindTypeAndAdvance(argString, null, traceLineMatch, ref i);
                     }
                     catch (CLogTypeNotFoundException e)
                     {
@@ -228,8 +229,8 @@ namespace clogutils
             return ret.ToArray();
         }
 
-        private static CLogDecodedTraceLine BuildArgsFromEncodedArgs(CLogConfigurationFile configFile,
-            CLogTraceMacroDefination macroDefination, Match traceLineMatch, string traceLine, string[] splitArgs)
+        private static CLogDecodedTraceLine BuildArgsFromEncodedArgs(CLogConfigurationFile configFile, string sourcefile, 
+            CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine, string[] splitArgs)
         {
             string userArgs = macroDefination.CombinePrefixWithEncodedString(splitArgs[macroDefination.EncodedArgNumber].Trim());
 
@@ -287,13 +288,13 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("TooManyArguments", traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(splitArgs[0].Trim(), userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(splitArgs[0].Trim(), sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
 
             return decodedTraceLine;
         }
 
         public string ConvertFile(CLogConfigurationFile configFile, ICLogFullyDecodedLineCallbackInterface callbacks,
-            string contents)
+            string contents, string contentsFileName)
         {
             string remaining = contents;
 
@@ -310,11 +311,11 @@ namespace clogutils
                 start = 0;
                 end = 0;
                 results = new StringBuilder();
-                KeyValuePair<int, Match> lastMatch = new KeyValuePair<int, Match>(0, null);
+                KeyValuePair<int, CLogLineMatch> lastMatch = new KeyValuePair<int, CLogLineMatch>(0, null);
 
                 try
                 {
-                    foreach (var match in UpdateMatches(contents, macro))
+                    foreach (var match in UpdateMatches(contents, contentsFileName, macro))
                     {
                         // We track which macros actually got used, in this way we can emit only what is needed to the .clog file
                         _inUseMacro.Add(macro);
@@ -323,16 +324,16 @@ namespace clogutils
                         {
                             lastMatch = match;
 
-                            string[] splitArgs = SplitWithEscapedQuotes(match.Value.Groups["args"].ToString(), ',');
+                            string[] splitArgs = SplitWithEscapedQuotes(match.Value.MatchedRegEx.Groups["args"].ToString(), ',');
 
-                            int idx = match.Value.Index - 1;
+                            int idx = match.Value.MatchedRegEx.Index - 1;
 
                             while (idx > 0 && (contents[idx] == ' ' || contents[idx] == '\t'))
                             {
                                 idx--;
                             }
 
-                            end = match.Value.Index;
+                            end = match.Value.MatchedRegEx.Index;
 
                             string keep = contents.Substring(start, end - start);
 
@@ -345,12 +346,12 @@ namespace clogutils
                             }
                             else
                             {
-                                CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, macro, match.Value, match.Value.Groups["args"].ToString(), splitArgs);
+                                CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
 
                                 callbacks.TraceLineDiscovered(traceLine, results);
                             }
 
-                            start = end = match.Value.Index + match.Value.Length;
+                            start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
                         }
                         catch (CLogHandledException)
                         {
@@ -449,7 +450,7 @@ namespace clogutils
 
         public interface ICLogPartiallyDecodedLineCallbackInterface
         {
-            void TraceLineDiscovered(Match m, CLogConfigurationFile configFile,
+            void TraceLineDiscovered(CLogLineMatch m, CLogConfigurationFile configFile,
                 CLogTraceMacroDefination macro, string[] variables, StringBuilder results);
         }
     }

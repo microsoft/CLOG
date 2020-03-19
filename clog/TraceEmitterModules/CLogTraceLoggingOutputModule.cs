@@ -65,7 +65,7 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
-                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg);
+                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
                 {

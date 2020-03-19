@@ -22,9 +22,10 @@ namespace clogutils
     {
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
 
-        public CLogDecodedTraceLine(string uniqueId, string userString, string userStringNoPrefix, Match m, CLogConfigurationFile c,
+        public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
             CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args)
         {
+            SourceFile = sourceFile;
             macro = mac;
             UniqueId = uniqueId;
             match = m;
@@ -46,7 +47,9 @@ namespace clogutils
 
         [JsonProperty] public CLogTraceMacroDefination macro { get; private set; }
 
-        public Match match { get; private set; }
+        public CLogLineMatch match { get; private set; }
+
+        public string SourceFile { get; set; }
 
         public void AddConfigFileProperty(string module, string key, string value)
         {

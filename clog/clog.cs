@@ -94,7 +94,7 @@ namespace clog
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
                         string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile, fullyDecodedMacroEmitter, content);
+                        string output = processor.ConvertFile(configFile,fullyDecodedMacroEmitter, content, options.InputFile);
 
                         if (!content.Contains(Path.GetFileName(options.OutputFile)))
                         {
@@ -152,8 +152,7 @@ namespace clog
                         {
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");
-
-                            File.WriteAllText(options.ConfigurationFile, configFile.ToJson());
+                            configFile.UpdateAndSave();
                         }
                     }
                     catch (CLogHandledException e)

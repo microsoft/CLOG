@@ -49,7 +49,7 @@ namespace clogutils.ConfigFile
 
             foreach (var arg in traceLine.splitArgs)
             {
-                info += traceLine.configFile.FindType(arg).EncodingType;
+                info += traceLine.configFile.FindType(arg, traceLine).EncodingType;
             }
 
             asString = info;

@@ -202,7 +202,7 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
-                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg);
+                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
                 {
@@ -304,7 +304,7 @@ namespace clog.TraceEmitterModules
             return ret;
         }
 
-        private uint FindUnusedEventId(Guid providerId, Match sourceLine)
+        private uint FindUnusedEventId(Guid providerId, CLogLineMatch sourceLine)
         {
             ManifestInformation manifest = FindProviderCache(providerId);
             List<uint> usedEvents = new List<uint>();
@@ -350,7 +350,7 @@ namespace clog.TraceEmitterModules
             foreach (var a2 in traceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a2;
-                CLogEncodingCLogTypeSearch node = traceLine.configFile.FindType(arg);
+                CLogEncodingCLogTypeSearch node = traceLine.configFile.FindType(arg, traceLine);
                 TemplateNode templateNode = new TemplateNode();
                 templateNode.ArgBundle = a2;
                 templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;

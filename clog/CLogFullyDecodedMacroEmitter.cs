@@ -64,7 +64,7 @@ namespace clog
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                switch (decodedTraceLine.configFile.FindType(arg).EncodingType)
+                switch (decodedTraceLine.configFile.FindType(arg, decodedTraceLine).EncodingType)
                 {
                     case CLogEncodingType.ByteArray:
                         clogArgCountForMacroAlignment += 2;
@@ -89,7 +89,7 @@ namespace clog
                 int idx = 1;
                 foreach (var arg in decodedTraceLine.splitArgs)
                 {
-                    CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg);
+                    CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                     if (idx == decodedTraceLine.macro.EncodedArgNumber)
                     {

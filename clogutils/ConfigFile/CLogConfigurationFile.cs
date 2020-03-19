@@ -99,13 +99,13 @@ namespace clogutils.ConfigFile
             set;
         }
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLine)
         {
             int idx = 0;
-            return FindTypeAndAdvance(bundle.DefinationEncoding, null, null, ref idx);
+            return FindTypeAndAdvance(bundle.DefinationEncoding, traceLine, null, ref idx);
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, string traceLine, Match traceLineMatch,
+        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch,
                 ref int index)
         {
             int tempIndex = index;
@@ -114,7 +114,7 @@ namespace clogutils.ConfigFile
 
             try
             {
-                if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+                if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLine, traceLineMatch, ref tempIndex)))
                 {
                     InUseTypeEncoders.AddType(ret);
                     index = tempIndex;
@@ -130,7 +130,7 @@ namespace clogutils.ConfigFile
             {
                 try
                 {
-                    if(null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+                    if(null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLine, traceLineMatch, ref tempIndex)))
                     {
                         InUseTypeEncoders.AddType(ret);
                         index = tempIndex;
@@ -243,7 +243,7 @@ namespace clogutils.ConfigFile
             return ret;
         }
 
-        public string ToJson()
+        private string ToJson()
         {
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Formatting = Formatting.Indented;

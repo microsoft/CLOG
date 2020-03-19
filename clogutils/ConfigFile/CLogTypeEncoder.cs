@@ -10,11 +10,13 @@ Abstract:
 --*/
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using clog2text_lttng;
+using clogutils.MacroDefinations;
 using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
@@ -30,6 +32,11 @@ namespace clogutils.ConfigFile
         [JsonProperty] public int Version { get; set; }
 
         [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();
+
+        public bool ShouldSerializeUsedBySourceFile()
+        {
+            return true;
+        }
 
         public List<CLogEncodingCLogTypeSearch> _savedTypesX { get; set; } = new List<CLogEncodingCLogTypeSearch>();
 
@@ -107,8 +114,6 @@ namespace clogutils.ConfigFile
 
             AddType(n, searchNode, fileNode, ref isNew, index + 1);
         }
-
-
         public void AddType(CLogEncodingCLogTypeSearch cLogTypeSearch)
         {
             bool isNew = false;
@@ -128,8 +133,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, Match traceLineMatch, ref int index)
+        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch, ref int index)
         {
             CLogTypeSearchNode start = _parent;
             string type = "";
@@ -145,6 +149,7 @@ namespace clogutils.ConfigFile
                 {
                     if (null != prev && null != prev.UserNode)
                     {
+                        prev.UserNode.UsedBySourceFile.Add(traceLine.SourceFile);
                         index = prevIdx.Value;
                         return prev.UserNode;
                     }
@@ -154,6 +159,7 @@ namespace clogutils.ConfigFile
 
                 if (index == encoded.Length - 1)
                 {
+                    start.UserNode.UsedBySourceFile.Add(traceLine.SourceFile);
                     return start.UserNode;
                 }
 
