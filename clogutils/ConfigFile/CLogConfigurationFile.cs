@@ -28,7 +28,7 @@ namespace clogutils.ConfigFile
 
         private static HashSet<string> _loadedConfigFiles = new HashSet<string>();
 
-        public string BUGBUG_String
+        public string ScopePrefix
         {
             get;
             set;
@@ -87,26 +87,71 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        [JsonProperty]
+        public bool MarkPhase
+        {
+            get;
+            set;
+        } = false;
+
+        /// <summary>
+        /// If the MarkPhase bit isnt set, dont clutter up the config file with it - it's a rare feature and we'd like to reduce confusion/complexity
+        /// </summary>
+        /// <returns>true/false if the MarkPhase should be serialized into json</returns>
+        public bool ShouldSerializeMarkPhase()
+        {
+            return MarkPhase;
+        }
+
         public CLogTypeEncoder InUseTypeEncoders
         {
             get;
             set;
         } = new CLogTypeEncoder();
 
-        public bool IsDirty
+        public bool AmIDirty
         {
             get;
             set;
         }
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLine)
+        public bool AreWeDirty()
         {
-            int idx = 0;
-            return FindTypeAndAdvance(bundle.DefinationEncoding, traceLine, null, ref idx);
+            bool dirty = AmIDirty;
+            foreach (var config in _chainedConfigFiles)
+            {
+                dirty |= config.AreWeDirty();
+            }
+            return dirty;
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch,
-                ref int index)
+        public bool AreWeInMarkPhase()
+        {
+            bool dirty = MarkPhase;
+            foreach (var config in _chainedConfigFiles)
+            {
+                dirty |= config.AreWeInMarkPhase();
+            }
+            return dirty;
+        }
+
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
+        {
+            return FindType(bundle, (CLogLineMatch)null);
+        }
+
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLineMatch)
+        {
+            return FindType(bundle, traceLineMatch.match);
+        }
+
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
+        {
+            int idx = 0;
+            return FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
+        }
+
+        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
         {
             int tempIndex = index;
             CLogEncodingCLogTypeSearch ret = null;
@@ -114,7 +159,7 @@ namespace clogutils.ConfigFile
 
             try
             {
-                if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLine, traceLineMatch, ref tempIndex)))
+                if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
                 {
                     InUseTypeEncoders.AddType(ret);
                     index = tempIndex;
@@ -130,7 +175,7 @@ namespace clogutils.ConfigFile
             {
                 try
                 {
-                    if(null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLine, traceLineMatch, ref tempIndex)))
+                    if(null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
                     {
                         InUseTypeEncoders.AddType(ret);
                         index = tempIndex;
@@ -183,7 +228,7 @@ namespace clogutils.ConfigFile
 
         public static CLogConfigurationFile FromFile(string fileName)
         {
-            if(_loadedConfigFiles.Contains(fileName))
+            if (_loadedConfigFiles.Contains(fileName))
             {
                 Console.WriteLine($"Circular config file detected {fileName}");
                 throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", null);
@@ -199,7 +244,7 @@ namespace clogutils.ConfigFile
             ret.FilePath = fileName;
             ret._chainedConfigFiles = new List<CLogConfigurationFile>();
 
-            if(!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
+            if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
                 string cSharp = Path.GetDirectoryName(fileName);
                 cSharp = Path.Combine(cSharp, ret.CustomTypeClogCSharpFile);
@@ -211,9 +256,9 @@ namespace clogutils.ConfigFile
             //
             HashSet<string> macros = new HashSet<string>();
 
-            foreach(var m in ret.SourceCodeMacros)
+            foreach (var m in ret.SourceCodeMacros)
             {
-                if(macros.Contains(m.MacroName))
+                if (macros.Contains(m.MacroName))
                 {
                     Console.WriteLine(
                         $"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
@@ -223,12 +268,12 @@ namespace clogutils.ConfigFile
                 macros.Add(m.MacroName);
             }
 
-            foreach(string downstream in ret.ChainedConfigFiles)
+            foreach (string downstream in ret.ChainedConfigFiles)
             {
                 string root = Path.GetDirectoryName(fileName);
                 string toOpen = Path.Combine(root, downstream);
 
-                if(!File.Exists(toOpen))
+                if (!File.Exists(toOpen))
                 {
                     Console.WriteLine($"Chained config file {toOpen} not found");
                     throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", null);
@@ -239,8 +284,28 @@ namespace clogutils.ConfigFile
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
+                        
+            RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
             return ret;
+        }
+
+        /// <summary>
+        /// Based on the config files 'mark' bit, update type encoders to persist their usage metrics on save
+        /// </summary>
+        /// <param name="ret"></param>
+        private static void RefreshTypeEncodersMarkBit(CLogConfigurationFile ret, bool markBit)
+        {
+            ret.MarkPhase = markBit;
+            foreach (var t in ret.TypeEncoders.TypeEncoder)
+            {
+                t.MarkPhase = markBit;
+            }
+
+            foreach(var config in ret._chainedConfigFiles)
+            {
+                RefreshTypeEncodersMarkBit(config, markBit);
+            }
         }
 
         private string ToJson()
@@ -249,6 +314,20 @@ namespace clogutils.ConfigFile
             s.Formatting = Formatting.Indented;
             string me = JsonConvert.SerializeObject(this, Formatting.Indented);
             return me;
+        }
+
+        public void Lint()
+        {
+            this.MarkPhase = false;
+
+            TypeEncoders.Lint();
+
+            foreach (var child in this._chainedConfigFiles)
+            {
+                child.Lint();
+            }
+
+            RefreshTypeEncodersMarkBit(this, false);
         }
 
         public void UpdateAndSave()

@@ -32,17 +32,44 @@ namespace clog
                 {
                     try
                     {
-                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
+                        //
+                        // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
+                        //    this secondary check looks for those and errors out if present
+                        //
+                        if (!options.IsValid())
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
+                            return -1;
+                        }
 
-                        string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
-                                                 options.ScopePrefix + "_" + Path.GetFileName(options.OutputFile)) + ".c";
+                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
+                        
+                        if(options.LintConfig)
+                        {
+                            if(!configFile.MarkPhase)
+                            {
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Lint operation only works on config files placed into the 'MarkPhase'.  This can be a destricutive action, please read the docs for more information");
+                                return -10;
+                            }
+                            configFile.Lint();
+                            configFile.UpdateAndSave();
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Lint operation complete");
+                            return 0;
+                        }
 
                         if (options.UpgradeConfigFile)
                         {
                             configFile.UpdateAndSave();
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Config upgrade complete");
+                            return 0;
                         }
+                        
 
-                        configFile.BUGBUG_String = options.ScopePrefix;
+
+                        string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
+                                                 options.ScopePrefix + "_" + Path.GetFileName(options.OutputFile)) + ".c";
+
+                        configFile.ScopePrefix = options.ScopePrefix;
                         configFile.FilePath = Path.GetFullPath(options.ConfigurationFile);
                         configFile.OverwriteHashCollisions = options.OverwriteHashCollisions;
 
@@ -113,8 +140,6 @@ namespace clog
 
 
                         sidecar.SaveOnFinish(options.SidecarFile);
-
-
                         fullyDecodedMacroEmitter.FinishedProcessing();
 
                         StringBuilder clogFile = new StringBuilder();
@@ -139,16 +164,14 @@ namespace clog
                         clogFile.AppendLine("#ifdef __cplusplus");
                         clogFile.AppendLine("}");
                         clogFile.AppendLine("#endif");
-
-
+                        
                         if(!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
-                        File.WriteAllText(options.OutputFile, clogFile.ToString());
 
+                        File.WriteAllText(options.OutputFile, clogFile.ToString());
                         File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
 
-
-                        if (configFile.IsDirty)
+                        if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");

@@ -167,7 +167,7 @@ namespace clogutils
                     try
                     {
                         // 'i' will point to the final character on a match (such that i+1 is the next fresh character)
-                        t = configFile.FindTypeAndAdvance(argString, null, traceLineMatch, ref i);
+                        t = configFile.FindTypeAndAdvance(argString, traceLineMatch, ref i);
                     }
                     catch (CLogTypeNotFoundException e)
                     {

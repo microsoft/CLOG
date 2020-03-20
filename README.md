@@ -10,10 +10,10 @@ Without introducing any new APIs for bit encoding, and exclusively using legacy 
 # CLOG makes these claims:
 
 1. Code and tool assets need to be decoupled from bit encoders to preserve the code/tools assets as bit encoders are modified (as would happen as code moves between OS’s or projects)
-API abstractions not a sufficient solution to our problems, due to performance. Worse, API’s tend to create permanent couplings between code and backend telemetry pipelines due to couplings.
+API abstractions not a sufficient solution to our problems, due to performance. Worse, API’s tend to create permanent couplings between code and tools due to those couplings.
 Clog argues a tool (and not a library) best solves the range of problems we face
 
-2. Event description(manifests), for purposes of tooling needs to be decoupled from description for human presentation (text files). For example diagtrack/wpa have different needs as compared to a human reading a log
+2. Event description(manifests), for purposes of tooling needs to be decoupled from description for human presentation (text files). For example the [Windows Performance Analyzer (WPA)](https://docs.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-analyzer) have different needs as compared to a human reading a log.
 
 
 # CLOG holds these claims by:

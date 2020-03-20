@@ -88,10 +88,10 @@ namespace clogutils
         }
 
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch)
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
             int idx = 0;
-            return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, traceLine, traceLineMatch, ref idx);
+            return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
         }
 
         public void SetTracelineMetadata(CLogDecodedTraceLine traceline, string module, Dictionary<string, string> values)

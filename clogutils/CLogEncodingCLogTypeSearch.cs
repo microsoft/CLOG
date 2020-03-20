@@ -18,13 +18,6 @@ namespace clogutils
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogEncodingCLogTypeSearch
     {
-        public CLogEncodingCLogTypeSearch(string d, bool synthesized = false)
-        {
-            DefinationEncoding = d;
-            Synthesized = synthesized;
-            UsedBySourceFile = new HashSet<string>();
-        }
-
         [JsonProperty]
         public CLogEncodingType EncodingType { get; set; }
 
@@ -42,6 +35,32 @@ namespace clogutils
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public HashSet<string> UsedBySourceFile { get; set; } = new HashSet<string>();
+
+        public bool MarkPhase { get; set; }
+
+
+        /// <summary>
+        /// Only serialize Synthesized if it's in use - just to keep things in the .config file tidy
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCustomDecoder()
+        {
+            return !string.IsNullOrEmpty(CustomDecoder);
+        }
+
+        /// <summary>
+        /// Only serialize Synthesized if it's in use - just to keep things in the .config file tidy
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeSynthesized()
+        {
+            return Synthesized;
+        }
+
+        public bool ShouldSerializeUsedBySourceFile()
+        {
+            return MarkPhase;
+        }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

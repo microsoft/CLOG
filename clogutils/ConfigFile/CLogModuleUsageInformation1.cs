@@ -73,7 +73,7 @@ namespace clogutils.ConfigFile
                 info.TraceID = traceLine.UniqueId;
                 info.UniquenessHash = hash;
                 TraceInformation.Add(info);
-                traceLine.configFile.IsDirty = true;
+                traceLine.configFile.AmIDirty = true;
             }
 
             if (info.UniquenessHash != hash)
@@ -85,7 +85,7 @@ namespace clogutils.ConfigFile
         public void Remove(CLogConfigurationFile config, CLogTraceLineInformation trace)
         {
             TraceInformation.Remove(trace);
-            config.IsDirty = true;
+            config.AmIDirty = true;
         }
     }
 }

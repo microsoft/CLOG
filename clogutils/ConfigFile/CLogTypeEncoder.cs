@@ -31,12 +31,7 @@ namespace clogutils.ConfigFile
 
         [JsonProperty] public int Version { get; set; }
 
-        [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();
-
-        public bool ShouldSerializeUsedBySourceFile()
-        {
-            return true;
-        }
+        [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();    
 
         public List<CLogEncodingCLogTypeSearch> _savedTypesX { get; set; } = new List<CLogEncodingCLogTypeSearch>();
 
@@ -49,6 +44,20 @@ namespace clogutils.ConfigFile
         {
             string me = JsonConvert.SerializeObject(this);
             return me;
+        }
+
+        public void Lint()
+        {
+            List<CLogEncodingCLogTypeSearch> newEncoders = new List<CLogEncodingCLogTypeSearch>();
+            foreach(var encoder in TypeEncoder)
+            {
+                if(encoder.UsedBySourceFile.Count > 0)
+                {
+                    newEncoders.Add(encoder);
+                    encoder.MarkPhase = false;
+                }
+            }
+            TypeEncoder = newEncoders;
         }
 
         [OnDeserialized]
@@ -133,7 +142,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogDecodedTraceLine traceLine, CLogLineMatch traceLineMatch, ref int index)
+        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
         {
             CLogTypeSearchNode start = _parent;
             string type = "";
@@ -149,7 +158,9 @@ namespace clogutils.ConfigFile
                 {
                     if (null != prev && null != prev.UserNode)
                     {
-                        prev.UserNode.UsedBySourceFile.Add(traceLine.SourceFile);
+                        if(null != traceLineMatch)
+                            prev.UserNode.UsedBySourceFile.Add(traceLineMatch.SourceFile);
+
                         index = prevIdx.Value;
                         return prev.UserNode;
                     }
@@ -159,7 +170,9 @@ namespace clogutils.ConfigFile
 
                 if (index == encoded.Length - 1)
                 {
-                    start.UserNode.UsedBySourceFile.Add(traceLine.SourceFile);
+                    if (null != traceLineMatch)
+                        start.UserNode.UsedBySourceFile.Add(traceLineMatch.SourceFile);
+
                     return start.UserNode;
                 }
 

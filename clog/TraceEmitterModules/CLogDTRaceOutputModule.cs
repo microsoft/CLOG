@@ -50,9 +50,9 @@ namespace clog.TraceEmitterModules
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
-            string uid = "MNO_" + decodedTraceLine.configFile.BUGBUG_String + "_" + Path.GetFileName(sourceFile).Replace(".", "_") + "_" + decodedTraceLine.UniqueId;
+            string uid = "MNO_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_") + "_" + decodedTraceLine.UniqueId;
 
-            uid = "DTRACE_" + decodedTraceLine.configFile.BUGBUG_String + "_" + Path.GetFileName(sourceFile).Replace(".", "_") + "_" + decodedTraceLine.UniqueId + Guid.NewGuid();
+            uid = "DTRACE_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_") + "_" + decodedTraceLine.UniqueId + Guid.NewGuid();
             uid = uid.Replace("{", "");
             uid = uid.Replace("}", "");
             uid = uid.Replace("-", "");
