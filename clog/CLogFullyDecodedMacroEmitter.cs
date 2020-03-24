@@ -153,7 +153,7 @@ namespace clog
 
             foreach (ICLogOutputModule module in _modules)
             {
-                CLogConfigurationProfile configProfile = decodedTraceLine.macro.FindConfigProfile(decodedTraceLine.configFile.ProfileName);
+                CLogConfigurationProfile configProfile = decodedTraceLine.GetMacroConfigurationProfile();
 
                 if (module.ManditoryModule || configProfile.ModuleNames.Contains(module.ModuleName.ToUpper()))
                 {

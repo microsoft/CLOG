@@ -54,7 +54,7 @@ namespace clog.TraceEmitterModules
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             string hash = decodedTraceLine.UniqueId;
-            CLogExportModuleDefination moduleSettings = decodedTraceLine.macro.FindConfigProfile(decodedTraceLine.configFile.ProfileName).FindExportModule(_ModuleName);
+            CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(_ModuleName);
 
             if (!_inited)
             {

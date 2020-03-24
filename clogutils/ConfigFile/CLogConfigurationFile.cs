@@ -67,6 +67,9 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        [JsonProperty] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
+
+
         [JsonProperty] public List<CLogTraceMacroDefination> SourceCodeMacros
         {
             get;

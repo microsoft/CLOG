@@ -12,7 +12,6 @@ Abstract:
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Linq;
 
@@ -65,24 +64,11 @@ namespace clogutils.MacroDefinations
         [JsonProperty] public string EncodedPrefix { get; set; }
 
         [JsonProperty] public virtual int EncodedArgNumber { get; set; }
-
-       // [JsonProperty] public Dictionary<string, string> CustomSettings { get; set; }
-
-       // [JsonProperty] public List<string> CLogExportModules { get; set; } = new List<string>();
-
-        public CLogConfigurationProfile FindConfigProfile(string profile)
-        {
-            return CLogConfigurationProfiles[profile];
-        }   
-
-        [JsonProperty] public Dictionary<string, CLogConfigurationProfile> CLogConfigurationProfiles { get; set; } = new Dictionary<string, CLogConfigurationProfile>();
+              
+        [JsonProperty] public Dictionary<string, string> MacroConfiguration { get; set; }
 
         public string ConfigFileWithMacroDefination { get; set; }
                
-
-        //[JsonProperty] public Dictionary<string, List<string>> CLogProfile { get; set; } = new Dictionary<string, List<string>>();
-
-
         [DefaultValue(CLogUniqueIDEncoder.Basic)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public CLogUniqueIDEncoder UniqueIdEncoder { get; set; }

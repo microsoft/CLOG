@@ -47,6 +47,12 @@ namespace clogutils
 
         [JsonProperty] public CLogTraceMacroDefination macro { get; private set; }
 
+        public CLogConfigurationProfile GetMacroConfigurationProfile()
+        {
+            return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
+        }
+
+
         public CLogLineMatch match { get; private set; }
 
         public string SourceFile { get; set; }

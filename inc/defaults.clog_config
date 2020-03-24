@@ -1,4 +1,5 @@
 {
+  "MacroConfigurations": {},
   "Version": 1,
   "CustomTypeClogCSharpFile": "../decoderTest/defaults.clog.cs",
   "TypeEncoders": {

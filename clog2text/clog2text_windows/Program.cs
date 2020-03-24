@@ -56,7 +56,7 @@ namespace clog2text_windows
 
                         foreach (var m in textManifest.EventBundlesV2)
                         {
-                            CLogExportModuleDefination configProfile = m.Value.macro.FindConfigProfile(config.ProfileName).FindExportModule("MANIFESTED_ETW");
+                            CLogExportModuleDefination configProfile = m.Value.GetMacroConfigurationProfile().FindExportModule("MANIFESTED_ETW");
 
                             ids.Add(new Guid(configProfile.CustomSettings["ETW_Provider"]));
                         }
