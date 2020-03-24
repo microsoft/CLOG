@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
 
@@ -32,6 +31,11 @@ namespace clogutils.ConfigFile
         {
             get;
             set;
+        }
+
+        public string ProfileName
+        {
+            get; set;
         }
         public string FilePath
         {
@@ -330,13 +334,49 @@ namespace clogutils.ConfigFile
             RefreshTypeEncodersMarkBit(this, false);
         }
 
-        public void UpdateAndSave()
+        public void UpdateVersion()
+        {
+#if false
+            if (0 == this.Version)
+            {
+                string config = Path.GetFileNameWithoutExtension(this.FilePath);
+
+                foreach (var mod in this.SourceCodeMacros)
+                {
+                    if (mod.CLogConfigurationProfiles.ContainsKey(config))
+                        continue;
+
+                    CLogConfigurationProfile profile = new CLogConfigurationProfile();
+
+                    foreach (var module in mod.CLogExportModules)
+                    {
+                        CLogExportModuleDefination newModule = new CLogExportModuleDefination();
+                        newModule.ExportModule = module;
+                        foreach (var setting in mod.CustomSettings)
+                            newModule.CustomSettings[setting.Key] = setting.Value;
+
+                        profile.Modules.Add(newModule);
+                    }
+
+                    mod.CLogConfigurationProfiles.Add(config, profile);
+                }
+                this.Version = 1;
+
+                foreach (var child in this._chainedConfigFiles)
+                {
+                    child.UpdateVersion();
+                }
+            }
+#endif
+        }
+
+        public void Save()
         {
             File.WriteAllText(this.FilePath, ToJson());
 
             foreach(var child in this._chainedConfigFiles)
             {
-                child.UpdateAndSave();
+                child.Save();
             }
         }
     }

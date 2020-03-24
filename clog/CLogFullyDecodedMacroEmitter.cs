@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text;
 using clogutils;
 using clogutils.ConfigFile;
+using clogutils.MacroDefinations;
 
 namespace clog
 {
@@ -152,7 +153,9 @@ namespace clog
 
             foreach (ICLogOutputModule module in _modules)
             {
-                if (module.ManditoryModule || decodedTraceLine.macro.CLogExportModules.Contains(module.ModuleName.ToUpper()))
+                CLogConfigurationProfile configProfile = decodedTraceLine.macro.FindConfigProfile(decodedTraceLine.configFile.ProfileName);
+
+                if (module.ManditoryModule || configProfile.ModuleNames.Contains(module.ModuleName.ToUpper()))
                 {
                     if (m_unusedModules.Contains(module))
                     {

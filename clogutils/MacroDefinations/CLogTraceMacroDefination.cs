@@ -14,9 +14,47 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace clogutils.MacroDefinations
 {
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class CLogExportModuleDefination
+    {
+        [JsonProperty]
+        public string ExportModule;
+
+        [JsonProperty]
+        public Dictionary<string, string> CustomSettings { get; set; } = new Dictionary<string, string>();
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class CLogConfigurationProfile
+    {
+        [JsonProperty]
+        public List<CLogExportModuleDefination> Modules = new List<CLogExportModuleDefination>();
+
+        public CLogExportModuleDefination FindExportModule(string moduleName)
+        {
+            return Modules.Where(x => { return x.ExportModule.Equals(moduleName); } ).FirstOrDefault();
+        }
+
+        public List<string> ModuleNames
+        {
+            get
+            {
+                List<string> ret = new List<string>();
+                foreach(var mod in Modules)
+                {
+                    ret.Add(mod.ExportModule);
+                }
+                return ret;
+            }
+        }
+    }
+
+
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceMacroDefination
     {
@@ -28,11 +66,22 @@ namespace clogutils.MacroDefinations
 
         [JsonProperty] public virtual int EncodedArgNumber { get; set; }
 
-        [JsonProperty] public Dictionary<string, string> CustomSettings { get; set; }
+       // [JsonProperty] public Dictionary<string, string> CustomSettings { get; set; }
+
+       // [JsonProperty] public List<string> CLogExportModules { get; set; } = new List<string>();
+
+        public CLogConfigurationProfile FindConfigProfile(string profile)
+        {
+            return CLogConfigurationProfiles[profile];
+        }   
+
+        [JsonProperty] public Dictionary<string, CLogConfigurationProfile> CLogConfigurationProfiles { get; set; } = new Dictionary<string, CLogConfigurationProfile>();
 
         public string ConfigFileWithMacroDefination { get; set; }
+               
 
-        [JsonProperty] public List<string> CLogExportModules { get; set; } = new List<string>();
+        //[JsonProperty] public Dictionary<string, List<string>> CLogProfile { get; set; } = new Dictionary<string, List<string>>();
+
 
         [DefaultValue(CLogUniqueIDEncoder.Basic)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]

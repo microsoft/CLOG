@@ -43,6 +43,7 @@ namespace clog
                         }
 
                         CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
+                        configFile.ProfileName = options.ConfigurationProfile;
                         
                         if(options.LintConfig)
                         {
@@ -52,14 +53,15 @@ namespace clog
                                 return -10;
                             }
                             configFile.Lint();
-                            configFile.UpdateAndSave();
+                            configFile.Save();
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Lint operation complete");
                             return 0;
                         }
 
                         if (options.UpgradeConfigFile)
                         {
-                            configFile.UpdateAndSave();
+                            configFile.UpdateVersion();
+                            configFile.Save();
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Config upgrade complete");
                             return 0;
                         }
@@ -175,7 +177,7 @@ namespace clog
                         {
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");
-                            configFile.UpdateAndSave();
+                            configFile.Save();
                         }
                     }
                     catch (CLogHandledException e)

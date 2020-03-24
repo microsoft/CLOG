@@ -31,6 +31,13 @@ namespace clog
             set;
         }
 
+        [Option('p', "configProfile", Required = true, HelpText = "Configuration profile name")]
+        public string ConfigurationProfile
+        {
+            get;
+            set;
+        }
+
         [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix")]
         public string ScopePrefix
         {

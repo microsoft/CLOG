@@ -8,6 +8,8 @@ function(CLOG_ADD_SOURCEFILE)
     message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
     message(STATUS ">>>> CMAKE_CLOG_BINS_DIRECTORY = ${CMAKE_CLOG_BINS_DIRECTORY}")
     message(STATUS ">>>> CMAKE_CLOG_SIDECAR_DIRECTORY = ${CMAKE_CLOG_SIDECAR_DIRECTORY}")
+    message(STATUS ">>>> CMAKE_CLOG_CONFIG_PROFILE = ${CMAKE_CLOG_CONFIG_PROFILE}")
+    
     message(STATUS ">>>> CLOG Library = ${library}")
 
     foreach(arg IN LISTS ARGV)
@@ -30,8 +32,8 @@ function(CLOG_ADD_SOURCEFILE)
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
 			DEPENDS ${CMAKE_CLOG_BINS_DIRECTORY}/clog.dll
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
-            COMMENT "ULOG: ${CMAKE_CLOG_BINS_DIRECTORY}/clog --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
-            COMMAND ${CMAKE_CLOG_BINS_DIRECTORY}/clog --overwriteHashCollsions --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
+            COMMENT "ULOG: ${CMAKE_CLOG_BINS_DIRECTORY}/clog  -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
+            COMMAND ${CMAKE_CLOG_BINS_DIRECTORY}/clog -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
         )
 
         add_custom_target(${ARG_DEPENDENCY}

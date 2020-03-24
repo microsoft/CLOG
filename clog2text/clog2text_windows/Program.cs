@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using clogutils;
 using clogutils.ConfigFile;
+using clogutils.MacroDefinations;
 using CommandLine;
 using Microsoft.Windows.EventTracing;
 using Microsoft.Windows.EventTracing.Events;
@@ -55,7 +56,9 @@ namespace clog2text_windows
 
                         foreach (var m in textManifest.EventBundlesV2)
                         {
-                            ids.Add(new Guid(m.Value.macro.CustomSettings["ETW_Provider"]));
+                            CLogExportModuleDefination configProfile = m.Value.macro.FindConfigProfile(config.ProfileName).FindExportModule("MANIFESTED_ETW");
+
+                            ids.Add(new Guid(configProfile.CustomSettings["ETW_Provider"]));
                         }
 
                         var events = etwfile.UseGenericEvents(ids.ToArray());

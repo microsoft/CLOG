@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using clogutils;
+using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
 {
@@ -27,14 +28,14 @@ namespace clog.TraceEmitterModules
 
         public XmlDocument doc = new XmlDocument();
         public string xmlFileName;
-
+        private static string _ModuleName = "MANIFESTED_ETW";
         public CLogManifestedETWOutputModule()
         {
         }
 
         public string ModuleName
         {
-            get { return "MANIFESTED_ETW"; }
+            get { return _ModuleName; }
         }
 
         public bool ManditoryModule
@@ -53,19 +54,20 @@ namespace clog.TraceEmitterModules
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             string hash = decodedTraceLine.UniqueId;
+            CLogExportModuleDefination moduleSettings = decodedTraceLine.macro.FindConfigProfile(decodedTraceLine.configFile.ProfileName).FindExportModule(_ModuleName);
 
             if (!_inited)
             {
-                if(!decodedTraceLine.macro.CustomSettings.ContainsKey("ETWManifestFile"))
+                if(!moduleSettings.CustomSettings.ContainsKey("ETWManifestFile"))
                     throw new CLogEnterReadOnlyModeException("ETWManifestFileNotSpecified", decodedTraceLine.match);
 
-               xmlFileName = decodedTraceLine.macro.CustomSettings["ETWManifestFile"];
+               xmlFileName = moduleSettings.CustomSettings["ETWManifestFile"];
                xmlFileName = Path.Combine(Path.GetDirectoryName(decodedTraceLine.macro.ConfigFileWithMacroDefination), xmlFileName);
 
                Init();
             }
 
-            if (!decodedTraceLine.macro.CustomSettings.ContainsKey("ETW_Provider"))
+            if (!moduleSettings.CustomSettings.ContainsKey("ETW_Provider"))
             {
                 Console.WriteLine($"The 'CustomSettings' dictionary for macro {decodedTraceLine.macro.MacroName} does not contain a GUID for the EtwProvider");
                 Console.WriteLine("    Please add an entry and rerun");
@@ -77,11 +79,11 @@ namespace clog.TraceEmitterModules
                 throw new CLogEnterReadOnlyModeException("ETW_Provider:NotSpecified", decodedTraceLine.match);
             }
 
-            Guid providerId = new Guid(decodedTraceLine.macro.CustomSettings["ETW_Provider"]);
+            Guid providerId = new Guid(moduleSettings.CustomSettings["ETW_Provider"]);
 
             ManifestInformation manifest = FindProviderCache(providerId);
             string eventNamePrefix;
-            if (!decodedTraceLine.macro.CustomSettings.TryGetValue("EventNamePrefix", out eventNamePrefix))
+            if (!moduleSettings.CustomSettings.TryGetValue("EventNamePrefix", out eventNamePrefix))
                 eventNamePrefix = string.Empty;
 
             if (null == manifest)

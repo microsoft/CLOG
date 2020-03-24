@@ -5,6 +5,18 @@
     "Version": 0,
     "TypeEncoder": [
       {
+        "EncodingType": "ByteArray",
+        "CType": "CLOG_PTR",
+        "DefinationEncoding": "!IPV4ADDR!",
+        "CustomDecoder": "defaults.clog_config.Types.QUIC_IP_ADDR"
+      },
+      {
+        "EncodingType": "ByteArray",
+        "CType": "CLOG_PTR",
+        "DefinationEncoding": "!IPV6ADDR!",
+        "CustomDecoder": "defaults.clog_config.Types.QUIC_IP_ADDR"
+      },
+      {
         "EncodingType": "UInt32",
         "CType": "CLOG_INT32",
         "DefinationEncoding": "d",
@@ -14,6 +26,16 @@
         "EncodingType": "UInt8",
         "CType": "CLOG_INT32",
         "DefinationEncoding": "c"
+      },
+      {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "ld"
+      },
+      {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "zd"
       },
       {
         "EncodingType": "Int32",
