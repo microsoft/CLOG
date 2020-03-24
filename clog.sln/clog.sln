@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_lttng", "..\clog2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clog2text_windows", "..\clog2text\clog2text_windows\clog2text_windows.csproj", "{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "decoderTest", "..\decoderTest\decoderTest.csproj", "{A2079B4E-FF96-4DE5-80E8-8403A17C4347}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,14 @@ Global
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.ActiveCfg = Release|x64
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.Build.0 = Release|x64
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|x64.Build.0 = Debug|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Release|x64.ActiveCfg = Release|Any CPU
+		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

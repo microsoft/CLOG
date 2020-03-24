@@ -1,13 +1,14 @@
 {
   "Version": 1,
-  "CustomTypeClogCSharpFile": null,
+  "CustomTypeClogCSharpFile": "../decoderTest/defaults.clog.cs",
   "TypeEncoders": {
     "Version": 0,
     "TypeEncoder": [
       {
         "EncodingType": "UInt32",
         "CType": "CLOG_INT32",
-        "DefinationEncoding": "d"
+        "DefinationEncoding": "d",
+        "CustomDecoder": "defaults.clog_config.Types.DecodeUInt32"
       },
       {
         "EncodingType": "UInt8",
