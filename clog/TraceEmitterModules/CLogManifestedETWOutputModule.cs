@@ -549,6 +549,20 @@ namespace clog.TraceEmitterModules
 
                 string inType = pe.GetAttribute("inType");
                 string name = pe.GetAttribute("name");
+
+                if(listofArgsAsSpecifiedBySourceFile.Count <= argIdx)
+                {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch - manifested ETW template and CLOG string differ");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"         Event ID : {eventId}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Event Provider : {providerId}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"        Event UID : {traceLine.UniqueId}");
+
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
+                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", traceLine.match);
+                }
+
                 TemplateNode templateReference = listofArgsAsSpecifiedBySourceFile[argIdx];
 
                 argLookup[templateReference.ArgBundle.VariableInfo.SuggestedTelemetryName] = name;
