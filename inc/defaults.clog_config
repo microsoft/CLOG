@@ -121,8 +121,5 @@
     ]
   },
   "SourceCodeMacros": [],
-  "ChainedConfigFiles": [],
-  "ModuleUniqueness": {
-    "TraceInformation": []
-  }
+  "ChainedConfigFiles": []
 }

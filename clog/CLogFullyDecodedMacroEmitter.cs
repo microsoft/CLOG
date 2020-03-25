@@ -40,7 +40,7 @@ namespace clog
             _sourceFile.AppendLine($"// CLOG generated {DateTimeOffset.Now}");
             _sourceFile.AppendLine("#include \"clog.h\"");
         }
-
+        
         public string HeaderInit
         {
             get { return _headerInit.ToString(); }
@@ -165,7 +165,7 @@ namespace clog
 
                     CLogTraceLineInformation existingTraceInfo;
 
-                    if (!decodedTraceLine.configFile.ModuleUniqueness.IsUnique(module, decodedTraceLine, out existingTraceInfo))
+                    if (!_sidecar.ModuleUniqueness.IsUnique(module, decodedTraceLine, out existingTraceInfo))
                     {
                         if (decodedTraceLine.configFile.OverwriteHashCollisions || existingTraceInfo.UniquenessHash == Guid.Empty)
                         {
@@ -174,7 +174,7 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        TraceID:{existingTraceInfo.TraceID}");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
 
-                            decodedTraceLine.configFile.ModuleUniqueness.Remove(decodedTraceLine.configFile, existingTraceInfo);
+                            _sidecar.ModuleUniqueness.Remove(decodedTraceLine.configFile, existingTraceInfo);
                             _knownHashes.Remove(decodedTraceLine.UniqueId);
                         }
                         else
@@ -211,7 +211,7 @@ namespace clog
 
                     if (!_knownHashes.Contains(decodedTraceLine.UniqueId))
                     {
-                        decodedTraceLine.configFile.ModuleUniqueness.Insert(module, decodedTraceLine);
+                        _sidecar.ModuleUniqueness.Insert(module, decodedTraceLine);
 
                         module.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
                             macroBody,

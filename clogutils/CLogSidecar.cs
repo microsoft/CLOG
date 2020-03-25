@@ -47,6 +47,14 @@ namespace clogutils
 
         [JsonProperty] public Dictionary<string, string> CustomTypeProcessorsX { get; set; } = new Dictionary<string, string>();
 
+
+        [JsonProperty]
+        public CLogModuleUsageInformation ModuleUniqueness
+        {
+            get;
+            set;
+        } = new CLogModuleUsageInformation();
+
         public string ModuleName
         {
             get { return "SIDECAR_EMITTER"; }

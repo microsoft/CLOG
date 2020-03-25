@@ -81,13 +81,6 @@ namespace clogutils.ConfigFile
             get;
             set;
         }
-
-        [JsonProperty] public CLogModuleUsageInformation ModuleUniqueness
-        {
-            get;
-            set;
-        } = new CLogModuleUsageInformation();
-
         public List<CLogConfigurationFile> _chainedConfigFiles
         {
             get;
