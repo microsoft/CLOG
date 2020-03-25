@@ -192,6 +192,16 @@ namespace clog.TraceEmitterModules
                     oldTemplate = newEvent.GetAttribute("template");
                 string templateId = DiscoverOrCreateTemplate(decodedTraceLine, sidecar, providerId, oldTemplate, eventId);
                 newEvent.SetAttribute("template", templateId);
+
+                if (moduleSettings.CustomSettings.ContainsKey("Level"))
+                    newEvent.SetAttribute("level", moduleSettings.CustomSettings["Level"]);
+                else
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Level not specified;  if you desire a Level, add 'Level' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
+
+                if (moduleSettings.CustomSettings.ContainsKey("Keywords"))
+                    newEvent.SetAttribute("keywords", moduleSettings.CustomSettings["Keywords"]);
+                else
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
             }
 
 

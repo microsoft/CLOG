@@ -65,8 +65,6 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Config upgrade complete");
                             return 0;
                         }
-                        
-
 
                         string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
                                                  options.ScopePrefix + "_" + Path.GetFileName(options.OutputFile)) + ".c";
