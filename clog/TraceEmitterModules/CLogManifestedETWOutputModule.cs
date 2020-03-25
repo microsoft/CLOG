@@ -522,7 +522,10 @@ namespace clog.TraceEmitterModules
                     template.AppendChild(dataNode);
                 }
 
-                template.SetAttribute("tid", templateId);
+                // Only apply a template ID if it's not empty - otherwise choose the default
+                if(!templateId.Equals("templateId_"))
+                    template.SetAttribute("tid", templateId);
+
                 manifest.templates.AppendChild(template);
             }
 
