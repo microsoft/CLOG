@@ -180,8 +180,15 @@ namespace clog.TraceEmitterModules
                 eventId = Convert.ToUInt32(newEvent.GetAttribute("value"));
             }
 
-            // Store the eventID for future decode 
+            //
+            // Store the eventID for future decode as well as every configuration setting attached to this module
+            //
             decodedTraceLine.AddConfigFileProperty(ModuleName, "EventID", eventId.ToString());
+            foreach(var setting in moduleSettings.CustomSettings)
+            {
+                decodedTraceLine.AddConfigFileProperty(ModuleName, setting.Key, setting.Value);
+            }
+            
 
             newEvent.SetAttribute("symbol", eventNamePrefix + hash);
 

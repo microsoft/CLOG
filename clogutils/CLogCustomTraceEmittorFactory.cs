@@ -117,10 +117,10 @@ namespace clog2text_lttng
             string member = bits[bits.Length - 1];
             customDecoder = customDecoder.Substring(0, customDecoder.Length - member.Length - 1);
 
-            foreach (var v in _codeAssembly.GetTypes())
+            /*foreach (var v in _codeAssembly.GetTypes())
             {
                 Console.WriteLine(v.FullName);
-            }
+            }*/
 
             var newType = _codeAssembly.GetType(customDecoder);
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);

@@ -8,6 +8,12 @@
       {
         "EncodingType": "ByteArray",
         "CType": "CLOG_PTR",
+        "DefinationEncoding": "SOCKADDR",
+        "CustomDecoder": "defaults.clog_config.Types.QUIC_IP_ADDR"
+      },
+      {
+        "EncodingType": "ByteArray",
+        "CType": "CLOG_PTR",
         "DefinationEncoding": "!IPV4ADDR!",
         "CustomDecoder": "defaults.clog_config.Types.QUIC_IP_ADDR"
       },

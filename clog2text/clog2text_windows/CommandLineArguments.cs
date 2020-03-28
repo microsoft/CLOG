@@ -20,5 +20,12 @@ namespace clog2text_windows
 
         [Option('s', "sidecar", Required = true, HelpText = "Full path to clog sidecar")]
         public string SideCarFile { get; set; }
+
+        [Option('o', "outputFile", Required = false, HelpText = "Emit to a file instead of STDOUT")]
+        public string OutputFile
+        {
+            get;
+            set;
+        }
     }
 }

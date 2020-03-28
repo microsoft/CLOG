@@ -27,5 +27,12 @@ namespace clog2text_lttng
             get;
             set;
         }
+
+        [Option('o', "outputFile", Required = false, HelpText = "Emit to a file instead of STDOUT")]
+        public string OutputFile
+        {
+            get;
+            set;
+        }
     }
 }

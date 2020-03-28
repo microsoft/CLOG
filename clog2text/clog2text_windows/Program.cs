@@ -48,6 +48,10 @@ namespace clog2text_windows
                         return -1;
                     }
 
+                    StreamWriter outputfile = null;
+                    if (!String.IsNullOrEmpty(options.OutputFile))
+                        outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
+
                     TraceProcessorSettings traceSettings = new TraceProcessorSettings {AllowLostEvents = true, AllowTimeInversion = true};
 
                     using (ITraceProcessor etwfile = TraceProcessor.Create(options.ETLFile, traceSettings))
@@ -56,9 +60,16 @@ namespace clog2text_windows
 
                         foreach (var m in textManifest.EventBundlesV2)
                         {
-                            CLogExportModuleDefination configProfile = m.Value.GetMacroConfigurationProfile().FindExportModule("MANIFESTED_ETW");
+                            foreach (var prop in m.Value.ModuleProperites)
+                            {
+                                if (!prop.Key.Equals("MANIFESTED_ETW"))
+                                    continue;
 
-                            ids.Add(new Guid(configProfile.CustomSettings["ETW_Provider"]));
+                                ids.Add(new Guid(prop.Value["ETW_Provider"]));
+                                //      CLogExportModuleDefination configProfile = prop.Value.("MANIFESTED_ETW");
+
+                                //  
+                            }
                         }
 
                         var events = etwfile.UseGenericEvents(ids.ToArray());
@@ -163,7 +174,7 @@ namespace clog2text_windows
                                 }
 
                                 toPrint:
-                                DecodeAndTraceToConsole(bundle, errorString, config, fixedUpArgs);
+                                DecodeAndTraceToConsole(outputfile, bundle, errorString, config, fixedUpArgs);
                             }
                             catch (Exception)
                             {

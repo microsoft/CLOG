@@ -88,14 +88,25 @@ namespace clog2text_lttng
 
                 string line;
                 LTTNGEventDecoder lttngDecoder = new LTTNGEventDecoder(textManifest);
+                int lines = 0;
+                StreamWriter outputfile = null;
+                if (!String.IsNullOrEmpty(options.OutputFile))
+                    outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
 
+                DateTimeOffset startTime = DateTimeOffset.Now;
                 while(!string.IsNullOrEmpty(line = file.ReadLine()))
                 {
+                    ++lines;
+                    if(0 == lines % 10000)
+                    {
+                        Console.WriteLine($"Line : {lines}");
+                    }
                     Dictionary<string, IClogEventArg> valueBag;
                     CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out valueBag);
-                    DecodeAndTraceToConsole(bundle, line, config, valueBag);
+                    DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
                 }
 
+                Console.WriteLine($"Decoded {lines} in {DateTimeOffset.Now - startTime}");
                 return 0;
             }, err =>
             {
@@ -176,7 +187,9 @@ namespace clog2text_lttng
             {
                 get
                 {
-                    throw new NotImplementedException("Binary Encoding Not Supported");
+                    //CLogConsoleTrace.TraceLine(TraceType.Err, "Binary Encoding Not Yet Supported with LTTNG");
+                    return new byte[0];
+                    //throw new NotImplementedException("Binary Encoding Not Supported");
                 }
             }
         }

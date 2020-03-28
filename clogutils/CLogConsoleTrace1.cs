@@ -11,6 +11,7 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using clogutils.ConfigFile;
 
@@ -54,7 +55,7 @@ namespace clogutils
             Trace(type, msg + Environment.NewLine);
         }
 
-        public static void DecodeAndTraceToConsole(CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
+        public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
         {
             try
             {
@@ -126,8 +127,11 @@ namespace clogutils
                     toPrint.Append(bundle.TraceString);
                 }
 
-                toPrint:
-                Console.WriteLine(toPrint);
+            toPrint:
+                if (null == outputfile)
+                    Console.WriteLine(toPrint);
+                else
+                    outputfile.WriteLine(toPrint);
             }
             catch (Exception e)
             {
