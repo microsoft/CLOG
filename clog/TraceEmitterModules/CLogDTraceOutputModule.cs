@@ -61,7 +61,6 @@ namespace clog.TraceEmitterModules
             uid = uid.Replace("{", "");
             uid = uid.Replace("}", "");
             uid = uid.Replace("-", "");
-
             
             //
             // Only emit the function once;  we may be called multiple times should someone emit an event multiple times in the same file 
