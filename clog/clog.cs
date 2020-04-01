@@ -110,7 +110,7 @@ namespace clog
                         CLogTraceLoggingOutputModule traceLoggingEmitter = new CLogTraceLoggingOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(traceLoggingEmitter);
 
-                        CLogDTRaceOutputModule dtrace = new CLogDTRaceOutputModule();
+                        CLogDTraceOutputModule dtrace = new CLogDTraceOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(dtrace);
 
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule();

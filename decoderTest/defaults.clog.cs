@@ -54,6 +54,9 @@ namespace defaults.clog_config
 
             switch (sa2.si_family)
             {
+                case 0:
+                    msg += "<empty>";
+                    break;
                 case 23: //<--v6
                     msg += "IPV6: sin6_flowinfo=" + sa2.sin6_flowinfo + " port=" + sa2.sin_port + "part1=" + sa2.S_v6Addr1 + ", part2=" + sa2.S_v6Addr2;
                     break;
@@ -61,7 +64,8 @@ namespace defaults.clog_config
                     msg += "IPV4:" + sa2.S_addr + ":" + sa2.sin_port;
                     break;
                 default:
-                    msg += "Unknown Family: " + sa2.si_family;
+                    throw new Exception("Invalid SI_FAMILY : " + sa2.si_family);
+                    //msg += "Unknown Family: " + sa2.si_family;
                     break;
             }
 

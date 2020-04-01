@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "simple.cpp.clog"
+#include "simple.cpp.clog.h"
 
 int main(int argc, char* argv[])
 {

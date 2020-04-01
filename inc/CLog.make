@@ -8,15 +8,12 @@ function(CLOG_ADD_SOURCEFILE)
     message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
     message(STATUS ">>>> CMAKE_CLOG_BINS_DIRECTORY = ${CMAKE_CLOG_BINS_DIRECTORY}")
     message(STATUS ">>>> CMAKE_CLOG_SIDECAR_DIRECTORY = ${CMAKE_CLOG_SIDECAR_DIRECTORY}")
-    message(STATUS ">>>> CMAKE_CLOG_CONFIG_PROFILE = ${CMAKE_CLOG_CONFIG_PROFILE}")
-    
+    message(STATUS ">>>> CMAKE_CLOG_CONFIG_PROFILE = ${CMAKE_CLOG_CONFIG_PROFILE}")    
     message(STATUS ">>>> CLOG Library = ${library}")
 
     foreach(arg IN LISTS ARGV)
-        string(MAKE_C_IDENTIFIER ${CMAKE_CURRENT_SOURCE_DIR}, PATH_HASH)
-        set(ARG_DEPENDENCY generate_clog_${arg}_${PATH_HASH})
-        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${arg}.clog)
-		set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}_${arg}.clog.c)
+        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${arg}.clog.h)
+		set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}_${arg}.clog.h.c)
 		
         message(STATUS ">>>>>>> CLOG Source File = ${arg}")
 
@@ -31,18 +28,17 @@ function(CLOG_ADD_SOURCEFILE)
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
 			DEPENDS ${CMAKE_CLOG_BINS_DIRECTORY}/clog.dll
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
             COMMENT "ULOG: ${CMAKE_CLOG_BINS_DIRECTORY}/clog -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
             COMMAND ${CMAKE_CLOG_BINS_DIRECTORY}/clog -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
-        )
-
-        add_custom_target(${ARG_DEPENDENCY}
-            COMMENT "CUSTOM TARGET for ${arg} : ${ARG_DEPENDENCY}"
         )
 
         set_property(TARGET CLOG_GENERATED_FILES
             APPEND PROPERTY OBJECT_DEPENDS ${ARG_CLOG_FILE}
             APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
+        )
+
+        set_property(SOURCE ${arg}
+            APPEND PROPERTY OBJECT_DEPENDS ${ARG_CLOG_FILE}
         )
       			
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
