@@ -138,7 +138,7 @@ namespace clog
                 _headerFile.AppendLine("/*----------------------------------------------------------");
                 _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
                 _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
-                _headerFile.AppendLine($"// {decodedTraceLine.match}");
+                _headerFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
 
                 foreach (var arg in decodedTraceLine.splitArgs)
                 {

@@ -105,6 +105,20 @@ namespace clog.TraceEmitterModules
                 throw new ReadOnlyException($"Too Many arguments in {hash},  LTTNG accepts a max of 9");
             }
 
+            lttngFile.AppendLine("");
+            lttngFile.AppendLine("");
+            lttngFile.AppendLine("");
+            lttngFile.AppendLine("/*----------------------------------------------------------");
+            lttngFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
+            lttngFile.AppendLine($"// {decodedTraceLine.TraceString}");
+            lttngFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
+
+            foreach (var arg in decodedTraceLine.splitArgs)
+            {
+                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
+            }
+            lttngFile.AppendLine("----------------------------------------------------------*/");           
+
             lttngFile.AppendLine($"TRACEPOINT_EVENT({_lttngProviderName}, {hash},");
 
             int argNum = 0;
@@ -178,10 +192,10 @@ namespace clog.TraceEmitterModules
 
                 case CLogEncodingType.ByteArray:
                     lttngFile.AppendLine(
-                        $"        ctf_integer(int, {arg.VariableInfo.SuggestedTelemetryName}_len, {arg.VariableInfo.SuggestedTelemetryName}_len)");
-
+                        $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len, {arg.VariableInfo.SuggestedTelemetryName}_len)");
+                
                     lttngFile.AppendLine(
-                        $"        ctf_integer(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                        $"        ctf_sequence(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName}, unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len)");
                     break;
 
                 case CLogEncodingType.Int8:

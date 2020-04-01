@@ -110,8 +110,11 @@ namespace clog
                         CLogTraceLoggingOutputModule traceLoggingEmitter = new CLogTraceLoggingOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(traceLoggingEmitter);
 
-                        CLogDTRaceOutputModule dtrace = new CLogDTRaceOutputModule();
+                        CLogDTraceOutputModule dtrace = new CLogDTraceOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(dtrace);
+
+                        CLogSystemTapModule systemTap = new CLogSystemTapModule();
+                        fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
@@ -145,10 +148,6 @@ namespace clog
                         StringBuilder clogFile = new StringBuilder();
                         clogFile.AppendLine("#include \"clog.h\"");
 
-                        clogFile.AppendLine("#ifdef __cplusplus");
-                        clogFile.AppendLine("extern \"C\" {");                        
-                        clogFile.AppendLine("#endif");
-                      
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
 
                         foreach (var macro in processor.MacrosInUse)
@@ -159,6 +158,10 @@ namespace clog
                                 $"#define {macro.MacroName}(a, ...) CLOG_CAT(CLOG_ARGN_SELECTOR(__VA_ARGS__), CLOG_CAT(_,a(#a, __VA_ARGS__)))");
                             clogFile.AppendLine("#endif");
                         }
+                       
+                        clogFile.AppendLine("#ifdef __cplusplus");
+                        clogFile.AppendLine("extern \"C\" {");                        
+                        clogFile.AppendLine("#endif");                      
 
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderFile);
                         clogFile.AppendLine("#ifdef __cplusplus");

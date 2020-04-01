@@ -1,4 +1,14 @@
 {
+  "MacroConfigurations": {
+    "lttng_plus": {
+      "Modules": [       
+        {
+          "ExportModule": "DTRACE",
+          "CustomSettings": {}
+        }
+      ]
+    }
+  },
   "Version": 0,
   "CustomTypeClogCSharpFile": null,
   "TypeEncoders": {
@@ -8,36 +18,22 @@
   "SourceCodeMacros": [
     {
       "MacroName": "TraceInfo",
-      "EncodedPrefix": "",
+      "EncodedPrefix": null,
       "EncodedArgNumber": 1,
-      "CustomSettings": {},
-      "CLogExportModules": [
-        "DTRACE"
-      ]
+      "MacroConfiguration": {
+        "linux": "lttng_plus"
+      }
     },
     {
       "MacroName": "TraceInstanceInfo",
       "EncodedPrefix": "[%p]",
       "EncodedArgNumber": 2,
-      "CustomSettings": {},
-      "CLogExportModules": [
-        "DTRACE"
-      ]
+      "MacroConfiguration": {
+        "linux": "lttng_plus"
+      }
     }
   ],
   "ChainedConfigFiles": [
     "../inc/defaults.clog_config"
-  ],
-  "ModuleUniqueness": {
-    "TraceInformation": [
-      {
-        "UniquenessHash": "a38bc616-c8ab-364c-c81f-23aa56c5fd44",
-        "TraceID": "LAUNCHED"
-      },
-      {
-        "UniquenessHash": "5748736c-d9e9-e656-05b0-02e629d787a4",
-        "TraceID": "INSTANCE_TEST"
-      }
-    ]
-  }
+  ]
 }
