@@ -24,6 +24,7 @@ namespace clog.TraceEmitterModules
         // alreadyEmitted maintains a list of all the functions that we have emitted
         //
         private readonly HashSet<string> alreadyEmitted = new HashSet<string>();
+        private bool emittedHeader = false;
 
         public string ModuleName
         {
@@ -42,9 +43,7 @@ namespace clog.TraceEmitterModules
         }
 
         public void InitHeader(StringBuilder header)
-        {
-            header.AppendLine($"// SYSTEMTAP {DateTime.Now}------");
-            header.AppendLine("#include <sys/sdt.h>");
+        {           
         }
 
         public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
@@ -52,17 +51,21 @@ namespace clog.TraceEmitterModules
         }
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
-        {
-            inline.AppendLine($"DTRACE_PROBE({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId}); \\");
+        {          
+        
+            if(!emittedHeader)
+            {
+                function.AppendLine($"// SYSTEMTAP {DateTime.Now}------");
+                function.AppendLine("#include <sys/sdt.h>");
+                emittedHeader = true;
+            }
 
-
-#if false          
             //
             // Generate a function name that is unique; this is where you'll attach a DTrace probe.
             //
             //     ScopePrefix is passed in during compliation, it is a unique name that indicates the library
             //
-            string uid = "DTRACE_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_");
+            string uid = "PROBE_DTRACE_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_");
             uid = uid.Replace("{", "");
             uid = uid.Replace("}", "");
             uid = uid.Replace("-", "");
@@ -124,8 +127,23 @@ namespace clog.TraceEmitterModules
             //
             // Emit our implementation into the .c file that CLOG generates
             //
-            function.AppendLine($"void {uid}({argsString})" + "{}\r\n\r\n");
-#endif            
+            function.AppendLine($"void {uid}({argsString})" + "{");  
+
+            if(0 == decodedTraceLine.splitArgs.Length)
+            {
+                function.AppendLine($"DTRACE_PROBE({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId});");               
+            }
+            else 
+            {
+                function.Append($"DTRACE_PROBE{decodedTraceLine.splitArgs.Length}({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId}");
+                foreach(var arg in decodedTraceLine.splitArgs) 
+                {
+                    function.Append($", {arg.MacroVariableName}");
+                } 
+                function.AppendLine(");"); 
+            }
+
+            function.AppendLine("}\r\n\r\n");
         }
     }
 }
