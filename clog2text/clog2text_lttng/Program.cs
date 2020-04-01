@@ -26,6 +26,7 @@ namespace clog2text_lttng
         private static Dictionary<string, IClogEventArg> SplitBabelTraceLine(string traceLine)
         {
             int bracketCount = 0;
+            int arrayCount = 0;
             Dictionary<string, IClogEventArg> ret = new Dictionary<string, IClogEventArg>();
             string piece = "";
             int lastEqual = -1;
@@ -35,7 +36,7 @@ namespace clog2text_lttng
                     i < traceLine.Length + 1;
                     ++i) //<-- go one beyond the array, we catch this in the if block below
             {
-                if((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount)
+                if((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount && 0 == arrayCount)
                 {
                     string key = traceLine.Substring(startIndex, lastEqual - startIndex).Trim();
                     string value = traceLine.Substring(lastEqual + 1, i - lastEqual - 1).Trim();
@@ -54,7 +55,15 @@ namespace clog2text_lttng
                 {
                     --bracketCount;
                 }
-                else if(traceLine[i] == '=' && 0 == bracketCount)
+                else if (traceLine[i] == '[' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/')
+                {
+                    ++arrayCount;
+                }
+                else if (arrayCount >= 1 && (traceLine[i] == ']' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/'))
+                {
+                    --arrayCount;
+                }
+                else if(traceLine[i] == '=' && 0 == bracketCount && 0 == arrayCount)
                 {
                     lastEqual = i;
                 }
@@ -190,8 +199,26 @@ namespace clog2text_lttng
             {
                 get
                 {
+                    int firstOpen = AsString.IndexOf("[")+1;
+                    int lastClose = AsString.LastIndexOf("]")-1;
+
+                    string bits = AsString.Substring(firstOpen, AsString.Length - (AsString.Length - lastClose) - firstOpen);
+                    var splits = SplitBabelTraceLine(bits);
+
+                    List<byte> ret = new List<byte>();
+                    int idx = 0;
+                    for(; ; )
+                    {
+                        IClogEventArg arg;
+                        if (!splits.TryGetValue($"[{idx}]", out arg))
+                            break;
+
+                        ret.Add((byte)arg.AsInt32);
+                        ++idx;
+                    }
+
                     //CLogConsoleTrace.TraceLine(TraceType.Err, "Binary Encoding Not Yet Supported with LTTNG");
-                    return new byte[0];
+                    return ret.ToArray();
                     //throw new NotImplementedException("Binary Encoding Not Supported");
                 }
             }

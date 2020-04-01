@@ -22,7 +22,12 @@ namespace decoderTest
         {
             //
             // Test some simple config types
-
+            byte[] example = new byte[27];
+            example[0] = 10;
+            example[1] = 0;
+            example[2] = 210;
+            example[3] = 123;
+            defaults.clog_config.Types.QUIC_IP_ADDR(example);
 
             //DecodeInt32
             VerifyConversion("-10000", defaults.clog_config.Types.DecodeInt32(-10000));

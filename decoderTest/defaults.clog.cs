@@ -54,7 +54,13 @@ namespace defaults.clog_config
 
             switch (sa2.si_family)
             {
+                case 0:  //<--unspecified
+                    msg += "Unspecified";
+                    break;
                 case 23: //<--v6
+                    msg += "IPV6: sin6_flowinfo=" + sa2.sin6_flowinfo + " port=" + sa2.sin_port + "part1=" + sa2.S_v6Addr1 + ", part2=" + sa2.S_v6Addr2;
+                    break;
+                case 10:  //<--v6 (linux)
                     msg += "IPV6: sin6_flowinfo=" + sa2.sin6_flowinfo + " port=" + sa2.sin_port + "part1=" + sa2.S_v6Addr1 + ", part2=" + sa2.S_v6Addr2;
                     break;
                 case 2:  //< --v4
