@@ -147,7 +147,11 @@ namespace clog
 
                 _headerFile.AppendLine("----------------------------------------------------------*/");
 
-                _headerFile.AppendLine($"void {implSignature};");
+                //
+                // BUGBUG: not fully implemented - the intent of 'implSignature' is to give a turn key
+                //    way for a module to emit code without the need for the module to emit its own function
+                //
+                //_headerFile.AppendLine($"void {implSignature};");
                 macroBody.AppendLine($"#define {macroName}({argsString})" + "\\");
             }
 

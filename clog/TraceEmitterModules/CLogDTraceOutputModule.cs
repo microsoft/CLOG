@@ -57,21 +57,10 @@ namespace clog.TraceEmitterModules
             //
             //     ScopePrefix is passed in during compliation, it is a unique name that indicates the library
             //
-            string uid = "DTRACE_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_");
+            string uid = "DTRACE_" + decodedTraceLine.configFile.ScopePrefix + "_" + Path.GetFileName(sourceFile).Replace(".", "_") + "_" + decodedTraceLine.UniqueId;
             uid = uid.Replace("{", "");
             uid = uid.Replace("}", "");
             uid = uid.Replace("-", "");
-            
-            //
-            // Only emit the function once;  we may be called multiple times should someone emit an event multiple times in the same file 
-            //    (usually error paths)
-            //
-            if(alreadyEmitted.Contains(uid))
-            {
-                return;
-            }
-
-            alreadyEmitted.Add(uid);
 
             string argsString = string.Empty;
             string macroString = string.Empty;
@@ -106,20 +95,21 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            //
-            // Emit a forward declare of our function into the header file
-            //
-            inline.AppendLine($"{uid}({macroString});\\");
-
+           
             //
             // Emit into the CLOG macro (this is the actual code that goes into the product)
             // 
             macroPrefix.AppendLine("void " + uid + "(" + argsString + ");\r\n");
-            
+
             //
-            // Emit our implementation into the .c file that CLOG generates
+            // Emit our foward delcaration and implementation into the .c file that CLOG generates
             //
-            function.AppendLine($"void {uid}({argsString})" + "{}\r\n\r\n");
+            if (!alreadyEmitted.Contains(uid))
+            {                
+                inline.AppendLine($"{uid}({macroString});\\");
+                function.AppendLine($"void {uid}({argsString})" + "{}\r\n\r\n");
+                alreadyEmitted.Add(uid);
+            }
         }
     }
 }
