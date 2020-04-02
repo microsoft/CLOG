@@ -240,7 +240,6 @@ namespace clog
 
         public void AddClogModule(ICLogOutputModule m)
         {
-            Console.WriteLine("Module : " + m.ModuleName);
             _modules.Add(m);
             m_unusedModules.Add(m);
         }
