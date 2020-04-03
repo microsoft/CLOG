@@ -34,7 +34,7 @@ namespace clogutils
         public void PrintDiagnostics()
         {
             CLogErrors.PrintMatchDiagnostic(TraceLine);
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"ERROR HELP MESSAGE: {Message}");
+            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Error: {Message}");
         }
     }
 }
