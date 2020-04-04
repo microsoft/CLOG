@@ -51,8 +51,7 @@ namespace clog.TraceEmitterModules
         }
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
-        {          
-        
+        {
             if(!emittedHeader)
             {
                 function.AppendLine($"// SYSTEMTAP {DateTime.Now}------");
