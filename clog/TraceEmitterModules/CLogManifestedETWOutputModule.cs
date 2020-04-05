@@ -59,7 +59,7 @@ namespace clog.TraceEmitterModules
             if (!_inited)
             {
                 if(!moduleSettings.CustomSettings.ContainsKey("ETWManifestFile"))
-                    throw new CLogEnterReadOnlyModeException("ETWManifestFileNotSpecified", decodedTraceLine.match);
+                    throw new CLogEnterReadOnlyModeException("ETWManifestFileNotSpecified", CLogHandledException.ExceptionType.MustSpecifiyETWManifest, decodedTraceLine.match);
 
                xmlFileName = moduleSettings.CustomSettings["ETWManifestFile"];
                xmlFileName = Path.Combine(Path.GetDirectoryName(decodedTraceLine.macro.ConfigFileWithMacroDefination), xmlFileName);
@@ -76,7 +76,7 @@ namespace clog.TraceEmitterModules
                 Console.WriteLine("");
                 Console.WriteLine("");
                 Console.WriteLine("");
-                throw new CLogEnterReadOnlyModeException("ETW_Provider:NotSpecified", decodedTraceLine.match);
+                throw new CLogEnterReadOnlyModeException("ETW_Provider:NotSpecified", CLogHandledException.ExceptionType.MustSpecifyETWProvider, decodedTraceLine.match);
             }
 
             Guid providerId = new Guid(moduleSettings.CustomSettings["ETW_Provider"]);
@@ -98,7 +98,7 @@ namespace clog.TraceEmitterModules
                 Console.WriteLine("");
                 Console.WriteLine("");
                 Console.WriteLine("");
-                throw new CLogEnterReadOnlyModeException("ManifestedETWProviderNotFoundInManifest", decodedTraceLine.match);
+                throw new CLogEnterReadOnlyModeException("ManifestedETWProviderNotFoundInManifest", CLogHandledException.ExceptionType.ManifestedETWProviderNotFound, decodedTraceLine.match);
             }
 
             //
@@ -266,7 +266,7 @@ namespace clog.TraceEmitterModules
             if (!File.Exists(xmlFileName))
             {
                 Console.WriteLine($"ETW Manifest {xmlFileName} doesnt exist");
-                throw new CLogEnterReadOnlyModeException("Output Manifest Missing", null);
+                throw new CLogEnterReadOnlyModeException("Output Manifest Missing", CLogHandledException.ExceptionType.ETWManifestNotFound, null);
             }
 
             doc.PreserveWhitespace = true;
@@ -354,7 +354,7 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            throw new CLogEnterReadOnlyModeException("OutOfUniqueIds", sourceLine);
+            throw new CLogEnterReadOnlyModeException("OutOfUniqueIds", CLogHandledException.ExceptionType.ETWOutOfUniqueIDs, sourceLine);
         }
 
         private void Save()
@@ -577,7 +577,7 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
-                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", traceLine.match);
+                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch,  traceLine.match);
                 }
 
                 TemplateNode templateReference = listofArgsAsSpecifiedBySourceFile[argIdx];
@@ -611,7 +611,7 @@ namespace clog.TraceEmitterModules
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"          name={t.Name} inType={t.Type}  length={t.LengthOfSelf}");
                     }
 
-                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", traceLine.match);
+                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch, traceLine.match);
                 }
 
 

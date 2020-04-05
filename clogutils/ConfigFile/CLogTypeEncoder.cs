@@ -189,7 +189,7 @@ namespace clogutils.ConfigFile
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"Custom C# file for custom decoder is missing.  Please create the file, or remove its reference from the config file");
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"                Missing File: {customTypeClogCSharpFile}");
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"      Defined In Config File: {configFile.FilePath}");
-                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing", null);
+                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing", CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
             }
 
             string sourceCode = File.ReadAllText(customTypeClogCSharpFile);

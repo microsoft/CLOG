@@ -124,12 +124,12 @@ namespace clog
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
                         string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile,fullyDecodedMacroEmitter, content, options.InputFile);
+                        string output = processor.ConvertFile(configFile,fullyDecodedMacroEmitter, content, options.InputFile, false);
 
                         if (!content.Contains(Path.GetFileName(options.OutputFile)))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"You must #include the clog output file {Path.GetFileName(options.OutputFile)}");
-                            throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", null);
+                            throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
                         }
 
                         sidecar.TypeEncoder.Merge(configFile.InUseTypeEncoders);

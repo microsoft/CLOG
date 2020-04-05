@@ -275,7 +275,7 @@ namespace clogutils
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Trace line is has the incorrect format - too few arguments were specified");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
 
-                    throw new CLogEnterReadOnlyModeException("TooFewArguments", traceLineMatch);
+                    throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
                 }
 
                 CLogTypeContainer item = types.Dequeue();
@@ -285,7 +285,7 @@ namespace clogutils
             if (0 != types.Count)
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Too many arguments were specified in trace line");
-                throw new CLogEnterReadOnlyModeException("TooManyArguments", traceLineMatch);
+                throw new CLogEnterReadOnlyModeException("TooManyArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
             }
 
             CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(splitArgs[0].Trim(), sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
@@ -294,7 +294,7 @@ namespace clogutils
         }
 
         public string ConvertFile(CLogConfigurationFile configFile, ICLogFullyDecodedLineCallbackInterface callbacks,
-            string contents, string contentsFileName)
+            string contents, string contentsFileName, bool conversionMode)
         {
             string remaining = contents;
 
@@ -362,7 +362,7 @@ namespace clogutils
                             Console.WriteLine($"ERROR: cant process {match}");
                             Console.WriteLine(e);
 
-                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", match.Value);
+                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", CLogHandledException.ExceptionType.InvalidInput, match.Value);
                         }
                     }
 
@@ -371,13 +371,14 @@ namespace clogutils
                         results.Append(contents.Substring(start, contents.Length - end));
                     }
 
-                    contents = results.ToString();
+                    if(conversionMode)
+                        contents = results.ToString();                    
                 }
                 catch (Exception e)
                 {
                     if (null == lastMatch.Value)
                     {
-                        throw new CLogHandledException("NoLine", null, false, e);
+                        throw new CLogHandledException("NoLine", CLogHandledException.ExceptionType.InvalidInput, null, false, e);
                     }
 
                     throw;

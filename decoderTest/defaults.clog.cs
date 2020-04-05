@@ -69,8 +69,6 @@ namespace defaults.clog_config
                     break;
                 default:
                     throw new Exception("Invalid SI_FAMILY : " + sa2.si_family);
-                    //msg += "Unknown Family: " + sa2.si_family;
-                    break;
             }
 
             System.Runtime.InteropServices.Marshal.FreeHGlobal(i);

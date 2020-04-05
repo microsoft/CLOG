@@ -95,14 +95,17 @@ namespace clogutils.MacroDefinations
 
                     if (-1 == lastIdx)
                         throw new CLogEnterReadOnlyModeException(
-                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format", m);
+                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
+                            m);
 
                     id = arg.Substring(0, lastIdx);
 
                     if (string.IsNullOrEmpty(id))
                     {
                         throw new CLogEnterReadOnlyModeException(
-                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format", m);
+                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
                     }
 
                     try
@@ -113,13 +116,14 @@ namespace clogutils.MacroDefinations
                     {
                         throw new CLogEnterReadOnlyModeException(
                             "Unique ID was located but is not in the correct format, please follow the 'StringAndNumerical' format",
+                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
                             m);
                     }
                 }
                     break;
 
                 default:
-                    throw new CLogEnterReadOnlyModeException("Invalid ID Encoder", m);
+                    throw new CLogEnterReadOnlyModeException("Invalid ID Encoder", CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
             }
         }
 

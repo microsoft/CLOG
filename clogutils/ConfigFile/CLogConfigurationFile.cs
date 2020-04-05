@@ -203,7 +203,7 @@ namespace clogutils.ConfigFile
                     if(ret.ContainsKey(def.MacroName))
                     {
                         Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
-                        throw new CLogEnterReadOnlyModeException("DuplicateMacro", null);
+                        throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
                     }
 
                     ret[def.MacroName] = def;
@@ -216,7 +216,7 @@ namespace clogutils.ConfigFile
                 if(ret.ContainsKey(def.MacroName))
                 {
                     Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
-                    throw new CLogEnterReadOnlyModeException("DuplicateMacro", null);
+                    throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
                 }
 
                 ret[def.MacroName] = def;
@@ -231,7 +231,7 @@ namespace clogutils.ConfigFile
             if (_loadedConfigFiles.Contains(fileName))
             {
                 Console.WriteLine($"Circular config file detected {fileName}");
-                throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", null);
+                throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
             }
 
             _loadedConfigFiles.Add(fileName);
@@ -262,7 +262,7 @@ namespace clogutils.ConfigFile
                 {
                     Console.WriteLine(
                         $"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
-                    throw new CLogEnterReadOnlyModeException("MultipleMacrosWithSameName", null);
+                    throw new CLogEnterReadOnlyModeException("MultipleMacrosWithSameName", CLogHandledException.ExceptionType.MultipleMacrosWithSameName, null);
                 }
 
                 macros.Add(m.MacroName);
@@ -276,7 +276,7 @@ namespace clogutils.ConfigFile
                 if (!File.Exists(toOpen))
                 {
                     Console.WriteLine($"Chained config file {toOpen} not found");
-                    throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", null);
+                    throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
                 }
 
                 var configFile = FromFile(toOpen);

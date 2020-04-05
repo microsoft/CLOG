@@ -250,7 +250,7 @@ namespace clog.TraceEmitterModules
                     break;
 
                 default:
-                    throw new CLogEnterReadOnlyModeException("LTTNG:UnknownType:" + node.EncodingType, decodedTraceLine.match);
+                    throw new CLogEnterReadOnlyModeException("LTTNG:UnknownType:" + node.EncodingType, CLogHandledException.ExceptionType.EncoderIncompatibleWithType, decodedTraceLine.match);
                 }
 
                 ++argNum;
@@ -335,7 +335,7 @@ namespace clog.TraceEmitterModules
                 return "const char *";
 
             default:
-                throw new CLogEnterReadOnlyModeException("InvalidType:" + node.EncodingType, null);
+                throw new CLogEnterReadOnlyModeException("InvalidType:" + node.EncodingType, CLogHandledException.ExceptionType.EncoderIncompatibleWithType,  null);
             }
         }
     }

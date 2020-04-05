@@ -78,7 +78,7 @@ namespace clogutils.ConfigFile
 
             if (info.UniquenessHash != hash)
             {
-                throw new CLogEnterReadOnlyModeException("DuplicateID", traceLine.match);
+                throw new CLogEnterReadOnlyModeException("DuplicateID", CLogHandledException.ExceptionType.DuplicateId, traceLine.match);
             }
         }
 
