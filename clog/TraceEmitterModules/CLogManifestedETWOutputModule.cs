@@ -602,7 +602,7 @@ namespace clog.TraceEmitterModules
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "  2. cleanup your template to be in this format");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
                     foreach (var t in listofArgsAsSpecifiedBySourceFile)
                     {
                         if (string.IsNullOrEmpty(t.LengthOfSelf))

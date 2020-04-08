@@ -111,7 +111,8 @@ namespace clog2text_lttng
                         Console.WriteLine($"Line : {lines}");
                     }
                     Dictionary<string, IClogEventArg> valueBag;
-                    CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out valueBag);
+                    EventInformation ei;
+                    CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
                     DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
                 }
 
@@ -141,13 +142,29 @@ namespace clog2text_lttng
                 _sidecar = sidecar;
             }
 
-            public CLogDecodedTraceLine DecodedTraceLine(string babbleTraceLine, out Dictionary<string, IClogEventArg> args)
+            public CLogDecodedTraceLine DecodedTraceLine(string babbleTraceLine, out EventInformation eventInfo, out Dictionary<string, IClogEventArg> args)
             {
                 args = SplitBabelTraceLine(babbleTraceLine);
 
-                if(!args.ContainsKey("name") || !args.ContainsKey("event.fields"))
+                EventInformation ei = eventInfo = new EventInformation();
+
+                if (!args.ContainsKey("name") || !args.ContainsKey("event.fields"))
                 {
                     Console.WriteLine("TraceHasNoArgs");
+                }
+
+                if (args.ContainsKey("timestamp"))
+                {
+                    string[] bits = args["timestamp"].AsString.Split(':');
+                    ei.Timestamp = new DateTimeOffset(Convert.ToDateTime(args["timestamp"].AsString));
+                }
+
+                if (args.ContainsKey("stream.packet.context"))
+                {
+                    string packetContext = args["stream.packet.context"].AsString;
+                    string packetFields = packetContext.Substring(1, packetContext.Length - 2).Trim();
+                    var cpuArgs = SplitBabelTraceLine(packetFields);
+                    ei.CPUId = cpuArgs["cpu_id"].AsString;
                 }
 
                 CLogDecodedTraceLine bundle = _sidecar.FindBundle(args["name"].AsString);
