@@ -116,8 +116,11 @@ namespace clog2text_lttng
                     DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
                 }
 
-                outputfile.Flush();
-                outputfile.Close();
+                if (null != outputfile)
+                {
+                    outputfile.Flush();
+                    outputfile.Close();
+                }
 
                 Console.WriteLine($"Decoded {lines} in {DateTimeOffset.Now - startTime}");
                 return 0;
