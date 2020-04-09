@@ -423,13 +423,13 @@ namespace clog.TraceEmitterModules
 
                     case CLogEncodingType.Int8:
                         templateNode.Type = "win:Int8";
-                        templateNode.Hash = "_i8";
+                        templateNode.Hash = "i8_";
                         break;
 
                     case CLogEncodingType.ByteArray:
                     {
                         templateNode.Type = "win:UInt8";
-                        templateNode.Hash = "ui_8";
+                        templateNode.Hash = "ui8_";
                         templateNode.Name += "_len";
                         listOfTemplateArgs.Add(templateNode);
 

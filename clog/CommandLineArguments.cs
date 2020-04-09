@@ -52,7 +52,7 @@ namespace clog
             set;
         }
 
-        [Option("overwriteHashCollsions", SetName = "build", Required = false, Default = false, HelpText = "CAUTION: overwrite trace signatures should a collsion occur.  please read documentation before using this")]
+        [Option("overwriteHashCollisions", SetName = "build", Required = false, Default = false, HelpText = "CAUTION: overwrite trace signatures should a collsion occur.  please read documentation before using this (you may also set CLOG_OVERWRITE_COLLISIONS in your environemnt)")]
         public bool OverwriteHashCollisions
         {
             get;

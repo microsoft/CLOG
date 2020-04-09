@@ -30,22 +30,40 @@ namespace clog
             return o.MapResult(
                 options =>
                 {
-                    try
+                try
+                {
+                    //
+                    // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
+                    //    this secondary check looks for those and errors out if present
+                    //
+                    if (!options.IsValid())
                     {
-                        //
-                        // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
-                        //    this secondary check looks for those and errors out if present
-                        //
-                        if (!options.IsValid())
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
+                        return -1;
+                    }
+
+                    CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
+                    configFile.ProfileName = options.ConfigurationProfile;
+
+                        if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
-                            return -1;
+                            options.OverwriteHashCollisions = true;
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "***********************************************");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Overwriting of sidecare collisions is set by environment variable CLOG_OVERWRITE_COLLISIONS.  This setting is only to be used while making large refactors and should not be included in build environments or standard development environments");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "***********************************************");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+
                         }
 
-                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
-                        configFile.ProfileName = options.ConfigurationProfile;
-                        
-                        if(options.LintConfig)
+
+                        if (options.LintConfig)
                         {
                             if(!configFile.MarkPhase)
                             {
