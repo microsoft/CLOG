@@ -577,20 +577,22 @@ namespace clog.TraceEmitterModules
                 if (templateReference.Type != inType)
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch: ");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"         Event ID : {eventId}");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Event Provider : {providerId}");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"        Event UID : {traceLine.UniqueId}");
-
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Source Line:");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, traceLine.match.MatchedRegEx.ToString());
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"               Event ID : {eventId}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"         Event Provider : {providerId}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"              Event UID : {traceLine.UniqueId}");
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"          Mismatch Name : {name}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"      Mismatch Arg Name : {name}");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    CLOG specified Type : {templateReference.Type}");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"      ETW Manifest Type : {inType}");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch: ");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Source Line:");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, CLogConsoleTrace.GetFileLine(traceLine.match));
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, traceLine.match.MatchedRegEx.ToString());
+
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
 
