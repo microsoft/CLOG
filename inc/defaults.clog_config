@@ -105,13 +105,18 @@
         "DefinationEncoding": "llx"
       },
       {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "lld"
+      },
+      {
         "EncodingType": "UInt64",
         "CType": "CLOG_UINT64",
         "DefinationEncoding": "llX"
       },
       {
-        "EncodingType": "UInt64",
-        "CType": "CLOG_UINT64",
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
         "DefinationEncoding": "I"
       },
       {

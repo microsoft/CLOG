@@ -165,7 +165,7 @@ namespace clogutils.ConfigFile
                         return prev.UserNode;
                     }
 
-                    throw new CLogTypeNotFoundException("InvalidType:" + type, type, traceLineMatch, true);
+                    throw new CLogTypeNotFoundException("InvalidType:" + type, type, traceLineMatch);
                 }
 
                 if (index == encoded.Length - 1)

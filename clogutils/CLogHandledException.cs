@@ -94,16 +94,16 @@ namespace clogutils
         }
 
 
-        public CLogHandledException(string msg, ExceptionType type, CLogLineMatch traceLine, bool silent = false, Exception e = null) : base(msg)
+        public CLogHandledException(string msg, ExceptionType type, CLogLineMatch traceLine, Exception e = null) : base(msg)
         {
             Exception = e;
             TraceLine = traceLine;
             Type = type;
-
+            /*
             if (!silent)
             {
                 PrintDiagnostics();
-            }
+            }*/
         }
 
         public ExceptionType Type { get; private set; }

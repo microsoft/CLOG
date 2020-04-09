@@ -112,7 +112,7 @@ namespace clog.TraceEmitterModules
             manifest.knownHashes.Add(hash);
 
             //
-            //  Insert our event
+            //  See if our event already exists - if it does we do not want to add it a second time
             //
             List<XmlElement> toRemove = new List<XmlElement>();
             XmlElement newEvent = null;
@@ -144,18 +144,9 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            foreach (var e in toRemove)
-            {
-                // manifest.events.RemoveChild(e);
-            }
-
-            toRemove.Clear();
-
-
             //
-            //  Add the event
+            //  Add the event if it doesnt already exist
             //
-
             if (null == newEvent)
             {
                 newEvent = doc.CreateElement("event", manifest.events.NamespaceURI);
@@ -167,7 +158,6 @@ namespace clog.TraceEmitterModules
             string eventAsString;
 
             decodedTraceLine.macro.DecodeUniqueId(decodedTraceLine.match, hash, out eventAsString, out hashUInt);
-
 
             uint eventId;
             if (!newEvent.HasAttribute("value"))
@@ -592,10 +582,14 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"        Event UID : {traceLine.UniqueId}");
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Source Line:");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, traceLine.match.MatchedRegEx.ToString());
+
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Mismatch Name : {name}");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Expected Type : {templateReference.Type}");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"      Actual Type : {inType}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"          Mismatch Name : {name}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    CLOG specified Type : {templateReference.Type}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"      ETW Manifest Type : {inType}");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch: ");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
@@ -613,8 +607,6 @@ namespace clog.TraceEmitterModules
 
                     throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch, traceLine.match);
                 }
-
-
                 ++argIdx;
             }
 

@@ -378,7 +378,7 @@ namespace clogutils
                 {
                     if (null == lastMatch.Value)
                     {
-                        throw new CLogHandledException("NoLine", CLogHandledException.ExceptionType.InvalidInput, null, false, e);
+                        throw new CLogHandledException("NoLine", CLogHandledException.ExceptionType.InvalidInput, null, e);
                     }
 
                     throw;
