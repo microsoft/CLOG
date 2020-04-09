@@ -24,11 +24,5 @@ namespace clogutils
 
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Line : {traceLineMatch.MatchedRegEx.Value}");
         }
-
-        public static void ReportUnspecifiedCLogType(string leadupString, CLogLineMatch traceLineMatch)
-        {
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"CERROR:0001 - Unspecified CLog Type {leadupString}");
-            PrintMatchDiagnostic(traceLineMatch);
-        }
     }
 }

@@ -188,6 +188,7 @@ namespace clogutils.ConfigFile
                 }
             }
 
+            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $" Unspecified CLog Type {traceLineMatch}");            
             throw previousException;
         }
 
