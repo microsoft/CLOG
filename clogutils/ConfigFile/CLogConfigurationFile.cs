@@ -188,7 +188,6 @@ namespace clogutils.ConfigFile
                 }
             }
 
-            CLogErrors.ReportUnspecifiedCLogType(previousException.PartialType, traceLineMatch);
             throw previousException;
         }
 

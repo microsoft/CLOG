@@ -196,26 +196,35 @@ namespace clog
                         }
                         else
                         {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{existingTraceInfo.TraceID}' is not unique - somewhere else in your library this unique ID has different");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    encoding string, or argument types.  You either need to back out your change, or use a different unique identifier");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    If you've made changes that wont impact tools (for example fixing a");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    typo in a trace string) - have two options to override/refresh the signature check");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "   Force/Clobber the event signature - indicating you desire breaking the uniqueness contract");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) frome this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    2. specify the --overwriteHashCollisions command line argument (good if you're making lots of changes that are all safe)");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    3. set environment varaible CLOG_OVERWRITE_COLLISIONS (useful if you'd like --overwriteHashCollisions but do not want to modify build scripts)");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
-
                             if (existingTraceInfo.Unsaved)
                             {
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event is in this file:");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        First Discovered Line:{existingTraceInfo.PreviousFileMatch}");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"             Conflicting Line:{decodedTraceLine.match}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{existingTraceInfo.TraceID}' is not unique within this file");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Previous Declaration: ");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"File/Line: {CLogConsoleTrace.GetFileLine(existingTraceInfo.PreviousFileMatch.match)}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{existingTraceInfo.PreviousFileMatch.match}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Current Declaration: ");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"File/Line: {CLogConsoleTrace.GetFileLine(decodedTraceLine.match)}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{decodedTraceLine.match}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
                             }
                             else
                             {
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{existingTraceInfo.TraceID}' is not unique - somewhere else in your library this unique ID has different");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    encoding string, or argument types.  You either need to back out your change, or use a different unique identifier");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    If you've made changes that wont impact tools (for example fixing a");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    typo in a trace string) - have two options to override/refresh the signature check");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "   Force/Clobber the event signature - indicating you desire breaking the uniqueness contract");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) frome this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    2. specify the --overwriteHashCollisions command line argument (good if you're making lots of changes that are all safe)");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    3. set environment varaible CLOG_OVERWRITE_COLLISIONS (useful if you'd like --overwriteHashCollisions but do not want to modify build scripts)");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event:");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        ConfigFile:{decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        TraceID:{existingTraceInfo.TraceID}");

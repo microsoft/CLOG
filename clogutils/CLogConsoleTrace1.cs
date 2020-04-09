@@ -55,6 +55,33 @@ namespace clogutils
             Trace(type, msg + Environment.NewLine);
         }
 
+        public static string GetFileLine(CLogLineMatch TraceLine)
+        {
+            if (null != TraceLine && null != TraceLine.SourceFile)
+            {
+                int line = 1;
+                int lastLine = 1;
+                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegEx.Index);
+                for (int i = 0; i < file.Length; ++i)
+                {
+                    if (file[i] == '\n')
+                    {
+                        string prev = file.Substring(lastLine, i - 1 - lastLine);
+                        //Console.WriteLine("Line: " + line + " " + prev);
+                        lastLine = i + 1;
+                        ++line;
+                    }
+                }
+
+                string fullPath = System.IO.Path.GetFullPath(TraceLine.SourceFile);
+                return $"{fullPath}({line},1)";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
         {
             try

@@ -117,29 +117,8 @@ namespace clogutils
         {
             CLogErrors.PrintMatchDiagnostic(TraceLine);
 
-            if (null != TraceLine && null != TraceLine.SourceFile)
-            {
-                int line = 1;
-                int lastLine = 1;
-                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegEx.Index);
-                for (int i = 0; i < file.Length; ++i)
-                {
-                    if (file[i] == '\n')
-                    {
-                        string prev = file.Substring(lastLine, i - 1 - lastLine);
-                        //Console.WriteLine("Line: " + line + " " + prev);
-                        lastLine = i + 1;
-                        ++line;
-                    }
-                }
-
-                string fullPath = System.IO.Path.GetFullPath(TraceLine.SourceFile);
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fullPath}({line},1): fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
-            }
-            else
-            {
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Error: {Message}");
-            }
+            string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
+            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
         }
     }
 }

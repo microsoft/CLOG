@@ -171,7 +171,6 @@ namespace clogutils
                     }
                     catch (CLogTypeNotFoundException e)
                     {
-                        e.PrintDiagnostics();
                         throw e;
                     }
 
