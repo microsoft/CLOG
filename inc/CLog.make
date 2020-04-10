@@ -1,13 +1,14 @@
 function(CLOG_ADD_SOURCEFILE)
     set(library ${ARGV0})
     list(REMOVE_AT ARGV 0)
-    # message(STATUS "****************<<<<<<<   CLOG(${library}))    >>>>>>>>>>>>>>>*******************")
-    # message(STATUS ">>>> CLOG_SOURCE_DIRECTORY = ${CLOG_SOURCE_DIRECTORY}")
-    # message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-    # message(STATUS ">>>> CMAKE_CLOG_BINS_DIRECTORY = ${CMAKE_CLOG_BINS_DIRECTORY}")
-    # message(STATUS ">>>> CMAKE_CLOG_SIDECAR_DIRECTORY = ${CMAKE_CLOG_SIDECAR_DIRECTORY}")
-    # message(STATUS ">>>> CMAKE_CLOG_CONFIG_PROFILE = ${CMAKE_CLOG_CONFIG_PROFILE}")
-    # message(STATUS ">>>> CLOG Library = ${library}")
+     # message(STATUS "****************<<<<<<<   CLOG(${library}))    >>>>>>>>>>>>>>>*******************")
+     # message(STATUS ">>>> CLOG_SOURCE_DIRECTORY = ${CLOG_SOURCE_DIRECTORY}")
+     # message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+     # message(STATUS ">>>> CMAKE_CLOG_BINS_DIRECTORY = ${CMAKE_CLOG_BINS_DIRECTORY}")
+     # message(STATUS ">>>> CMAKE_CLOG_SIDECAR_DIRECTORY = ${CMAKE_CLOG_SIDECAR_DIRECTORY}")
+     # message(STATUS ">>>> CMAKE_CLOG_CONFIG_PROFILE = ${CMAKE_CLOG_CONFIG_PROFILE}")
+     # message(STATUS ">>>> CLOG Library = ${library}")
+     # message(STATUS ">>>> CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 
     foreach(arg IN LISTS ARGV)
         set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${arg}.clog.h)
@@ -22,6 +23,22 @@ function(CLOG_ADD_SOURCEFILE)
             OUTPUT ${CMAKE_CLOG_BINS_DIRECTORY}/clog.dll
             COMMAND dotnet build ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_coreclr.sln -o ${CMAKE_CLOG_BINS_DIRECTORY}
         )
+
+        add_custom_command(
+            WORKING_DIRECTORY ${CLOG_SOURCE_DIRECTORY}
+            COMMENT "Building CLOG and its support tooling"
+            COMMENT "msbuild -t:restore ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_windows.sln"
+            COMMENT "msbuild ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_windows.sln /p:OutDir=${CMAKE_CLOG_BINS_DIRECTORY}/windows"
+            OUTPUT ${CMAKE_CLOG_BINS_DIRECTORY}/windows/clog2text_windows.exe
+            COMMAND msbuild -t:restore ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog.sln
+            COMMAND msbuild ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog.sln /p:OutDir=${CMAKE_CLOG_BINS_DIRECTORY}/windows
+        )
+
+        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+            set_property(SOURCE ${arg}
+                APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CLOG_BINS_DIRECTORY}/windows/clog2text_windows.exe
+            )
+        endif()
 
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
