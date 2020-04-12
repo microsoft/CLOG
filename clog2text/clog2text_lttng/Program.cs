@@ -27,6 +27,7 @@ namespace clog2text_lttng
         {
             int bracketCount = 0;
             int arrayCount = 0;
+            int quotes = 0;
             Dictionary<string, IClogEventArg> ret = new Dictionary<string, IClogEventArg>();
             string piece = "";
             int lastEqual = -1;
@@ -36,7 +37,7 @@ namespace clog2text_lttng
                     i < traceLine.Length + 1;
                     ++i) //<-- go one beyond the array, we catch this in the if block below
             {
-                if((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount && 0 == arrayCount)
+                if((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount && 0 == arrayCount && 0 == quotes)
                 {
                     string key = traceLine.Substring(startIndex, lastEqual - startIndex).Trim();
                     string value = traceLine.Substring(lastEqual + 1, i - lastEqual - 1).Trim();
@@ -47,25 +48,34 @@ namespace clog2text_lttng
                     continue;
                 }
 
-                if(traceLine[i] == '{' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/')
+                if (traceLine[i] == '{')
                 {
                     ++bracketCount;
                 }
-                else if(bracketCount >= 1 && (traceLine[i] == '}' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/'))
+                else if (bracketCount >= 1 && traceLine[i] == '}')
                 {
                     --bracketCount;
                 }
-                else if (traceLine[i] == '[' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/')
+                else if (traceLine[i] == '[')
                 {
                     ++arrayCount;
                 }
-                else if (arrayCount >= 1 && (traceLine[i] == ']' || i >= 1 && traceLine[i] == '"' && traceLine[i - 1] == '/'))
+                else if (arrayCount >= 1 && traceLine[i] == ']')
                 {
                     --arrayCount;
                 }
-                else if(traceLine[i] == '=' && 0 == bracketCount && 0 == arrayCount)
+                else if (traceLine[i] == '=' && 0 == bracketCount && 0 == arrayCount)
                 {
                     lastEqual = i;
+                }
+                else if (traceLine[i] == '\"' && (i != 0 && traceLine[i - 1] != '\\'))
+                {
+                    if (0 == quotes)
+                        ++quotes;
+                    else if(1 == quotes)
+                        quotes--;
+                    else
+                        throw new ArgumentException("Escaped Quotes Off");                  
                 }
 
                 piece += traceLine[i];
