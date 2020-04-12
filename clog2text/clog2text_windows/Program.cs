@@ -52,137 +52,154 @@ namespace clog2text_windows
                     if (!String.IsNullOrEmpty(options.OutputFile))
                         outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
 
-                    TraceProcessorSettings traceSettings = new TraceProcessorSettings {AllowLostEvents = true, AllowTimeInversion = true};
-
-                    using (ITraceProcessor etwfile = TraceProcessor.Create(options.ETLFile, traceSettings))
+                    try
                     {
-                        HashSet<Guid> ids = new HashSet<Guid>();
+                        TraceProcessorSettings traceSettings = new TraceProcessorSettings { AllowLostEvents = true, AllowTimeInversion = true };
 
-                        foreach (var m in textManifest.EventBundlesV2)
+                        using (ITraceProcessor etwfile = TraceProcessor.Create(options.ETLFile, traceSettings))
                         {
-                            foreach (var prop in m.Value.ModuleProperites)
+                            HashSet<Guid> ids = new HashSet<Guid>();
+
+                            foreach (var m in textManifest.EventBundlesV2)
                             {
-                                if (!prop.Key.Equals("MANIFESTED_ETW"))
-                                    continue;
+                                foreach (var prop in m.Value.ModuleProperites)
+                                {
+                                    if (!prop.Key.Equals("MANIFESTED_ETW"))
+                                        continue;
 
-                                ids.Add(new Guid(prop.Value["ETW_Provider"]));
-                                //      CLogExportModuleDefination configProfile = prop.Value.("MANIFESTED_ETW");
+                                    ids.Add(new Guid(prop.Value["ETW_Provider"]));
+                                    //      CLogExportModuleDefination configProfile = prop.Value.("MANIFESTED_ETW");
 
-                                //  
+                                    //  
+                                }
                             }
-                        }
 
-                        var events = etwfile.UseGenericEvents(ids.ToArray());
-                        etwfile.Process();
+                            var events = etwfile.UseGenericEvents(ids.ToArray());
+                            etwfile.Process();
 
-                        foreach (var e in events.Result.Events)
-                        {
-                            string line = "";
-
-                            try
+                            foreach (var e in events.Result.Events)
                             {
-                                Dictionary<string, IClogEventArg> fixedUpArgs = new Dictionary<string, IClogEventArg>();
-                                string errorString = "ERROR";
+                                string line = "";
 
-                                if (null == e.Fields)
+                                try
                                 {
-                                    continue;
-                                }
+                                    Dictionary<string, IClogEventArg> fixedUpArgs = new Dictionary<string, IClogEventArg>();
+                                    string errorString = "ERROR";
 
-                                Dictionary<string, IClogEventArg> args = new Dictionary<string, IClogEventArg>();
-
-                                foreach (var f in e.Fields)
-                                {
-                                    args[f.Name] = new ManifestedETWEvent(f);
-                                }
-
-                                CLogDecodedTraceLine bundle = null;
-                                int eidAsInt = -1;
-
-                                foreach (var b in textManifest.EventBundlesV2)
-                                {
-                                    Dictionary<string, string> keys;
-
-                                    if (!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
+                                    if (null == e.Fields)
                                     {
                                         continue;
                                     }
 
-                                    string eid;
+                                    Dictionary<string, IClogEventArg> args = new Dictionary<string, IClogEventArg>();
 
-                                    if (!keys.TryGetValue("EventID", out eid))
+                                    foreach (var f in e.Fields)
+                                    {
+                                        args[f.Name] = new ManifestedETWEvent(f);
+                                    }
+
+                                    CLogDecodedTraceLine bundle = null;
+                                    int eidAsInt = -1;
+
+                                    foreach (var b in textManifest.EventBundlesV2)
+                                    {
+                                        Dictionary<string, string> keys;
+
+                                        if (!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
+                                        {
+                                            continue;
+                                        }
+
+                                        string eid;
+
+                                        if (!keys.TryGetValue("EventID", out eid))
+                                        {
+                                            continue;
+                                        }
+
+                                        eidAsInt = Convert.ToInt32(eid);
+
+                                        if (eidAsInt == e.Id)
+                                        {
+                                            bundle = b.Value;
+                                            errorString = "ERROR:" + eidAsInt;
+                                            break;
+                                        }
+                                    }
+
+                                    if (null == bundle)
                                     {
                                         continue;
                                     }
 
-                                    eidAsInt = Convert.ToInt32(eid);
+                                    Dictionary<string, string> argMap = textManifest.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
+                                    var types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out string clean);
 
-                                    if (eidAsInt == e.Id)
+                                    if (0 == types.Length)
                                     {
-                                        bundle = b.Value;
-                                        errorString = "ERROR:" + eidAsInt;
-                                        break;
-                                    }
-                                }
-
-                                if (null == bundle)
-                                {
-                                    continue;
-                                }
-
-                                Dictionary<string, string> argMap = textManifest.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
-                                var types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out string clean);
-
-                                if (0 == types.Length)
-                                {
-                                    errorString = bundle.TraceString;
-                                    goto toPrint;
-                                }
-
-                                int argIndex = 0;
-
-                                foreach (var type in types)
-                                {
-                                    var arg = bundle.splitArgs[argIndex];
-                                    CLogEncodingCLogTypeSearch node = config.FindType(arg);
-
-                                    switch (node.EncodingType)
-                                    {
-                                        case CLogEncodingType.Synthesized:
-                                            continue;
-
-                                        case CLogEncodingType.Skip:
-                                            continue;
+                                        errorString = bundle.TraceString;
+                                        goto toPrint;
                                     }
 
-                                    string lookupArgName = argMap[arg.VariableInfo.SuggestedTelemetryName];
+                                    int argIndex = 0;
 
-                                    if (!args.ContainsKey(lookupArgName))
+                                    foreach (var type in types)
                                     {
-                                        Console.WriteLine($"Argmap missing {lookupArgName}");
-                                        throw new Exception("InvalidType : " + node.DefinationEncoding);
-                                    }
+                                        var arg = bundle.splitArgs[argIndex];
+                                        CLogEncodingCLogTypeSearch node = config.FindType(arg);
 
-                                    if (0 != node.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
-                                    {
-                                        Console.WriteLine("Invalid Types in Traceline");
-                                        throw new Exception("InvalidType : " + node.DefinationEncoding);
-                                    }
+                                        switch (node.EncodingType)
+                                        {
+                                            case CLogEncodingType.Synthesized:
+                                                continue;
 
-                                    fixedUpArgs[arg.VariableInfo.SuggestedTelemetryName] = args[lookupArgName];
-                                    ++argIndex;
-                                }
+                                            case CLogEncodingType.Skip:
+                                                continue;
+                                        }
+
+                                        string lookupArgName = argMap[arg.VariableInfo.SuggestedTelemetryName];
+
+                                        if (!args.ContainsKey(lookupArgName))
+                                        {
+                                            Console.WriteLine($"Argmap missing {lookupArgName}");
+                                            throw new Exception("InvalidType : " + node.DefinationEncoding);
+                                        }
+
+                                        if (0 != node.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
+                                        {
+                                            Console.WriteLine("Invalid Types in Traceline");
+                                            throw new Exception("InvalidType : " + node.DefinationEncoding);
+                                        }
+
+                                        fixedUpArgs[arg.VariableInfo.SuggestedTelemetryName] = args[lookupArgName];
+                                        ++argIndex;
+                                    }
 
                                 toPrint:
-                                DecodeAndTraceToConsole(outputfile, bundle, errorString, config, fixedUpArgs);
-                            }
-                            catch (Exception)
-                            {
-                                Console.WriteLine($"Invalid TraceLine : {line}");
+                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, config, fixedUpArgs);
+                                }
+                                catch (Exception)
+                                {
+                                    Console.WriteLine($"Invalid TraceLine : {line}");
+                                }
                             }
                         }
                     }
-
+                    catch (Exception e)
+                    {
+                        if (null != outputfile)
+                        {
+                            outputfile.WriteLine("ERROR : " + e);
+                        }
+                    }
+                    finally
+                    {
+                        if (null != outputfile)
+                        {
+                            outputfile.Flush();
+                            outputfile.Close();
+                        }
+                    }
                     return 0;
                 }, err =>
                 {

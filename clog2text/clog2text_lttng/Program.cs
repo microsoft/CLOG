@@ -103,25 +103,34 @@ namespace clog2text_lttng
                     outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
 
                 DateTimeOffset startTime = DateTimeOffset.Now;
-                while(!string.IsNullOrEmpty(line = file.ReadLine()))
+
+                try
                 {
-                    ++lines;
-                    if(0 == lines % 10000)
+                    while (!string.IsNullOrEmpty(line = file.ReadLine()))
                     {
-                        Console.WriteLine($"Line : {lines}");
+                        ++lines;
+                        if (0 == lines % 10000)
+                        {
+                            Console.WriteLine($"Line : {lines}");
+                        }
+                        Dictionary<string, IClogEventArg> valueBag;
+                        EventInformation ei;
+                        CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
+                        DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
                     }
-                    Dictionary<string, IClogEventArg> valueBag;
-                    EventInformation ei;
-                    CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
-                    DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
                 }
-
-                if (null != outputfile)
+                catch (Exception e)
                 {
-                    outputfile.Flush();
-                    outputfile.Close();
+                    outputfile.WriteLine("ERROR : " + e);
                 }
-
+                finally
+                {
+                    if (null != outputfile)
+                    {
+                        outputfile.Flush();
+                        outputfile.Close();
+                    }
+                }
                 Console.WriteLine($"Decoded {lines} in {DateTimeOffset.Now - startTime}");
                 return 0;
             }, err =>
