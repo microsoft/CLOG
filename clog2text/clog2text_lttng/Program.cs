@@ -121,7 +121,10 @@ namespace clog2text_lttng
                 }
                 catch (Exception e)
                 {
-                    outputfile.WriteLine("ERROR : " + e);
+                    if (null != ouputfile)
+                    {
+                        outputfile.WriteLine("ERROR : " + e);
+                    }
                 }
                 finally
                 {

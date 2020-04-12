@@ -187,6 +187,7 @@ namespace clog2text_windows
                     }
                     catch (Exception e)
                     {
+                        CLogConsoleTrace.TraceLine(TraceType.Err, "ERROR : " + e);
                         if (null != outputfile)
                         {
                             outputfile.WriteLine("ERROR : " + e);
