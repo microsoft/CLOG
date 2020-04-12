@@ -121,7 +121,8 @@ namespace clog2text_lttng
                 }
                 catch (Exception e)
                 {
-                    if (null != ouputfile)
+                    CLogConsoleTrace.TraceLine(TraceType.Err, "ERROR : " + e);
+                    if (null != outputfile)
                     {
                         outputfile.WriteLine("ERROR : " + e);
                     }
