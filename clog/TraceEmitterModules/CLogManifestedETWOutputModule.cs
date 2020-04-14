@@ -29,6 +29,8 @@ namespace clog.TraceEmitterModules
         public XmlDocument doc = new XmlDocument();
         public string xmlFileName;
         private static string _ModuleName = "MANIFESTED_ETW";
+        private bool _dirty = false;
+
         public CLogManifestedETWOutputModule()
         {
         }
@@ -49,6 +51,18 @@ namespace clog.TraceEmitterModules
 
         public void InitHeader(StringBuilder header)
         {
+        }
+
+        private void SetAttribute(XmlElement e, string attribute, string newValue)
+        {
+            if(e.HasAttribute(attribute))
+            {
+                if (e.GetAttribute(attribute).Equals(newValue))
+                    return;
+            }
+
+            _dirty = true;
+            e.SetAttribute(attribute, newValue);
         }
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
@@ -151,6 +165,7 @@ namespace clog.TraceEmitterModules
             {
                 newEvent = doc.CreateElement("event", manifest.events.NamespaceURI);
                 manifest.events.AppendChild(newEvent);
+                _dirty = true;
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix +hash} to ETW manifest {xmlFileName}");
             }
 
@@ -163,7 +178,7 @@ namespace clog.TraceEmitterModules
             if (!newEvent.HasAttribute("value"))
             {
                 eventId = FindUnusedEventId(providerId, decodedTraceLine.match);
-                newEvent.SetAttribute("value", eventId.ToString());
+                SetAttribute(newEvent, "value", eventId.ToString());
             }
             else
             {
@@ -180,26 +195,23 @@ namespace clog.TraceEmitterModules
             }
             
 
-            newEvent.SetAttribute("symbol", eventNamePrefix + hash);
+            SetAttribute(newEvent, "symbol", eventNamePrefix + hash);
 
-            //if ()
-            {
-                string oldTemplate = null;
-                if (newEvent.HasAttribute("template"))
-                    oldTemplate = newEvent.GetAttribute("template");
-                string templateId = DiscoverOrCreateTemplate(decodedTraceLine, sidecar, providerId, oldTemplate, eventId);
-                newEvent.SetAttribute("template", templateId);
+            string oldTemplate = null;
+            if (newEvent.HasAttribute("template"))
+                oldTemplate = newEvent.GetAttribute("template");
+            string templateId = DiscoverOrCreateTemplate(decodedTraceLine, sidecar, providerId, oldTemplate, eventId);
+            SetAttribute(newEvent, "template", templateId);
 
-                if (moduleSettings.CustomSettings.ContainsKey("Level"))
-                    newEvent.SetAttribute("level", moduleSettings.CustomSettings["Level"]);
-                else
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Level not specified;  if you desire a Level, add 'Level' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
+            if (moduleSettings.CustomSettings.ContainsKey("Level"))
+                SetAttribute(newEvent, "level", moduleSettings.CustomSettings["Level"]);
+            else
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Level not specified;  if you desire a Level, add 'Level' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
-                if (moduleSettings.CustomSettings.ContainsKey("Keywords"))
-                    newEvent.SetAttribute("keywords", moduleSettings.CustomSettings["Keywords"]);
-                else
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
-            }
+            if (moduleSettings.CustomSettings.ContainsKey("Keywords"))
+                SetAttribute(newEvent, "keywords", moduleSettings.CustomSettings["Keywords"]);
+            else
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
 
             //
@@ -349,7 +361,10 @@ namespace clog.TraceEmitterModules
 
         private void Save()
         {
+            if (!_dirty)
+                return;
             doc.Save(xmlFileName);
+            _dirty = false;
         }
 
         private List<TemplateNode> ConstructTemplateArgs(CLogDecodedTraceLine traceLine)
