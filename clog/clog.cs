@@ -30,20 +30,20 @@ namespace clog
             return o.MapResult(
                 options =>
                 {
-                try
-                {
-                    //
-                    // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
-                    //    this secondary check looks for those and errors out if present
-                    //
-                    if (!options.IsValid())
+                    try
                     {
-                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
-                        return -1;
-                    }
+                        //
+                        // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
+                        //    this secondary check looks for those and errors out if present
+                        //
+                        if (!options.IsValid())
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
+                            return -1;
+                        }
 
-                    CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
-                    configFile.ProfileName = options.ConfigurationProfile;
+                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
+                        configFile.ProfileName = options.ConfigurationProfile;
 
                         if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
@@ -59,13 +59,11 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-
                         }
-
 
                         if (options.LintConfig)
                         {
-                            if(!configFile.MarkPhase)
+                            if (!configFile.MarkPhase)
                             {
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Lint operation only works on config files placed into the 'MarkPhase'.  This can be a destricutive action, please read the docs for more information");
                                 return -10;
@@ -81,6 +79,31 @@ namespace clog
                             configFile.UpdateVersion();
                             configFile.Save();
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Config upgrade complete");
+                            return 0;
+                        }
+
+
+
+                        CLogSidecar sidecar;
+                        if (!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
+
+                        if (!File.Exists(options.SidecarFile))
+                        {
+                            sidecar = new CLogSidecar();
+                        }
+                        else
+                        {
+                            string json = File.ReadAllText(options.SidecarFile);
+                            sidecar = CLogSidecar.FromJson(json);
+                            if (null == sidecar)
+                                sidecar = new CLogSidecar();
+                        }
+
+                        if (options.RefreshCustomTypeProcessor)
+                        {
+                            sidecar.CustomTypeProcessorsX[Path.GetFileName(options.ConfigurationFile)] = configFile.TypeEncoders.CustomCSharp;
+                            sidecar.Save(options.SidecarFile);
                             return 0;
                         }
 
@@ -103,28 +126,11 @@ namespace clog
                         }
 
 
-                        CLogSidecar sidecar;
-                        
-                        if(!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
-
-                        if (!File.Exists(options.SidecarFile))
-                        {
-                            sidecar = new CLogSidecar();
-                        }
-                        else
-                        {
-                            string json = File.ReadAllText(options.SidecarFile);
-                            sidecar = CLogSidecar.FromJson(json);
-                            if (null == sidecar)
-                                sidecar = new CLogSidecar();
-                        }
-
                         CLogFileProcessor processor = new CLogFileProcessor(configFile);
                         CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(options.InputFile, sidecar);
 
                         fullyDecodedMacroEmitter.AddClogModule(sidecar);
-                        
+
                         CLogTraceLoggingOutputModule traceLoggingEmitter = new CLogTraceLoggingOutputModule();
                         fullyDecodedMacroEmitter.AddClogModule(traceLoggingEmitter);
 
@@ -142,7 +148,7 @@ namespace clog
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
                         string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile,fullyDecodedMacroEmitter, content, options.InputFile, false);
+                        string output = processor.ConvertFile(configFile, fullyDecodedMacroEmitter, content, options.InputFile, false);
 
                         if (!content.Contains(Path.GetFileName(options.OutputFile)))
                         {
@@ -176,17 +182,17 @@ namespace clog
                                 $"#define {macro.MacroName}(a, ...) CLOG_CAT(CLOG_ARGN_SELECTOR(__VA_ARGS__), CLOG_CAT(_,a(#a, __VA_ARGS__)))");
                             clogFile.AppendLine("#endif");
                         }
-                       
+
                         clogFile.AppendLine("#ifdef __cplusplus");
-                        clogFile.AppendLine("extern \"C\" {");                        
-                        clogFile.AppendLine("#endif");                      
+                        clogFile.AppendLine("extern \"C\" {");
+                        clogFile.AppendLine("#endif");
 
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderFile);
                         clogFile.AppendLine("#ifdef __cplusplus");
                         clogFile.AppendLine("}");
                         clogFile.AppendLine("#endif");
-                        
-                        if(!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
+
+                        if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
 
                         File.WriteAllText(options.OutputFile, clogFile.ToString());

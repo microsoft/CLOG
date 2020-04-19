@@ -28,6 +28,8 @@ namespace clogutils
 
             uint AsUInt32 { get; }
 
+            ulong AsPointer { get; } 
+
             byte[] AsBinary { get; }
         }
     }

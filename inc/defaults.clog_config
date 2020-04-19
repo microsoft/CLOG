@@ -31,7 +31,12 @@
       },
       {
         "EncodingType": "UInt8",
-        "CType": "CLOG_INT32",
+        "CType": "CLOG_UINT8",
+        "DefinationEncoding": "hhu"
+      },
+      {
+        "EncodingType": "UInt8",
+        "CType": "CLOG_UINT8",
         "DefinationEncoding": "c"
       },
       {
@@ -67,7 +72,8 @@
       {
         "EncodingType": "Pointer",
         "CType": "CLOG_PTR",
-        "DefinationEncoding": "p"
+        "DefinationEncoding": "p",
+        "CustomDecoder": "defaults.clog_config.Types.DecodePointer"
       },
       {
         "EncodingType": "UInt16",

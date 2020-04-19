@@ -134,12 +134,24 @@ namespace clogutils.ConfigFile
                 {
                     TypeEncoder.Add(cLogTypeSearch);
                 }
-
+                
                 if (!_savedTypesX.Contains(cLogTypeSearch))
                 {
                     _savedTypesX.Add(cLogTypeSearch);
+					
                 }
             }
+        }
+
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
+        {
+            return FindType(bundle.DefinationEncoding);
+        }
+
+        public CLogEncodingCLogTypeSearch FindType(string encoded)
+        {
+            int idx = 0;
+            return FindTypeAndAdvance(encoded, null,ref idx);
         }
 
         public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
@@ -179,6 +191,14 @@ namespace clogutils.ConfigFile
                 prev = start;
                 prevIdx = index;
                 ++index;
+            }
+        }
+
+        public string CustomCSharp
+        {
+            get
+            {
+                return _traceEmittorX.CustomTypeDecoder;
             }
         }
 

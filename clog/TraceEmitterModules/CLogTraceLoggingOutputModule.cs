@@ -13,6 +13,7 @@ Abstract:
 using System.Collections.Generic;
 using System.Text;
 using clogutils;
+using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
 {
@@ -43,11 +44,9 @@ namespace clog.TraceEmitterModules
         {
             int hashUInt;
             string hash;
-
+            CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
 
             decodedTraceLine.macro.DecodeUniqueId(decodedTraceLine.match, decodedTraceLine.UniqueId, out hash, out hashUInt);
-
-
             if (knownHashes.Contains(hash))
             {
                 return;
@@ -73,13 +72,6 @@ namespace clog.TraceEmitterModules
                         continue;
 
                     case CLogEncodingType.Skip:
-                        continue;
-
-
-                    case CLogEncodingType.ANSI_String:
-                        continue;
-
-                    case CLogEncodingType.UNICODE_String:
                         continue;
                 }
 
@@ -130,10 +122,21 @@ namespace clog.TraceEmitterModules
                         break;
 
                     case CLogEncodingType.ANSI_String:
-                        traceloggingLine += ",\\\n    TraceLoggingAnsiString" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingString" + $"((const char *)({arg.MacroVariableName}),\"{arg.VariableInfo.SuggestedTelemetryName}\")";
+                        break;
+
+                    case CLogEncodingType.UNICODE_String:
+                        traceloggingLine += ",\\\n    TraceLoggingWideString" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
                 }
             }
+
+            // Emit keywords (if supplied by the user)
+            if (moduleSettings.CustomSettings.ContainsKey("Keyword"))
+                traceloggingLine += ",\\\n    TraceLoggingKeyword" + $"({moduleSettings.CustomSettings["Keyword"]})";
+
+            if (moduleSettings.CustomSettings.ContainsKey("Level"))
+                traceloggingLine += ",\\\n    TraceLoggingLevel" + $"({moduleSettings.CustomSettings["Level"]})";
 
             traceloggingLine += "); \\";
             inline.AppendLine(traceloggingLine);

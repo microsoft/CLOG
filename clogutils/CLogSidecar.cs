@@ -84,15 +84,20 @@ namespace clogutils
         {
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void Save(string fileName)
         {
-            if (string.IsNullOrEmpty(_sidecarFileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 return;
             }
 
             string s = ToJson();
-            File.WriteAllText(_sidecarFileName, s);
+            File.WriteAllText(fileName, s);
+        }
+
+        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        {
+            Save(_sidecarFileName);
         }
 
 

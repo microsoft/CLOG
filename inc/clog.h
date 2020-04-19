@@ -7,6 +7,11 @@
 #define CLOG_BYTEARRAY_HELPER(length, pointer) pointer, length
 #define CLOG_BYTEARRAY(length, pointer) CLOG_BYTEARRAY_HELPER(length, pointer)
 #define CLOG_PTR const void *
+
+#define CLOG_UINT8 const unsigned char
+#define CLOG_INT8 const char
+
+
 #define CLOG_INT32 const int
 #define CLOG_UINT32 const unsigned int
 #define CLOG_INT64 const long long

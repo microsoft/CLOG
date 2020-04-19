@@ -69,7 +69,6 @@ namespace clog2text_windows
 
                                     ids.Add(new Guid(prop.Value["ETW_Provider"]));
                                     //      CLogExportModuleDefination configProfile = prop.Value.("MANIFESTED_ETW");
-
                                     //  
                                 }
                             }
@@ -105,25 +104,37 @@ namespace clog2text_windows
                                     {
                                         Dictionary<string, string> keys;
 
-                                        if (!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
+                                        if (!e.IsTraceLogging)
                                         {
-                                            continue;
+                                            if (!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
+                                            {
+                                                continue;
+                                            }
+
+                                            string eid;
+
+                                            if (!keys.TryGetValue("EventID", out eid))
+                                            {
+                                                continue;
+                                            }
+
+                                            eidAsInt = Convert.ToInt32(eid);
+
+                                            if (eidAsInt == e.Id)
+                                            {
+                                                bundle = b.Value;
+                                                errorString = "ERROR:" + eidAsInt;
+                                                break;
+                                            }
                                         }
-
-                                        string eid;
-
-                                        if (!keys.TryGetValue("EventID", out eid))
+                                        else
                                         {
-                                            continue;
-                                        }
-
-                                        eidAsInt = Convert.ToInt32(eid);
-
-                                        if (eidAsInt == e.Id)
-                                        {
-                                            bundle = b.Value;
-                                            errorString = "ERROR:" + eidAsInt;
-                                            break;
+                                            if(e.ActivityName.Equals(b.Key))
+                                            {
+                                                bundle = b.Value;
+                                                errorString = "ERROR:" + b.Key;
+                                                break;
+                                            }
                                         }
                                     }
 
@@ -132,7 +143,21 @@ namespace clog2text_windows
                                         continue;
                                     }
 
-                                    Dictionary<string, string> argMap = textManifest.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
+                                    Dictionary<string, string> argMap;
+
+                                    if (e.IsTraceLogging)
+                                    {
+                                        argMap = new Dictionary<string, string>();
+                                        foreach (var arg in args)
+                                        {
+                                            argMap[arg.Key] = arg.Key;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        argMap = textManifest.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
+                                    }                                    
+                                    
                                     var types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out string clean);
 
                                     if (0 == types.Length)
@@ -220,7 +245,25 @@ namespace clog2text_windows
 
             public byte[] AsBinary
             {
-                get { return _event.AsBinary.ToArray(); }
+                get {
+                    switch (_event.Type)
+                    {
+                        case GenericEventFieldType.ByteList:
+                            return _event.AsByteList.ToArray();
+                        case GenericEventFieldType.Binary:
+                            return _event.AsBinary.ToArray();
+                        default:
+                            throw new InvalidDataException("Invalid ETW Encoding : " + _event.Type);
+                    }
+                }
+            }
+
+            public ulong AsPointer
+            {
+                get
+                {
+                    return _event.AsUInt64;
+                }
             }
 
             public string AsString

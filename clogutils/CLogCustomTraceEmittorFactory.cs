@@ -108,6 +108,10 @@ namespace clog2text_lttng
                     args[0] = value.AsBinary;
                     break;
 
+                case CLogEncodingType.Pointer:
+                    args[0] = value.AsPointer;
+                    break;
+
                 default:
                     throw new NotImplementedException("UndefinedType:" + type);
             }
@@ -116,15 +120,9 @@ namespace clog2text_lttng
             string[] bits = customDecoder.Split('.');
             string member = bits[bits.Length - 1];
             customDecoder = customDecoder.Substring(0, customDecoder.Length - member.Length - 1);
-
-            /*foreach (var v in _codeAssembly.GetTypes())
-            {
-                Console.WriteLine(v.FullName);
-            }*/
-
+       
             var newType = _codeAssembly.GetType(customDecoder);
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
-
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {

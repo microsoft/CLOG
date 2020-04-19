@@ -238,6 +238,14 @@ namespace clog2text_lttng
                 }
             }
 
+            public ulong AsPointer
+            {
+                get
+                {
+                    return Convert.ToUInt64(AsString);
+                }
+            }
+
             public byte[] AsBinary
             {
                 get

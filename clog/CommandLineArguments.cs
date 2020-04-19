@@ -31,7 +31,14 @@ namespace clog
             set;
         }
 
-        [Option('p', "configProfile", Required = true, HelpText = "Configuration profile name")]
+        [Option("refreshCustomTypeProcessor", SetName = "debug", Required = false, HelpText = "[DEBUGGING] update the C# custom type processor for the specified sidecar ")]
+        public bool RefreshCustomTypeProcessor
+        {
+            get;
+            set;
+        }
+
+        [Option('p', "configProfile",  HelpText = "Configuration profile name")]
         public string ConfigurationProfile
         {
             get;
@@ -45,7 +52,7 @@ namespace clog
             set;
         }
 
-        [Option('s', "sideCar", SetName = "build", Required = false, HelpText = "Full path to sidecar")]
+        [Option('s', "sideCar", Required = false, HelpText = "Full path to sidecar")]
         public string SidecarFile
         {
             get;
@@ -88,7 +95,7 @@ namespace clog
             //
             if (string.IsNullOrEmpty(this.InputFile) || string.IsNullOrEmpty(this.OutputFile))
             {
-                if (!LintConfig && !UpgradeConfigFile)
+                if (!LintConfig && !UpgradeConfigFile && !RefreshCustomTypeProcessor)
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "input file and output file are required if not linting or upgrading config file");
                     return false;
@@ -120,6 +127,27 @@ namespace clog
                 if (!string.IsNullOrEmpty(this.InputFile) || !string.IsNullOrEmpty(this.OutputFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "do not specify input or output files if you're linting or upgrading the config file");
+                    return false;
+                }
+            }
+
+            if (RefreshCustomTypeProcessor)
+            {
+                if (string.IsNullOrEmpty(this.SidecarFile) || string.IsNullOrEmpty(this.ConfigurationFile))
+                {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
+                    return false;
+                }
+            }
+
+            //
+            // Makesure ConfigurationProfile is specified for all but those who do not need it
+            //
+            if(!RefreshCustomTypeProcessor)
+            {
+                if(string.IsNullOrEmpty(this.ConfigurationProfile))
+                {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
                     return false;
                 }
             }
