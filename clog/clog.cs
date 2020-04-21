@@ -82,8 +82,6 @@ namespace clog
                             return 0;
                         }
 
-
-
                         CLogSidecar sidecar;
                         if (!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
@@ -156,9 +154,8 @@ namespace clog
                             throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
                         }
 
-                        sidecar.TypeEncoder.Merge(configFile.InUseTypeEncoders);
-
-
+                        //sidecar.TypeEncoder.MergeHotTypes(configFile.InUseTypeEncoders);
+                        
                         sidecar.CustomTypeProcessorsX[Path.GetFileName(configFile.FilePath)] = configFile.TypeEncoders.CustomTypeDecoder;
                         foreach (var c in configFile._chainedConfigFiles)
                         {

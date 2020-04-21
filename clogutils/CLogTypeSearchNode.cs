@@ -33,5 +33,23 @@ namespace clogutils
         public Dictionary<char, CLogTypeSearchNode> Nodes = new Dictionary<char, CLogTypeSearchNode>();
 
         public CLogEncodingCLogTypeSearch UserNode { get; set; }
+
+        private static void Flatten(CLogTypeSearchNode node, List<CLogEncodingCLogTypeSearch> ret)
+        {
+            if (null != node.UserNode)
+                ret.Add(node.UserNode);
+
+            foreach (var n in node.Nodes)
+            {
+                Flatten(n.Value, ret);
+            }
+        }
+
+        public IEnumerable<CLogEncodingCLogTypeSearch> Flatten()
+        {
+            List<CLogEncodingCLogTypeSearch> ret = new List<CLogEncodingCLogTypeSearch>();
+            Flatten(this, ret);
+            return ret;
+        }
     }
 }

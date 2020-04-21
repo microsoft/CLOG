@@ -11,6 +11,7 @@ Abstract:
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -31,9 +32,30 @@ namespace clogutils.ConfigFile
 
         [JsonProperty] public int Version { get; set; }
 
-        [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();    
+        [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();
 
-        public List<CLogEncodingCLogTypeSearch> _savedTypesX { get; set; } = new List<CLogEncodingCLogTypeSearch>();
+        public IEnumerable<CLogEncodingCLogTypeSearch> FlattendTypeEncoder
+        {
+            get
+            {
+                return _parent.Flatten();
+            }
+        }
+        /*
+        {
+            get
+            {
+              //  List<CLogEncodingCLogTypeSearch> ret = new List<CLogEncodingCLogTypeSearch>();
+
+                return _parent.Flatten();
+
+               // return ret;
+            }
+        }*/
+
+        //  public List<CLogEncodingCLogTypeSearch> hotTypes { get; set; } = new List<CLogEncodingCLogTypeSearch>();
+
+
 
         public string CustomTypeDecoder
         {
@@ -49,7 +71,7 @@ namespace clogutils.ConfigFile
         public void Lint()
         {
             List<CLogEncodingCLogTypeSearch> newEncoders = new List<CLogEncodingCLogTypeSearch>();
-            foreach(var encoder in TypeEncoder)
+            foreach(var encoder in FlattendTypeEncoder)
             {
                 if(encoder.UsedBySourceFile.Count > 0)
                 {
@@ -57,21 +79,42 @@ namespace clogutils.ConfigFile
                     encoder.MarkPhase = false;
                 }
             }
-            TypeEncoder = newEncoders;
+
+            Init(newEncoders);
+            //TypeEncoder = newEncoders;
         }
+        
+        [OnSerializing]
+        private void OnSerialized(StreamingContext context)
+        {
+            TypeEncoder = new List<CLogEncodingCLogTypeSearch>(FlattendTypeEncoder);
+        }
+               
+        [OnSerialized()]
+        internal void OnSerializedMethod(StreamingContext context)
+        {
+            TypeEncoder = null;
+        }
+
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
             Init(TypeEncoder);
+            TypeEncoder = null;
         }
-
-        public void Merge(CLogTypeEncoder x)
+/*
+        public void MergeHotTypes(CLogTypeEncoder x)
         {
-            foreach (var type in x._savedTypesX)
+            foreach (var type in x.hotTypes)
             {
                 var v = TypeEncoder.FirstOrDefault(yx => yx.DefinationEncoding.Equals(type.DefinationEncoding));
 
+                if(type.Hash != v.Hash)
+                {
+                    Debugger.Break();
+                }
+              
                 if (null != v)
                 {
                     continue;
@@ -79,29 +122,26 @@ namespace clogutils.ConfigFile
 
                 AddType(type);
             }
-        }
+        }*/
 
         public void InitCustomDecoder(string code)
         {
             _traceEmittorX.SetSourceCode(code);
         }
 
-        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value)
+        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine)
         {
-            return _traceEmittorX.Decode(node, value);
+            return _traceEmittorX.Decode(node, value, traceLine);
         }
 
         public void Init(IEnumerable<CLogEncodingCLogTypeSearch> savedTypes)
         {
             _traceEmittorX = new CLogCustomTraceEmittorFactory();
+            _parent = new CLogTypeSearchNode();
 
             foreach (var e in savedTypes.ToArray())
             {
                 AddType(e);
-
-                if (string.IsNullOrEmpty(e.CustomDecoder))
-                {
-                }
             }
         }
 
@@ -127,28 +167,28 @@ namespace clogutils.ConfigFile
         {
             bool isNew = false;
             AddType(_parent, null, cLogTypeSearch, ref isNew);
-
+#if false
             if (isNew)
             {
                 if (!TypeEncoder.Contains(cLogTypeSearch))
                 {
                     TypeEncoder.Add(cLogTypeSearch);
                 }
-                
-                if (!_savedTypesX.Contains(cLogTypeSearch))
+      /*          
+                if (!hotTypes.Contains(cLogTypeSearch))
                 {
-                    _savedTypesX.Add(cLogTypeSearch);
-					
-                }
+                    hotTypes.Add(cLogTypeSearch);
+                }*/
             }
+#endif
         }
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
+        public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle)
         {
-            return FindType(bundle.DefinationEncoding);
+            return FindTypeX(bundle.DefinationEncoding);
         }
 
-        public CLogEncodingCLogTypeSearch FindType(string encoded)
+        public CLogEncodingCLogTypeSearch FindTypeX(string encoded)
         {
             int idx = 0;
             return FindTypeAndAdvance(encoded, null,ref idx);
@@ -177,7 +217,7 @@ namespace clogutils.ConfigFile
                         return prev.UserNode;
                     }
 
-                    throw new CLogTypeNotFoundException("InvalidType:" + type, type, traceLineMatch);
+                    return null;
                 }
 
                 if (index == encoded.Length - 1)
@@ -209,7 +249,7 @@ namespace clogutils.ConfigFile
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"Custom C# file for custom decoder is missing.  Please create the file, or remove its reference from the config file");
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"                Missing File: {customTypeClogCSharpFile}");
                 CLogConsoleTrace.TraceLine(TraceType.Err, $"      Defined In Config File: {configFile.FilePath}");
-                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing", CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
+                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing: " + customTypeClogCSharpFile, CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
             }
 
             string sourceCode = File.ReadAllText(customTypeClogCSharpFile);

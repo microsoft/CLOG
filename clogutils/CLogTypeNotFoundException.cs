@@ -24,6 +24,7 @@ namespace clogutils
             AreReadOnly = true;
             Exception = e;
             PartialType = partialType;
+            InfoString = "Missing Type : " + partialType;
         }
 
         public string PartialType { get; set; }

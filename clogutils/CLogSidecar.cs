@@ -10,6 +10,7 @@ Abstract:
 --*/
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
@@ -74,6 +75,12 @@ namespace clogutils
 
             foreach (var v in traceLine.splitArgs)
             {
+         //       var x = TypeEncoder.FindType(v);
+         //       if (x.EncodingType == CLogEncodingType.Pointer)
+         //           Debugger.Break();
+
+         //       var y = traceLine.configFile.FindType(v);
+
                 TypeEncoder.AddType(traceLine.configFile.FindType(v, traceLine));
             }
 
@@ -101,7 +108,7 @@ namespace clogutils
         }
 
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
+        public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
             int idx = 0;
             return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);

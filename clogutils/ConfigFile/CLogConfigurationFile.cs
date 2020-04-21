@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
+using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
 {
@@ -85,7 +86,7 @@ namespace clogutils.ConfigFile
         {
             get;
             set;
-        }
+        } = new List<CLogConfigurationFile>();
 
         [JsonProperty]
         public bool MarkPhase
@@ -151,45 +152,59 @@ namespace clogutils.ConfigFile
             return FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
         }
 
+        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine)
+        {
+            CLogCustomDecoderNotFoundException oldException = null;
+
+            try
+            {
+                return TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine);
+            }
+            catch (CLogCustomDecoderNotFoundException e)
+            {
+                oldException = e;
+            }
+
+            foreach (var config in _chainedConfigFiles)
+            {
+                try
+                {
+                    return TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine);
+                }
+                catch (CLogCustomDecoderNotFoundException e)
+                {
+                    oldException = e;
+                }
+            }
+
+            return "ERROR:CustomDecoderNotFound:" + node.CustomDecoder + ":" + node.DefinationEncoding;
+        }
+
+
         public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
         {
             int tempIndex = index;
             CLogEncodingCLogTypeSearch ret = null;
-            CLogTypeNotFoundException previousException = null;
 
-            try
+            if (null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
             {
-                if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+                InUseTypeEncoders.AddType(ret);
+                index = tempIndex;
+                return ret;
+            }
+
+            foreach (var config in _chainedConfigFiles)
+            {
+                tempIndex = index;
+                if (null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
                 {
                     InUseTypeEncoders.AddType(ret);
                     index = tempIndex;
                     return ret;
                 }
             }
-            catch(CLogTypeNotFoundException e)
-            {
-                previousException = e;
-            }
 
-            foreach(var config in _chainedConfigFiles)
-            {
-                try
-                {
-                    if(null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
-                    {
-                        InUseTypeEncoders.AddType(ret);
-                        index = tempIndex;
-                        return ret;
-                    }
-                }
-                catch(CLogTypeNotFoundException e)
-                {
-                    previousException = e;
-                }
-            }
-
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $" Unspecified CLog Type {traceLineMatch}");            
-            throw previousException;
+            throw new CLogTypeNotFoundException("InvalidType:" + encoded, encoded, traceLineMatch);
         }
 
         public CLogTraceMacroDefination[] AllKnownMacros()
@@ -297,7 +312,7 @@ namespace clogutils.ConfigFile
         private static void RefreshTypeEncodersMarkBit(CLogConfigurationFile ret, bool markBit)
         {
             ret.MarkPhase = markBit;
-            foreach (var t in ret.TypeEncoders.TypeEncoder)
+            foreach (var t in ret.TypeEncoders.FlattendTypeEncoder)
             {
                 t.MarkPhase = markBit;
             }

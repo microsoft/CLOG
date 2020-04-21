@@ -9,6 +9,7 @@ Abstract:
 
 --*/
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -37,6 +38,16 @@ namespace clogutils
         public HashSet<string> UsedBySourceFile { get; set; } = new HashSet<string>();
 
         public bool MarkPhase { get; set; }
+       
+
+        public Guid Hash
+        {
+            get
+            {
+                string hash = EncodingType + "," + CType + "," + DefinationEncoding + "," + CustomDecoder + "," + Synthesized;
+                return CLogFileProcessor.GenerateMD5Hash(hash);
+            }
+        }
 
 
         /// <summary>

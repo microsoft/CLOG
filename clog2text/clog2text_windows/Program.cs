@@ -64,12 +64,14 @@ namespace clog2text_windows
                             {
                                 foreach (var prop in m.Value.ModuleProperites)
                                 {
-                                    if (!prop.Key.Equals("MANIFESTED_ETW"))
-                                        continue;
-
-                                    ids.Add(new Guid(prop.Value["ETW_Provider"]));
-                                    //      CLogExportModuleDefination configProfile = prop.Value.("MANIFESTED_ETW");
-                                    //  
+                                    if (prop.Key.Equals("MANIFESTED_ETW"))
+                                    {
+                                        ids.Add(new Guid(prop.Value["ETW_Provider"]));
+                                    }
+                                    else if (prop.Key.Equals("TRACELOGGING"))
+                                    {
+                                        ids.Add(new Guid(prop.Value["ETW_Provider"]));
+                                    }
                                 }
                             }
 

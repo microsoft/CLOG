@@ -136,7 +136,7 @@ namespace clogutils
                             }
                             else
                             {
-                                toPrint.Append($"{type.LeadingString}{config.TypeEncoders.DecodeUsingCustomDecoder(type.TypeNode, value)}");
+                                toPrint.Append($"{type.LeadingString}{config.DecodeUsingCustomDecoder(type.TypeNode, value, bundle.match)}");
                             }
                         }
 

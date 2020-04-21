@@ -85,7 +85,7 @@ namespace clog2text_lttng
             _codeAssembly = Assembly.Load(assembly);
         }
 
-        public string Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value)
+        public string Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine)
         {
             //
             // Compiling also caches the assembly
@@ -126,6 +126,9 @@ namespace clog2text_lttng
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {
+                if (null == newType)
+                    throw new CLogCustomDecoderNotFoundException("TypeNotFound:" + customDecoder, traceLine);
+
                 var meth = newType.GetMember(member).FirstOrDefault() as MethodInfo;
                 _compiledConverterFunctions[type.CustomDecoder] = meth;
             }

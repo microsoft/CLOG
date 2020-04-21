@@ -39,7 +39,8 @@ namespace clogutils
             ManifestedETWProviderNotFound = 19,
             ETWManifestNotFound = 20,
             ETWOutOfUniqueIDs = 21,
-            ETWTypeMismatch = 22
+            ETWTypeMismatch = 22,
+            CustomTypeDecoderNotFound = 23
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -119,6 +120,9 @@ namespace clogutils
 
             string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+
+            if(!String.IsNullOrEmpty(InfoString))
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Info : " + InfoString);
         }
     }
 }
