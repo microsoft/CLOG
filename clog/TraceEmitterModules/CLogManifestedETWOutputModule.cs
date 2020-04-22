@@ -86,7 +86,7 @@ namespace clog.TraceEmitterModules
                 Console.WriteLine($"The 'CustomSettings' dictionary for macro {decodedTraceLine.macro.MacroName} does not contain a GUID for the EtwProvider");
                 Console.WriteLine("    Please add an entry and rerun");
                 Console.WriteLine("");
-                Console.WriteLine($"Configuration File  : {decodedTraceLine.configFile.FullFilePath}");
+                Console.WriteLine($"Configuration File  : {decodedTraceLine.configFile.FilePath}");
                 Console.WriteLine("");
                 Console.WriteLine("");
                 Console.WriteLine("");
@@ -107,7 +107,7 @@ namespace clog.TraceEmitterModules
                 Console.WriteLine("    please consult the MSDN documentation for an ETW manifest for instructions");
                 Console.WriteLine("");
 
-                Console.WriteLine($"Macro:  {providerId} is defined in {decodedTraceLine.configFile.FullFilePath}");
+                Console.WriteLine($"Macro:  {providerId} is defined in {decodedTraceLine.configFile.FilePath}");
                 Console.WriteLine($"ETW Manifest : is set as {xmlFileName}");
                 Console.WriteLine("");
                 Console.WriteLine("");
@@ -206,12 +206,12 @@ namespace clog.TraceEmitterModules
             if (moduleSettings.CustomSettings.ContainsKey("Level"))
                 SetAttribute(newEvent, "level", moduleSettings.CustomSettings["Level"]);
             else
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Level not specified;  if you desire a Level, add 'Level' to CustomSettings in {decodedTraceLine.configFile.FullFilePath}");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Level not specified;  if you desire a Level, add 'Level' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
             if (moduleSettings.CustomSettings.ContainsKey("Keywords"))
                 SetAttribute(newEvent, "keywords", moduleSettings.CustomSettings["Keywords"]);
             else
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FullFilePath}");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
 
             //

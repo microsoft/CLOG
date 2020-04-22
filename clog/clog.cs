@@ -18,7 +18,6 @@ using clog.TraceEmitterModules;
 using clogutils;
 using clogutils.ConfigFile;
 using CommandLine;
-using static clogutils.CLogConsoleTrace;
 
 namespace clog
 {
@@ -43,24 +42,7 @@ namespace clog
                             return -1;
                         }
 
-                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(null, options.ConfigurationFile, 
-                        (relative, file) => {
-                            string dir = file;
-                            if(!String.IsNullOrEmpty(relative))
-                            {
-                                dir = Path.Combine(relative, file);
-                            }
-
-                          /*  if (!File.Exists(customTypeClogCSharpFile))
-                            {
-                                CLogConsoleTrace.TraceLine(TraceType.Err, $"Custom C# file for custom decoder is missing.  Please create the file, or remove its reference from the config file");
-                                CLogConsoleTrace.TraceLine(TraceType.Err, $"                Missing File: {customTypeClogCSharpFile}");
-                                CLogConsoleTrace.TraceLine(TraceType.Err, $"      Defined In Config File: {configFile.FullFilePath}");
-                                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing: " + customTypeClogCSharpFile, CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
-                            }*/
-
-                            return File.ReadAllText(dir);
-                        });
+                        CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
                         configFile.ProfileName = options.ConfigurationProfile;
 
                         if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
@@ -115,7 +97,6 @@ namespace clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
-                        sidecar.AttachConfigFiles(configFile);
 
                         if (options.RefreshCustomTypeProcessor)
                         {
@@ -128,7 +109,7 @@ namespace clog
                                                  options.ScopePrefix + "_" + Path.GetFileName(options.OutputFile)) + ".c";
 
                         configFile.ScopePrefix = options.ScopePrefix;
-                        configFile.FullFilePath = Path.GetFullPath(options.ConfigurationFile);
+                        configFile.FilePath = Path.GetFullPath(options.ConfigurationFile);
                         configFile.OverwriteHashCollisions = options.OverwriteHashCollisions;
 
                         //Delete the output file; we want to encourage build breaks if something goes wrong
@@ -175,10 +156,10 @@ namespace clog
 
                         //sidecar.TypeEncoder.MergeHotTypes(configFile.InUseTypeEncoders);
                         
-                        sidecar.CustomTypeProcessorsX[Path.GetFileName(configFile.FullFilePath)] = configFile.TypeEncoders.CustomTypeDecoder;
+                        sidecar.CustomTypeProcessorsX[Path.GetFileName(configFile.FilePath)] = configFile.TypeEncoders.CustomTypeDecoder;
                         foreach (var c in configFile._chainedConfigFiles)
                         {
-                            sidecar.CustomTypeProcessorsX[Path.GetFileName(c.FullFilePath)] = c.TypeEncoders.CustomTypeDecoder;
+                            sidecar.CustomTypeProcessorsX[Path.GetFileName(c.FilePath)] = c.TypeEncoders.CustomTypeDecoder;
                         }
 
 
@@ -217,7 +198,7 @@ namespace clog
                         if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
                             Console.WriteLine("Configuration file was updated, saving...");
-                            Console.WriteLine($"    {configFile.FullFilePath}");
+                            Console.WriteLine($"    {configFile.FilePath}");
                             configFile.Save();
                         }
                     }

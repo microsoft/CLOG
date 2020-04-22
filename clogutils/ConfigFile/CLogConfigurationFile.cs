@@ -38,12 +38,7 @@ namespace clogutils.ConfigFile
         {
             get; set;
         }
-        public string FullFilePath
-        {
-            get;
-            set;
-        }
-        public string RelativeFilePath
+        public string FilePath
         {
             get;
             set;
@@ -227,7 +222,7 @@ namespace clogutils.ConfigFile
                     }
 
                     ret[def.MacroName] = def;
-                    def.ConfigFileWithMacroDefination = config.FullFilePath;
+                    def.ConfigFileWithMacroDefination = config.FilePath;
                 }
             }
 
@@ -240,15 +235,13 @@ namespace clogutils.ConfigFile
                 }
 
                 ret[def.MacroName] = def;
-                def.ConfigFileWithMacroDefination = this.FullFilePath;
+                def.ConfigFileWithMacroDefination = this.FilePath;
             }
 
             return ret.Values.ToArray();
         }
 
-        public delegate string LoadDelegate(string relativeRoot, string file);
-
-        public static CLogConfigurationFile FromFile(string relativeRoot, string fileName, LoadDelegate loader)
+        public static CLogConfigurationFile FromFile(string fileName)
         {
             if (_loadedConfigFiles.Contains(fileName))
             {
@@ -257,32 +250,20 @@ namespace clogutils.ConfigFile
             }
 
             _loadedConfigFiles.Add(fileName);
-            string json = loader(relativeRoot, fileName);
-                
-                //File.ReadAllText(fileName);
+            string json = File.ReadAllText(fileName);
 
-             JsonSerializerSettings s = new JsonSerializerSettings();
+            JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
             CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
-            ret.FullFilePath = fileName;
+            ret.FilePath = fileName;
             ret._chainedConfigFiles = new List<CLogConfigurationFile>();
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
-                //string cSharp = Path.GetDirectoryName(fileName);
-                //cSharp = Path.Combine(cSharp, ret.CustomTypeClogCSharpFile);
-                string cSharp = loader(relativeRoot, ret.CustomTypeClogCSharpFile);
-
-                if (String.IsNullOrEmpty(cSharp))
-                {
-                    CLogConsoleTrace.TraceLine(TraceType.Err, $"Custom C# file for custom decoder is missing.  Please create the file, or remove its reference from the config file");
-                    CLogConsoleTrace.TraceLine(TraceType.Err, $"                Missing File: {ret.CustomTypeClogCSharpFile}");
-                    CLogConsoleTrace.TraceLine(TraceType.Err, $"      Defined In Config File: {fileName}");
-                    throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing: " + ret.CustomTypeClogCSharpFile, CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
-                }
-
-                ret.TypeEncoders.SetSourceCode(cSharp);
+                string cSharp = Path.GetDirectoryName(fileName);
+                cSharp = Path.Combine(cSharp, ret.CustomTypeClogCSharpFile);
+                ret.TypeEncoders.LoadCustomCSharp(cSharp, ret);
             }
 
             //
@@ -294,7 +275,8 @@ namespace clogutils.ConfigFile
             {
                 if (macros.Contains(m.MacroName))
                 {
-                    Console.WriteLine($"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
+                    Console.WriteLine(
+                        $"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
                     throw new CLogEnterReadOnlyModeException("MultipleMacrosWithSameName", CLogHandledException.ExceptionType.MultipleMacrosWithSameName, null);
                 }
 
@@ -303,18 +285,16 @@ namespace clogutils.ConfigFile
 
             foreach (string downstream in ret.ChainedConfigFiles)
             {
-                //string root = Path.GetDirectoryName(fileName);
-               //string toOpen = loader(relativeRoot, downstream);
-               //Path.Combine(root, downstream);
+                string root = Path.GetDirectoryName(fileName);
+                string toOpen = Path.Combine(root, downstream);
 
-              /*  if (String.IsNullOrEmpty(toOpen))
+                if (!File.Exists(toOpen))
                 {
-                    Console.WriteLine($"Chained config file {downstream} not found");
+                    Console.WriteLine($"Chained config file {toOpen} not found");
                     throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
-                }*/
+                }
 
-                var configFile = FromFile(relativeRoot, downstream, loader);
-                configFile.RelativeFilePath = downstream;
+                var configFile = FromFile(toOpen);
                 ret._chainedConfigFiles.Add(configFile);
             }
 
@@ -343,7 +323,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public string ToJson()
+        private string ToJson()
         {
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Formatting = Formatting.Indented;
@@ -403,7 +383,7 @@ namespace clogutils.ConfigFile
 
         public void Save()
         {
-            File.WriteAllText(this.FullFilePath, ToJson());
+            File.WriteAllText(this.FilePath, ToJson());
 
             foreach(var child in this._chainedConfigFiles)
             {

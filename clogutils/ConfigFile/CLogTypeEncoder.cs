@@ -242,8 +242,19 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public void SetSourceCode(string sourceCode)
-        {         
+        public void LoadCustomCSharp(string customTypeClogCSharpFile, CLogConfigurationFile configFile)
+        {
+            if (!File.Exists(customTypeClogCSharpFile))
+            {
+                CLogConsoleTrace.TraceLine(TraceType.Err, $"Custom C# file for custom decoder is missing.  Please create the file, or remove its reference from the config file");
+                CLogConsoleTrace.TraceLine(TraceType.Err, $"                Missing File: {customTypeClogCSharpFile}");
+                CLogConsoleTrace.TraceLine(TraceType.Err, $"      Defined In Config File: {configFile.FilePath}");
+                throw new CLogEnterReadOnlyModeException("CustomCSharpFileMissing: " + customTypeClogCSharpFile, CLogHandledException.ExceptionType.UnableToOpenCustomDecoder, null);
+            }
+
+            string sourceCode = File.ReadAllText(customTypeClogCSharpFile);
+            string sourceHash = Path.GetFileName(configFile.FilePath);
+
             _traceEmittorX.SetSourceCode(sourceCode);
         }
     }
