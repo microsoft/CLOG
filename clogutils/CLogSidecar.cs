@@ -41,13 +41,13 @@ namespace clogutils
         }
 
         [JsonProperty] public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
-
         [JsonProperty] public int Version { get; set; }
-
         [JsonProperty] public CLogTypeEncoder TypeEncoder { get; set; } = new CLogTypeEncoder();
-
         [JsonProperty] public Dictionary<string, string> CustomTypeProcessorsX { get; set; } = new Dictionary<string, string>();
 
+        [JsonProperty] public Dictionary<string, CLogConfigurationFile> SideCars = new Dictionary<string, CLogConfigurationFile>();
+
+        [JsonProperty] public CLogConfigurationFile MyConfig { get; set; }
 
         [JsonProperty]
         public CLogModuleUsageInformation ModuleUniqueness
@@ -55,6 +55,18 @@ namespace clogutils
             get;
             set;
         } = new CLogModuleUsageInformation();
+
+        public void AttachConfigFiles(CLogConfigurationFile rootConfig)
+        {
+            SideCars["root"] = rootConfig;
+
+            MyConfig = rootConfig;
+
+            foreach(var c in rootConfig._chainedConfigFiles)
+            {
+                SideCars[c.RelativeFilePath] = c;
+            }
+        }
 
         public string ModuleName
         {
@@ -106,7 +118,6 @@ namespace clogutils
         {
             Save(_sidecarFileName);
         }
-
 
         public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
@@ -182,6 +193,7 @@ namespace clogutils
                 }
             }
 
+            //ret.MyConfig = 
             return ret;
         }
     }
