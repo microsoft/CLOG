@@ -129,9 +129,9 @@ namespace clogutils.ConfigFile
             _traceEmittorX.SetSourceCode(code);
         }
 
-        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine)
-        {
-            return _traceEmittorX.Decode(node, value, traceLine);
+        public bool DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
+        {            
+            return _traceEmittorX.Decode(node, value, traceLine, out decodedValue);
         }
 
         public void Init(IEnumerable<CLogEncodingCLogTypeSearch> savedTypes)

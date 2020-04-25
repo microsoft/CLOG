@@ -93,9 +93,6 @@ namespace clog2text_lttng
             {
                 string sidecarJson = File.ReadAllText(options.SideCarFile);
                 CLogSidecar textManifest = CLogSidecar.FromJson(sidecarJson);
-                CLogConfigurationFile config = new CLogConfigurationFile();
-                config.TypeEncoders = textManifest.TypeEncoder;
-
 
                 TextReader file = Console.In;
 
@@ -126,7 +123,7 @@ namespace clog2text_lttng
                         Dictionary<string, IClogEventArg> valueBag;
                         EventInformation ei;
                         CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
-                        DecodeAndTraceToConsole(outputfile, bundle, line, config, valueBag);
+                        DecodeAndTraceToConsole(outputfile, bundle, line, textManifest.ConfigFile, valueBag);
                     }
                 }
                 catch (Exception e)

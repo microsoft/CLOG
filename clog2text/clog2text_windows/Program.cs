@@ -35,9 +35,7 @@ namespace clog2text_windows
                 options =>
                 {
                     string sidecarJson = File.ReadAllText(options.SideCarFile);
-                    CLogSidecar textManifest = CLogSidecar.FromJson(sidecarJson);
-                    CLogConfigurationFile config = new CLogConfigurationFile();
-                    config.TypeEncoders = textManifest.TypeEncoder;
+                    CLogSidecar sidecar = CLogSidecar.FromJson(sidecarJson);
 
 
                     TextReader file = Console.In;
@@ -60,7 +58,7 @@ namespace clog2text_windows
                         {
                             HashSet<Guid> ids = new HashSet<Guid>();
 
-                            foreach (var m in textManifest.EventBundlesV2)
+                            foreach (var m in sidecar.EventBundlesV2)
                             {
                                 foreach (var prop in m.Value.ModuleProperites)
                                 {
@@ -102,7 +100,7 @@ namespace clog2text_windows
                                     CLogDecodedTraceLine bundle = null;
                                     int eidAsInt = -1;
 
-                                    foreach (var b in textManifest.EventBundlesV2)
+                                    foreach (var b in sidecar.EventBundlesV2)
                                     {
                                         Dictionary<string, string> keys;
 
@@ -157,10 +155,10 @@ namespace clog2text_windows
                                     }
                                     else
                                     {
-                                        argMap = textManifest.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
+                                        argMap = sidecar.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
                                     }                                    
                                     
-                                    var types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out string clean);
+                                    var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out string clean);
 
                                     if (0 == types.Length)
                                     {
@@ -173,7 +171,7 @@ namespace clog2text_windows
                                     foreach (var type in types)
                                     {
                                         var arg = bundle.splitArgs[argIndex];
-                                        CLogEncodingCLogTypeSearch node = config.FindType(arg);
+                                        CLogEncodingCLogTypeSearch node = sidecar.ConfigFile.FindType(arg);
 
                                         switch (node.EncodingType)
                                         {
@@ -203,7 +201,7 @@ namespace clog2text_windows
                                     }
 
                                 toPrint:
-                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, config, fixedUpArgs);
+                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs);
                                 }
                                 catch (Exception)
                                 {
@@ -264,7 +262,15 @@ namespace clog2text_windows
             {
                 get
                 {
-                    return _event.AsUInt64;
+                    switch(_event.Type)
+                    {
+                        case GenericEventFieldType.UInt64:
+                            return _event.AsUInt64;
+                        case GenericEventFieldType.Address:
+                            return (ulong)_event.AsAddress.Value;
+                        default:
+                            throw new InvalidDataException("InvalidTypeForPointer:" + _event.Type);
+                    }                   
                 }
             }
 

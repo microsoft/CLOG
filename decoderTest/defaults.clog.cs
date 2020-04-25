@@ -15,7 +15,7 @@ namespace defaults.clog_config
     {
         public static string DecodePointer(ulong pointer)
         {
-            return "CLOG_PINTER:" + pointer.ToString("x");
+            return "CLOG_POINTER:" + pointer.ToString("x");
         }
 
         public static string DecodeUInt32(uint value)

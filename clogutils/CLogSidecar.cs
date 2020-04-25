@@ -44,10 +44,8 @@ namespace clogutils
 
         [JsonProperty] public int Version { get; set; }
 
-        [JsonProperty] public CLogTypeEncoder TypeEncoder { get; set; } = new CLogTypeEncoder();
 
-        [JsonProperty] public Dictionary<string, string> CustomTypeProcessorsX { get; set; } = new Dictionary<string, string>();
-
+        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
 
         [JsonProperty]
         public CLogModuleUsageInformation ModuleUniqueness
@@ -72,17 +70,6 @@ namespace clogutils
             string hash;
 
             traceLine.macro.DecodeUniqueId(traceLine.match, traceLine.UniqueId, out hash, out hashUInt);
-
-            foreach (var v in traceLine.splitArgs)
-            {
-         //       var x = TypeEncoder.FindType(v);
-         //       if (x.EncodingType == CLogEncodingType.Pointer)
-         //           Debugger.Break();
-
-         //       var y = traceLine.configFile.FindType(v);
-
-                TypeEncoder.AddType(traceLine.configFile.FindType(v, traceLine));
-            }
 
             EventBundlesV2[hash] = traceLine;
         }
@@ -111,7 +98,7 @@ namespace clogutils
         public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
             int idx = 0;
-            return TypeEncoder.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
+            return ConfigFile.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
         }
 
         public void SetTracelineMetadata(CLogDecodedTraceLine traceline, string module, Dictionary<string, string> values)
@@ -158,9 +145,14 @@ namespace clogutils
 
         public string ToJson()
         {
+            bool old = ConfigFile.SerializeChainedConfigurations;
+            ConfigFile.SerializeChainedConfigurations = true;
+
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Formatting = Formatting.Indented;
             string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+
+            ConfigFile.SerializeChainedConfigurations = old;
             return me;
         }
 
@@ -170,17 +162,6 @@ namespace clogutils
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
             CLogSidecar ret = JsonConvert.DeserializeObject<CLogSidecar>(json, s);
-
-            if (null != ret)
-            {
-                foreach (var assembly in ret.CustomTypeProcessorsX)
-                {
-                    if (null != assembly.Value && 0 != assembly.Value.Length)
-                    {
-                        ret.TypeEncoder.InitCustomDecoder(assembly.Value);
-                    }
-                }
-            }
 
             return ret;
         }

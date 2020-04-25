@@ -62,6 +62,18 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        public bool ShouldSerializeCustomTypeClogCSharpFileContents()
+        {
+            return !String.IsNullOrEmpty(CustomTypeClogCSharpFileContents);
+        }
+
+        [JsonProperty]
+        public string CustomTypeClogCSharpFileContents
+        {
+            get;
+            set;
+        }
+
         [JsonProperty] public CLogTypeEncoder TypeEncoders
         {
             get;
@@ -82,7 +94,10 @@ namespace clogutils.ConfigFile
             get;
             set;
         }
-        public List<CLogConfigurationFile> _chainedConfigFiles
+
+
+        [JsonProperty]
+        public List<CLogConfigurationFile> ChainedConfigurations
         {
             get;
             set;
@@ -94,6 +109,49 @@ namespace clogutils.ConfigFile
             get;
             set;
         } = false;
+
+
+        private bool _SerializeChainConfiguration = false;
+        public bool SerializeChainedConfigurations
+        {
+            get
+            {
+                return _SerializeChainConfiguration;
+            }
+            set
+            {
+                _SerializeChainConfiguration = value;
+
+                if (value == true)
+                {
+                    CustomTypeClogCSharpFileContents = TypeEncoders.CustomCSharp;
+                }
+                else
+                {
+                    CustomTypeClogCSharpFileContents = null;
+                }
+
+                foreach (var c in ChainedConfigurations)
+                {
+                    c.SerializeChainedConfigurations = value;
+                }
+            }
+        }
+        
+        public bool ShouldSerializeChainedConfigurations()
+        {
+            return SerializeChainedConfigurations;
+        }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            if (!String.IsNullOrEmpty(this.CustomTypeClogCSharpFileContents))
+                this.TypeEncoders.InitCustomDecoder(this.CustomTypeClogCSharpFileContents);
+        }
+
+        
 
         /// <summary>
         /// If the MarkPhase bit isnt set, dont clutter up the config file with it - it's a rare feature and we'd like to reduce confusion/complexity
@@ -119,7 +177,7 @@ namespace clogutils.ConfigFile
         public bool AreWeDirty()
         {
             bool dirty = AmIDirty;
-            foreach (var config in _chainedConfigFiles)
+            foreach (var config in ChainedConfigurations)
             {
                 dirty |= config.AreWeDirty();
             }
@@ -129,7 +187,7 @@ namespace clogutils.ConfigFile
         public bool AreWeInMarkPhase()
         {
             bool dirty = MarkPhase;
-            foreach (var config in _chainedConfigFiles)
+            foreach (var config in ChainedConfigurations)
             {
                 dirty |= config.AreWeInMarkPhase();
             }
@@ -152,34 +210,21 @@ namespace clogutils.ConfigFile
             return FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
         }
 
-        public string DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine)
+        public bool DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
-            CLogCustomDecoderNotFoundException oldException = null;
+            if (!TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
+                return false;
 
-            try
-            {
-                return TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine);
-            }
-            catch (CLogCustomDecoderNotFoundException e)
-            {
-                oldException = e;
-            }
 
-            foreach (var config in _chainedConfigFiles)
+            foreach (var config in ChainedConfigurations)
             {
-                try
-                {
-                    return TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine);
-                }
-                catch (CLogCustomDecoderNotFoundException e)
-                {
-                    oldException = e;
-                }
+                if (!config.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
+                    return false;
             }
 
-            return "ERROR:CustomDecoderNotFound:" + node.CustomDecoder + ":" + node.DefinationEncoding;
+            decodedValue = "ERROR:CustomDecoderNotFound:" + node.CustomDecoder + ":" + node.DefinationEncoding;
+            return false;
         }
-
 
         public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
         {
@@ -193,7 +238,7 @@ namespace clogutils.ConfigFile
                 return ret;
             }
 
-            foreach (var config in _chainedConfigFiles)
+            foreach (var config in ChainedConfigurations)
             {
                 tempIndex = index;
                 if (null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
@@ -211,7 +256,7 @@ namespace clogutils.ConfigFile
         {
             Dictionary<string, CLogTraceMacroDefination> ret = new Dictionary<string, CLogTraceMacroDefination>();
 
-            foreach(var config in _chainedConfigFiles)
+            foreach(var config in ChainedConfigurations)
             {
                 foreach(var def in config.AllKnownMacros())
                 {
@@ -257,7 +302,7 @@ namespace clogutils.ConfigFile
 
             CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
             ret.FilePath = fileName;
-            ret._chainedConfigFiles = new List<CLogConfigurationFile>();
+            ret.ChainedConfigurations = new List<CLogConfigurationFile>();
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
@@ -295,7 +340,7 @@ namespace clogutils.ConfigFile
                 }
 
                 var configFile = FromFile(toOpen);
-                ret._chainedConfigFiles.Add(configFile);
+                ret.ChainedConfigurations.Add(configFile);
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
@@ -317,14 +362,16 @@ namespace clogutils.ConfigFile
                 t.MarkPhase = markBit;
             }
 
-            foreach(var config in ret._chainedConfigFiles)
+            foreach(var config in ret.ChainedConfigurations)
             {
                 RefreshTypeEncodersMarkBit(config, markBit);
             }
         }
 
-        private string ToJson()
+        private string ToJson(bool persistChainedFiles)
         {
+            SerializeChainedConfigurations = persistChainedFiles;
+
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Formatting = Formatting.Indented;
             string me = JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -337,7 +384,7 @@ namespace clogutils.ConfigFile
 
             TypeEncoders.Lint();
 
-            foreach (var child in this._chainedConfigFiles)
+            foreach (var child in this.ChainedConfigurations)
             {
                 child.Lint();
             }
@@ -381,13 +428,16 @@ namespace clogutils.ConfigFile
 #endif
         }
 
-        public void Save()
+        public void Save(bool persistChainedFiles)
         {
-            File.WriteAllText(this.FilePath, ToJson());
+            if (persistChainedFiles)
+                this.CustomTypeClogCSharpFileContents = this.TypeEncoders.CustomCSharp;
 
-            foreach(var child in this._chainedConfigFiles)
+            File.WriteAllText(this.FilePath, ToJson(persistChainedFiles));
+
+            foreach(var child in this.ChainedConfigurations)
             {
-                child.Save();
+                child.Save(persistChainedFiles);
             }
         }
     }

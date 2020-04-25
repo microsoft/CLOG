@@ -69,7 +69,7 @@ namespace clog
                                 return -10;
                             }
                             configFile.Lint();
-                            configFile.Save();
+                            configFile.Save(false);
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Lint operation complete");
                             return 0;
                         }
@@ -77,7 +77,7 @@ namespace clog
                         if (options.UpgradeConfigFile)
                         {
                             configFile.UpdateVersion();
-                            configFile.Save();
+                            configFile.Save(false);
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "Config upgrade complete");
                             return 0;
                         }
@@ -97,10 +97,11 @@ namespace clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
+                        sidecar.ConfigFile = configFile;
+
 
                         if (options.RefreshCustomTypeProcessor)
-                        {
-                            sidecar.CustomTypeProcessorsX[Path.GetFileName(options.ConfigurationFile)] = configFile.TypeEncoders.CustomCSharp;
+                        {                            
                             sidecar.Save(options.SidecarFile);
                             return 0;
                         }
@@ -154,14 +155,6 @@ namespace clog
                             throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
                         }
 
-                        //sidecar.TypeEncoder.MergeHotTypes(configFile.InUseTypeEncoders);
-                        
-                        sidecar.CustomTypeProcessorsX[Path.GetFileName(configFile.FilePath)] = configFile.TypeEncoders.CustomTypeDecoder;
-                        foreach (var c in configFile._chainedConfigFiles)
-                        {
-                            sidecar.CustomTypeProcessorsX[Path.GetFileName(c.FilePath)] = c.TypeEncoders.CustomTypeDecoder;
-                        }
-
 
                         sidecar.SaveOnFinish(options.SidecarFile);
                         fullyDecodedMacroEmitter.FinishedProcessing();
@@ -199,7 +192,7 @@ namespace clog
                         {
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");
-                            configFile.Save();
+                            configFile.Save(false);
                         }
                     }
                     catch (CLogHandledException e)

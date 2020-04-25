@@ -43,6 +43,11 @@ namespace clog2text_lttng
             CustomTypeDecoder = sourceCode;
         }
 
+        public bool Inited()
+        {
+            return !String.IsNullOrEmpty(CustomTypeDecoder);
+        }
+
         private  void PrepareAssemblyCompileIfNecessary()
         {
             if (null != _codeAssembly)
@@ -85,7 +90,7 @@ namespace clog2text_lttng
             _codeAssembly = Assembly.Load(assembly);
         }
 
-        public string Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine)
+        public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
             //
             // Compiling also caches the assembly
@@ -123,19 +128,20 @@ namespace clog2text_lttng
        
             var newType = _codeAssembly.GetType(customDecoder);
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
+            decodedValue = "ERROR:" + type.CustomDecoder;
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {
                 if (null == newType)
-                    throw new CLogCustomDecoderNotFoundException("TypeNotFound:" + customDecoder, traceLine);
+                    return true;
 
                 var meth = newType.GetMember(member).FirstOrDefault() as MethodInfo;
                 _compiledConverterFunctions[type.CustomDecoder] = meth;
             }
 
             MethodInfo method = _compiledConverterFunctions[type.CustomDecoder];
-            string ret = (string)method.Invoke(_typesInterface, args);
-            return ret;
+            decodedValue = (string)method.Invoke(_typesInterface, args);
+            return false;
         }
 
         private string MakeStringCSafe(string s)
