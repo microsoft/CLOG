@@ -99,8 +99,26 @@ namespace clog.TraceEmitterModules
 
             decodedTraceLine.macro.DecodeUniqueId(decodedTraceLine.match, decodedTraceLine.UniqueId, out hash, out hashUInt);
 
+            int usedArguments = 0;
+            foreach(var a in decodedTraceLine.splitArgs)
+            {
+                CLogFileProcessor.CLogVariableBundle arg = a;
+                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
-            if(decodedTraceLine.splitArgs.Length > 12)
+                switch(node.EncodingType)
+                {
+                    case CLogEncodingType.Synthesized:
+                        continue;
+                    case CLogEncodingType.ByteArray:
+                        usedArguments += 2;
+                        break;
+                    default:
+                        ++usedArguments;
+                        break;
+                }
+            }
+
+            if(usedArguments >= 12)
             {
                 throw new ReadOnlyException($"Too Many arguments in {hash},  LTTNG accepts a max of 9");
             }
@@ -117,7 +135,7 @@ namespace clog.TraceEmitterModules
             {
                 lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
             }
-            lttngFile.AppendLine("----------------------------------------------------------*/");           
+            lttngFile.AppendLine("----------------------------------------------------------*/");
 
             lttngFile.AppendLine($"TRACEPOINT_EVENT({_lttngProviderName}, {hash},");
 
@@ -186,14 +204,14 @@ namespace clog.TraceEmitterModules
 
                 case CLogEncodingType.Skip:
                     continue;
-                    
+
                 case CLogEncodingType.UNICODE_String:
                     continue;
 
                 case CLogEncodingType.ByteArray:
                     lttngFile.AppendLine(
                         $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len, {arg.VariableInfo.SuggestedTelemetryName}_len)");
-                
+
                     lttngFile.AppendLine(
                         $"        ctf_sequence(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName}, unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len)");
                     break;

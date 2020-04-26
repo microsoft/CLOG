@@ -1,7 +1,7 @@
 {
   "MacroConfigurations": {
     "lttng_plus": {
-      "Modules": [       
+      "Modules": [
         {
           "ExportModule": "DTRACE",
           "CustomSettings": {}
