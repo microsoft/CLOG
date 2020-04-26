@@ -40,7 +40,8 @@ namespace clogutils
             ETWManifestNotFound = 20,
             ETWOutOfUniqueIDs = 21,
             ETWTypeMismatch = 22,
-            CustomTypeDecoderNotFound = 23
+            CustomTypeDecoderNotFound = 23,
+            InvalidUniqueId =24
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -89,6 +90,8 @@ namespace clogutils
                     return "ETW Manifest contains too many unique ID's;  this is a limitation of ETW that requires either a new provider, or the deletion of unused ID's";
                 case ExceptionType.ETWTypeMismatch:
                     return "CLOG defined types mismatch with existing ETW manifest - you must fix the ETW manifest manually to align the types";
+                case ExceptionType.InvalidUniqueId:
+                    return "CLOG Unique IDs must be alphanumeric";
             }
 
             return "Uknown Error";

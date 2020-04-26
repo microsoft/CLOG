@@ -99,7 +99,7 @@ namespace clog.TraceEmitterModules
             string eventNamePrefix;
             if (!moduleSettings.CustomSettings.TryGetValue("EventNamePrefix", out eventNamePrefix))
                 eventNamePrefix = string.Empty;
-
+            
             if (null == manifest)
             {
                 Console.WriteLine($"Unable to locate ETW provider {providerId} in CLOG macro {decodedTraceLine.macro.MacroName}");

@@ -287,7 +287,15 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("TooManyArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(splitArgs[0].Trim(), sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
+            string uniqueId = splitArgs[0].Trim();
+            Regex rg = new Regex(@"^[a-zA-Z0-9_]*$");
+            if (!rg.IsMatch(uniqueId))
+            {
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"CLOG Unique ID's must be alpha numeric and {uniqueId} is not");
+                throw new CLogEnterReadOnlyModeException("InvalidUniqueID", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
+            }
+
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(uniqueId, sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
 
             return decodedTraceLine;
         }
