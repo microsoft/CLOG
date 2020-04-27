@@ -71,6 +71,12 @@ namespace clogutils
 
             traceLine.macro.DecodeUniqueId(traceLine.match, traceLine.UniqueId, out hash, out hashUInt);
 
+            if(EventBundlesV2.ContainsKey(hash))
+            {
+                return;
+            }
+
+            traceLine.configFile.AmIDirty = true;
             EventBundlesV2[hash] = traceLine;
         }
 

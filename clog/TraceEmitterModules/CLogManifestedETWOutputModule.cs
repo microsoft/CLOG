@@ -30,9 +30,11 @@ namespace clog.TraceEmitterModules
         public string xmlFileName;
         private static string _ModuleName = "MANIFESTED_ETW";
         private bool _dirty = false;
+        private bool _readOnlyMode = false;
 
-        public CLogManifestedETWOutputModule()
+        public CLogManifestedETWOutputModule(bool inReadOnlyMode)
         {
+            _readOnlyMode = inReadOnlyMode;
         }
 
         public string ModuleName
@@ -255,7 +257,7 @@ namespace clog.TraceEmitterModules
 
             traceLine += "); \\";
             inline.AppendLine(traceLine);
-            Save();
+            Save(decodedTraceLine.match);
         }
 
         private void Init()
@@ -359,10 +361,16 @@ namespace clog.TraceEmitterModules
             throw new CLogEnterReadOnlyModeException("OutOfUniqueIds", CLogHandledException.ExceptionType.ETWOutOfUniqueIDs, sourceLine);
         }
 
-        private void Save()
+        private void Save(CLogLineMatch match)
         {
             if (!_dirty)
                 return;
+
+            if (_readOnlyMode)
+            {
+                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ETWManifest", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, match);
+            }
+
             doc.Save(xmlFileName);
             _dirty = false;
         }

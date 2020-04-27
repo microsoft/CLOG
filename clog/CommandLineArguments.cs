@@ -45,6 +45,13 @@ namespace clog
             set;
         }
 
+        [Option('r', "readOnly", HelpText = "Put CLOG in readonly mode - use this in a build system to prevent manifest or sidecar modifications.  You can set CLOG_FORCE_WRITABLE environment if you're in a development mode")]
+        public bool ReadOnly
+        {
+            get;
+            set;
+        }
+
         [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix")]
         public string ScopePrefix
         {

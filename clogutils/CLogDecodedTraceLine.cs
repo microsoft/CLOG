@@ -73,7 +73,6 @@ namespace clogutils
             }
 
             ModuleProperites[module][key] = value;
-            configFile.AmIDirty = true;
         }
 
         public string GetConfigFileProperty(string module, string key)

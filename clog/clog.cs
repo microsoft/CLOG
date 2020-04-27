@@ -45,6 +45,12 @@ namespace clog
                         CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
                         configFile.ProfileName = options.ConfigurationProfile;
 
+                        if (options.ReadOnly && !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_FORCE_WRITABLE")))
+                        {
+                            options.ReadOnly = false;
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed via --readOnly not to emit changes however this was overridden with CLOG_FORCE_WRITABLE environment variable");
+                        }
+
                         if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
                             options.OverwriteHashCollisions = true;
@@ -139,7 +145,7 @@ namespace clog
                         CLogSystemTapModule systemTap = new CLogSystemTapModule();
                         fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
-                        CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule();
+                        CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
                         CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(options.InputFile, options.OutputFile,
@@ -190,6 +196,10 @@ namespace clog
 
                         if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
+                            if(options.ReadOnly)
+                            {
+                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                            }
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");
                             configFile.Save(false);
