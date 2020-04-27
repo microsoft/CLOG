@@ -175,7 +175,7 @@ namespace clogutils
         public bool AreDirty
         {
             get { MergeHot(); return _areDirty; }
-            set { value = _areDirty; }
+            set { _areDirty = value; }
         }
 
         public CLogDecodedTraceLine FindBundle(string uid)
