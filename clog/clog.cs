@@ -190,10 +190,7 @@ namespace clog
 
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
-
-                        File.WriteAllText(options.OutputFile, clogFile.ToString());
-                        File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
-
+                                               
                         if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
                             if(options.ReadOnly)
@@ -204,6 +201,9 @@ namespace clog
                             Console.WriteLine($"    {configFile.FilePath}");
                             configFile.Save(false);
                         }
+
+                        File.WriteAllText(options.OutputFile, clogFile.ToString());
+                        File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
                     }
                     catch (CLogHandledException e)
                     {
