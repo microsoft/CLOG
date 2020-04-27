@@ -161,8 +161,6 @@ namespace clog
                             throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
                         }
 
-
-                        sidecar.SaveOnFinish(options.SidecarFile);
                         fullyDecodedMacroEmitter.FinishedProcessing();
 
                         StringBuilder clogFile = new StringBuilder();
@@ -190,12 +188,21 @@ namespace clog
 
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
-                                               
+
+                        if(sidecar.AreDirty)
+                        {
+                            if (options.ReadOnly)
+                            {
+                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                            }
+                            sidecar.Save(options.SidecarFile);
+                        }
+
                         if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
                             if(options.ReadOnly)
                             {
-                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ConfigFile", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
                             Console.WriteLine("Configuration file was updated, saving...");
                             Console.WriteLine($"    {configFile.FilePath}");

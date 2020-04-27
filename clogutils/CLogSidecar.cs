@@ -42,6 +42,9 @@ namespace clogutils
 
         [JsonProperty] public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
 
+        private Dictionary<string, CLogDecodedTraceLine> HotEventBundles { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
+
+
         [JsonProperty] public int Version { get; set; }
 
 
@@ -64,20 +67,14 @@ namespace clogutils
             get { return true; }
         }
 
+
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             int hashUInt;
             string hash;
 
             traceLine.macro.DecodeUniqueId(traceLine.match, traceLine.UniqueId, out hash, out hashUInt);
-
-            if(EventBundlesV2.ContainsKey(hash))
-            {
-                return;
-            }
-
-            traceLine.configFile.AmIDirty = true;
-            EventBundlesV2[hash] = traceLine;
+            HotEventBundles[hash] = traceLine;
         }
 
         public void InitHeader(StringBuilder header)
@@ -99,7 +96,6 @@ namespace clogutils
         {
             Save(_sidecarFileName);
         }
-
 
         public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
@@ -132,9 +128,54 @@ namespace clogutils
             return ModuleTraceData[module][traceline.UniqueId];
         }
 
-        public void SaveOnFinish(string filename)
+        private void MergeHot()
         {
-            _sidecarFileName = filename;
+            //
+            // Merge in hot values
+            // 
+            foreach (var hot in HotEventBundles)
+            {
+                CLogDecodedTraceLine old;
+                if (EventBundlesV2.TryGetValue(hot.Key, out old))
+                {
+                    foreach (var x in hot.Value.ModuleProperites)
+                    {
+                        if (!old.ModuleProperites.ContainsKey(x.Key))
+                        {
+                            old.ModuleProperites[x.Key] = x.Value;
+                            AreDirty = true;
+                        }
+                        else
+                        {
+                            foreach(var y in hot.Value.ModuleProperites[x.Key])
+                            {
+                                if(!old.ModuleProperites[x.Key].ContainsKey(y.Key))
+                                {
+                                    old.ModuleProperites[x.Key][y.Key] = y.Value;
+                                    AreDirty = true;
+                                }
+                                else if(!old.ModuleProperites[x.Key][y.Key].Equals(y.Value))
+                                {
+                                    old.ModuleProperites[x.Key][y.Key] = y.Value;
+                                    AreDirty = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    EventBundlesV2[hot.Key] = hot.Value;
+                    AreDirty = true;
+                }
+            }
+        }
+
+        private bool _areDirty = false;
+        public bool AreDirty
+        {
+            get { MergeHot(); return _areDirty; }
+            set { value = _areDirty; }
         }
 
         public CLogDecodedTraceLine FindBundle(string uid)
