@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*++
+
+    Copyright (c) Microsoft Corporation.
+    Licensed under the MIT License.
+
+Abstract:
+
+    Describes a source line that matches with a CLOG macro
+
+--*/
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
