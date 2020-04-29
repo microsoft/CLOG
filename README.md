@@ -1,3 +1,12 @@
+﻿# Revisions
+## 0.1.0 ALPHA
+* Initial drop
+* Released for purposes of starting conversations
+* We expecting substantial (breaking) changes in short order;  please do not take a dependence until verson 1.0.0
+* We're using semver [as a guiding light](https://semver.org/spec/v2.0.0.html)
+
+
+# Introduction
 Within the tracing/telemetry space there are many API choices and (even if it's possible) it’s very difficult to choose correctly. The Microsoft QUIC project is in need of the ability to emit logging events cross platform, even in high performance data paths.
 
 Without introducing any new APIs for bit encoding, and exclusively using legacy encoders and tooling (ETW on Windows, LTTNG on linux) CLOG provides:
