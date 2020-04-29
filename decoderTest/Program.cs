@@ -3,6 +3,8 @@
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
 
+    Abstract : simple test of basic types
+
 --*/
 
 using System;

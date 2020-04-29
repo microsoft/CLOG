@@ -14,7 +14,7 @@ Abstract:
         such that 12 is the numerical representation of MESSAGE.
 
 
-    ***Pressently Unused and incomplete***
+    ***Presently Unused and incomplete***
 
 --*/
 

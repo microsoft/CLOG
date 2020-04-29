@@ -34,17 +34,21 @@ namespace clogutils
             TraceStringNoPrefix = userStringNoPrefix;
         }
 
-        [JsonProperty] public string TraceString { get; private set; }
+        [JsonProperty]
+        public string TraceString { get; private set; }
 
         public string TraceStringNoPrefix { get; private set; }
 
-        [JsonProperty] public string UniqueId { get; private set; }
+        [JsonProperty]
+        public string UniqueId { get; private set; }
 
         public CLogConfigurationFile configFile { get; private set; }
 
-        [JsonProperty] public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
+        [JsonProperty]
+        public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
 
-        [JsonProperty] public CLogTraceMacroDefination macro { get; private set; }
+        [JsonProperty]
+        public CLogTraceMacroDefination macro { get; private set; }
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {

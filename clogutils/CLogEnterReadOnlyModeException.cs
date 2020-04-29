@@ -25,12 +25,4 @@ namespace clogutils
             InfoString = msg;
         }
     }
-
-    public class CLogCustomDecoderNotFoundException : CLogEnterReadOnlyModeException
-    {
-        public CLogCustomDecoderNotFoundException(string msg, CLogLineMatch traceLine, Exception e = null) :
-            base(msg, CLogHandledException.ExceptionType.CustomTypeDecoderNotFound, traceLine, e)
-        {
-        }
-    }
 }

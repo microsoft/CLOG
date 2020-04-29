@@ -13,47 +13,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace clogutils.MacroDefinations
 {
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class CLogExportModuleDefination
-    {
-        [JsonProperty]
-        public string ExportModule;
-
-        [JsonProperty]
-        public Dictionary<string, string> CustomSettings { get; set; } = new Dictionary<string, string>();
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class CLogConfigurationProfile
-    {
-        [JsonProperty]
-        public List<CLogExportModuleDefination> Modules = new List<CLogExportModuleDefination>();
-
-        public CLogExportModuleDefination FindExportModule(string moduleName)
-        {
-            return Modules.Where(x => { return x.ExportModule.Equals(moduleName); }).FirstOrDefault();
-        }
-
-        public List<string> ModuleNames
-        {
-            get
-            {
-                List<string> ret = new List<string>();
-                foreach (var mod in Modules)
-                {
-                    ret.Add(mod.ExportModule);
-                }
-                return ret;
-            }
-        }
-    }
-
-
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceMacroDefination
     {
