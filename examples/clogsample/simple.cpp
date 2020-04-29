@@ -1,3 +1,13 @@
+/*++
+
+    Copyright (c) Microsoft Corporation.
+    Licensed under the MIT License.
+
+Abstract:
+
+   Simple CLOG test
+
+--*/
 #include <stdio.h>
 #include "simple.cpp.clog.h"
 

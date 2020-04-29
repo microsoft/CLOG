@@ -6,7 +6,7 @@
 Abstract:
 
     This class implements methods that emit C/C++ code that interacts with clog.h (which is used within your product code to define events)
-    
+
     Should other lanaguages be desired (C# for example), this is the emission code that would likly need to be extended
 
 --*/
@@ -40,7 +40,7 @@ namespace clog
             _sourceFile.AppendLine($"// CLOG generated {DateTimeOffset.Now}");
             _sourceFile.AppendLine("#include \"clog.h\"");
         }
-        
+
         public string HeaderInit
         {
             get { return _headerInit.ToString(); }
@@ -98,7 +98,7 @@ namespace clog
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)
             {
                 implSignature += "const char *uniqueId";
-                argsString += "uniqueId";// "encoded_arg_string";
+                argsString += "uniqueId";
 
                 int idx = 1;
                 foreach (var arg in decodedTraceLine.splitArgs)
@@ -234,7 +234,6 @@ namespace clog
                             throw new CLogEnterReadOnlyModeException("TraceIDNotUnique", CLogHandledException.ExceptionType.TaceIDNotUnique,  decodedTraceLine.match);
                         }
                     }
-
 
                     if (!_knownHashes.Contains(decodedTraceLine.UniqueId))
                     {

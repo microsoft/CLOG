@@ -1,4 +1,15 @@
-#pragma once 
+/*++
+
+    Copyright (c) Microsoft Corporation.
+    Licensed under the MIT License.
+
+Abstract:
+
+    Main CLOG header file - this describes the primary macros that result in calling your desired trace libraries
+
+--*/
+
+#pragma once
 
 #ifndef LOG_ADDR_LEN
 #define LOG_ADDR_LEN(x) sizeof(x)
@@ -24,7 +35,7 @@
 extern "C" {
 #endif
 
-    
+
 #define EXPAND(x) x
 #define SELECT_ARGN_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, N, ...) N
 #define CLOG_ARGN_SELECTOR(...) \
@@ -58,7 +69,7 @@ extern "C" {
         0))
 
 #define CLOG_CAT_HELPER(x, y) x ## y
-#define CLOG_CAT(x, y) CLOG_CAT_HELPER(x, y)  
+#define CLOG_CAT(x, y) CLOG_CAT_HELPER(x, y)
 
 #ifdef __cplusplus
 }

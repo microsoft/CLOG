@@ -75,7 +75,7 @@ namespace clog2text_lttng
                     else if(1 == quotes)
                         quotes--;
                     else
-                        throw new ArgumentException("Escaped Quotes Off");                  
+                        throw new ArgumentException("Escaped Quotes Off");
                 }
 
                 piece += traceLine[i];
@@ -150,7 +150,6 @@ namespace clog2text_lttng
                 return -1;
             });
         }
-
         public interface ICLogEventDecoder
         {
             public string GetValue(string value);
@@ -265,9 +264,7 @@ namespace clog2text_lttng
                         ++idx;
                     }
 
-                    //CLogConsoleTrace.TraceLine(TraceType.Err, "Binary Encoding Not Yet Supported with LTTNG");
                     return ret.ToArray();
-                    //throw new NotImplementedException("Binary Encoding Not Supported");
                 }
             }
         }

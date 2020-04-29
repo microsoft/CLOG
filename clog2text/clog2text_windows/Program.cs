@@ -156,8 +156,8 @@ namespace clog2text_windows
                                     else
                                     {
                                         argMap = sidecar.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
-                                    }                                    
-                                    
+                                    }
+
                                     var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out string clean);
 
                                     if (0 == types.Length)
@@ -270,7 +270,7 @@ namespace clog2text_windows
                             return (ulong)_event.AsAddress.Value;
                         default:
                             throw new InvalidDataException("InvalidTypeForPointer:" + _event.Type);
-                    }                   
+                    }
                 }
             }
 

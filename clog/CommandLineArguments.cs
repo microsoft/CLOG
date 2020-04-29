@@ -78,14 +78,14 @@ namespace clog
         {
             get;
             set;
-        }        
+        }
 
         [Option('c', "configFile", Required = true, HelpText = "Full path to clog configuration file")]
         public string ConfigurationFile
         {
             get;
             set;
-        }            
+        }
 
         [Option("upgradeConfigFile", Required = false, Default = false, HelpText = "[OPTIONAL] Upgrade (by overwriting) the input config file to be of the latest version")]
         public bool UpgradeConfigFile
@@ -93,7 +93,6 @@ namespace clog
             get;
             set;
         }
-
 
         public bool IsValid()
         {

@@ -18,7 +18,7 @@ namespace clogutils
     {
         public enum ExceptionType
         {
-            TypeException = 1, 
+            TypeException = 1,
             DuplicateMacro = 2,
             MultipleMacrosWithSameName = 3,
             CircularConfigFilesNotAllowed = 4,
@@ -100,17 +100,11 @@ namespace clogutils
             return "Uknown Error";
         }
 
-
         public CLogHandledException(string msg, ExceptionType type, CLogLineMatch traceLine, Exception e = null) : base(msg)
         {
             Exception = e;
             TraceLine = traceLine;
             Type = type;
-            /*
-            if (!silent)
-            {
-                PrintDiagnostics();
-            }*/
         }
 
         public ExceptionType Type { get; private set; }

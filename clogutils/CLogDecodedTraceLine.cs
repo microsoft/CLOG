@@ -52,7 +52,6 @@ namespace clogutils
             return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
         }
 
-
         public CLogLineMatch match { get; private set; }
 
         public string SourceFile { get; set; }

@@ -228,7 +228,7 @@ namespace clogutils
             return ret.ToArray();
         }
 
-        private static CLogDecodedTraceLine BuildArgsFromEncodedArgs(CLogConfigurationFile configFile, string sourcefile, 
+        private static CLogDecodedTraceLine BuildArgsFromEncodedArgs(CLogConfigurationFile configFile, string sourcefile,
             CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine, string[] splitArgs)
         {
             string userArgs = macroDefination.CombinePrefixWithEncodedString(splitArgs[macroDefination.EncodedArgNumber].Trim());
@@ -379,7 +379,7 @@ namespace clogutils
                     }
 
                     if(conversionMode)
-                        contents = results.ToString();                    
+                        contents = results.ToString();
                 }
                 catch (Exception e)
                 {
@@ -394,7 +394,6 @@ namespace clogutils
 
             return contents;
         }
-
 
         public class VariableInfo
         {

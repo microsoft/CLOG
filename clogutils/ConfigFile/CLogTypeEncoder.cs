@@ -5,7 +5,7 @@
 
 Abstract:
 
-    Build heirarchy of encoding strings and types,  for example %foo vs %f  
+    Build heirarchy of encoding strings and types,  for example %foo vs %f
 
 --*/
 
@@ -41,21 +41,6 @@ namespace clogutils.ConfigFile
                 return _parent.Flatten();
             }
         }
-        /*
-        {
-            get
-            {
-              //  List<CLogEncodingCLogTypeSearch> ret = new List<CLogEncodingCLogTypeSearch>();
-
-                return _parent.Flatten();
-
-               // return ret;
-            }
-        }*/
-
-        //  public List<CLogEncodingCLogTypeSearch> hotTypes { get; set; } = new List<CLogEncodingCLogTypeSearch>();
-
-
 
         public string CustomTypeDecoder
         {
@@ -81,21 +66,19 @@ namespace clogutils.ConfigFile
             }
 
             Init(newEncoders);
-            //TypeEncoder = newEncoders;
         }
-        
+
         [OnSerializing]
         private void OnSerialized(StreamingContext context)
         {
             TypeEncoder = new List<CLogEncodingCLogTypeSearch>(FlattendTypeEncoder);
         }
-               
+
         [OnSerialized()]
         internal void OnSerializedMethod(StreamingContext context)
         {
             TypeEncoder = null;
         }
-
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -103,26 +86,6 @@ namespace clogutils.ConfigFile
             Init(TypeEncoder);
             TypeEncoder = null;
         }
-/*
-        public void MergeHotTypes(CLogTypeEncoder x)
-        {
-            foreach (var type in x.hotTypes)
-            {
-                var v = TypeEncoder.FirstOrDefault(yx => yx.DefinationEncoding.Equals(type.DefinationEncoding));
-
-                if(type.Hash != v.Hash)
-                {
-                    Debugger.Break();
-                }
-              
-                if (null != v)
-                {
-                    continue;
-                }
-
-                AddType(type);
-            }
-        }*/
 
         public void InitCustomDecoder(string code)
         {
@@ -130,7 +93,7 @@ namespace clogutils.ConfigFile
         }
 
         public bool DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
-        {            
+        {
             return _traceEmittorX.Decode(node, value, traceLine, out decodedValue);
         }
 
@@ -174,11 +137,6 @@ namespace clogutils.ConfigFile
                 {
                     TypeEncoder.Add(cLogTypeSearch);
                 }
-      /*          
-                if (!hotTypes.Contains(cLogTypeSearch))
-                {
-                    hotTypes.Add(cLogTypeSearch);
-                }*/
             }
 #endif
         }

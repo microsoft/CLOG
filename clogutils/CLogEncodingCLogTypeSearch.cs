@@ -38,7 +38,6 @@ namespace clogutils
         public HashSet<string> UsedBySourceFile { get; set; } = new HashSet<string>();
 
         public bool MarkPhase { get; set; }
-       
 
         public Guid Hash
         {
@@ -48,7 +47,6 @@ namespace clogutils
                 return CLogFileProcessor.GenerateMD5Hash(hash);
             }
         }
-
 
         /// <summary>
         /// Only serialize Synthesized if it's in use - just to keep things in the .config file tidy
