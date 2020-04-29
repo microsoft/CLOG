@@ -10,13 +10,13 @@ Abstract:
 
 --*/
 
+using clogutils.MacroDefinations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using clogutils.MacroDefinations;
-using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
@@ -50,13 +50,15 @@ namespace clogutils.ConfigFile
             set;
         }
 
-        [JsonProperty] public int Version
+        [JsonProperty]
+        public int Version
         {
             get;
             set;
         }
 
-        [JsonProperty] public string CustomTypeClogCSharpFile
+        [JsonProperty]
+        public string CustomTypeClogCSharpFile
         {
             get;
             set;
@@ -74,7 +76,8 @@ namespace clogutils.ConfigFile
             set;
         }
 
-        [JsonProperty] public CLogTypeEncoder TypeEncoders
+        [JsonProperty]
+        public CLogTypeEncoder TypeEncoders
         {
             get;
             set;
@@ -83,13 +86,15 @@ namespace clogutils.ConfigFile
         [JsonProperty] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
 
 
-        [JsonProperty] public List<CLogTraceMacroDefination> SourceCodeMacros
+        [JsonProperty]
+        public List<CLogTraceMacroDefination> SourceCodeMacros
         {
             get;
             set;
         } = new List<CLogTraceMacroDefination>();
 
-        [JsonProperty] private List<string> ChainedConfigFiles
+        [JsonProperty]
+        private List<string> ChainedConfigFiles
         {
             get;
             set;
@@ -137,7 +142,7 @@ namespace clogutils.ConfigFile
                 }
             }
         }
-        
+
         public bool ShouldSerializeChainedConfigurations()
         {
             return SerializeChainedConfigurations;
@@ -151,7 +156,7 @@ namespace clogutils.ConfigFile
                 this.TypeEncoders.InitCustomDecoder(this.CustomTypeClogCSharpFileContents);
         }
 
-        
+
 
         /// <summary>
         /// If the MarkPhase bit isnt set, dont clutter up the config file with it - it's a rare feature and we'd like to reduce confusion/complexity
@@ -256,11 +261,11 @@ namespace clogutils.ConfigFile
         {
             Dictionary<string, CLogTraceMacroDefination> ret = new Dictionary<string, CLogTraceMacroDefination>();
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
-                foreach(var def in config.AllKnownMacros())
+                foreach (var def in config.AllKnownMacros())
                 {
-                    if(ret.ContainsKey(def.MacroName))
+                    if (ret.ContainsKey(def.MacroName))
                     {
                         Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
                         throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
@@ -271,9 +276,9 @@ namespace clogutils.ConfigFile
                 }
             }
 
-            foreach(var def in SourceCodeMacros)
+            foreach (var def in SourceCodeMacros)
             {
-                if(ret.ContainsKey(def.MacroName))
+                if (ret.ContainsKey(def.MacroName))
                 {
                     Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
                     throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
@@ -344,7 +349,7 @@ namespace clogutils.ConfigFile
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
-                        
+
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
             return ret;
@@ -362,7 +367,7 @@ namespace clogutils.ConfigFile
                 t.MarkPhase = markBit;
             }
 
-            foreach(var config in ret.ChainedConfigurations)
+            foreach (var config in ret.ChainedConfigurations)
             {
                 RefreshTypeEncodersMarkBit(config, markBit);
             }
@@ -435,7 +440,7 @@ namespace clogutils.ConfigFile
 
             File.WriteAllText(this.FilePath, ToJson(persistChainedFiles));
 
-            foreach(var child in this.ChainedConfigurations)
+            foreach (var child in this.ChainedConfigurations)
             {
                 child.Save(persistChainedFiles);
             }

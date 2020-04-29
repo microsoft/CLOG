@@ -9,8 +9,8 @@ Abstract:
 
 --*/
 
-using System;
 using Newtonsoft.Json;
+using System;
 
 namespace clogutils.ConfigFile
 {

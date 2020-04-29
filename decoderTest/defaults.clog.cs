@@ -5,10 +5,6 @@
 
 --*/
 
-
-using System;
-using System.Runtime.InteropServices;
-
 namespace defaults.clog_config
 {
     public class Types
@@ -20,12 +16,12 @@ namespace defaults.clog_config
 
         public static string DecodeUInt32(uint value)
         {
-            return "CLOG_UINT32:"+value.ToString();
+            return "CLOG_UINT32:" + value.ToString();
         }
 
         public static string DecodeInt32(int value)
         {
-            return "CLOG_INT32:"+value.ToString();
+            return "CLOG_INT32:" + value.ToString();
         }
 
         public static string DecodeInt8(byte value)

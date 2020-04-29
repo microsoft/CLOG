@@ -9,11 +9,10 @@ Abstract:
 
 --*/
 
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace clogutils
 {

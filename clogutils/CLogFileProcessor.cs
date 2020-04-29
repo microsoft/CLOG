@@ -9,15 +9,15 @@ Abstract:
 
 --*/
 
+using clogutils.ConfigFile;
+using clogutils.MacroDefinations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using clogutils.ConfigFile;
-using clogutils.MacroDefinations;
-using Newtonsoft.Json;
 
 namespace clogutils
 {
@@ -378,7 +378,7 @@ namespace clogutils
                         results.Append(contents.Substring(start, contents.Length - end));
                     }
 
-                    if(conversionMode)
+                    if (conversionMode)
                         contents = results.ToString();
                 }
                 catch (Exception e)

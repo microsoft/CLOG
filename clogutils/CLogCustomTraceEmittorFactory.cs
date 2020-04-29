@@ -12,6 +12,10 @@ Abstract:
 
 --*/
 
+using clogutils;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,10 +23,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using clogutils;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_lttng
@@ -48,7 +48,7 @@ namespace clog2text_lttng
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
 
-        private  void PrepareAssemblyCompileIfNecessary()
+        private void PrepareAssemblyCompileIfNecessary()
         {
             if (null != _codeAssembly)
                 return;
@@ -56,12 +56,12 @@ namespace clog2text_lttng
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(CustomTypeDecoder);
 
             string assemblyName = Path.GetRandomFileName();
-            var refPaths = new[] {typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll")};
+            var refPaths = new[] { typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll") };
             MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
 
             CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
-                new[] {syntaxTree},
+                new[] { syntaxTree },
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -81,7 +81,7 @@ namespace clog2text_lttng
 
                 throw new Exception("Unable to compile type converters");
             }
-            
+
             _codeAssembly = Assembly.Load(_compiledCode.GetBuffer());
         }
 
@@ -125,7 +125,7 @@ namespace clog2text_lttng
             string[] bits = customDecoder.Split('.');
             string member = bits[bits.Length - 1];
             customDecoder = customDecoder.Substring(0, customDecoder.Length - member.Length - 1);
-       
+
             var newType = _codeAssembly.GetType(customDecoder);
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
             decodedValue = "ERROR:" + type.CustomDecoder;

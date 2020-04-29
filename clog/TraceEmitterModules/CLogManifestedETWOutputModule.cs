@@ -10,14 +10,13 @@ Abstract:
 
 --*/
 
+using clogutils;
+using clogutils.MacroDefinations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
-using clogutils;
-using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
 {
@@ -57,7 +56,7 @@ namespace clog.TraceEmitterModules
 
         private void SetAttribute(XmlElement e, string attribute, string newValue)
         {
-            if(e.HasAttribute(attribute))
+            if (e.HasAttribute(attribute))
             {
                 if (e.GetAttribute(attribute).Equals(newValue))
                     return;
@@ -74,13 +73,13 @@ namespace clog.TraceEmitterModules
 
             if (!_inited)
             {
-                if(!moduleSettings.CustomSettings.ContainsKey("ETWManifestFile"))
+                if (!moduleSettings.CustomSettings.ContainsKey("ETWManifestFile"))
                     throw new CLogEnterReadOnlyModeException("ETWManifestFileNotSpecified", CLogHandledException.ExceptionType.MustSpecifiyETWManifest, decodedTraceLine.match);
 
-               xmlFileName = moduleSettings.CustomSettings["ETWManifestFile"];
-               xmlFileName = Path.Combine(Path.GetDirectoryName(decodedTraceLine.macro.ConfigFileWithMacroDefination), xmlFileName);
+                xmlFileName = moduleSettings.CustomSettings["ETWManifestFile"];
+                xmlFileName = Path.Combine(Path.GetDirectoryName(decodedTraceLine.macro.ConfigFileWithMacroDefination), xmlFileName);
 
-               Init();
+                Init();
             }
 
             if (!moduleSettings.CustomSettings.ContainsKey("ETW_Provider"))
@@ -101,7 +100,7 @@ namespace clog.TraceEmitterModules
             string eventNamePrefix;
             if (!moduleSettings.CustomSettings.TryGetValue("EventNamePrefix", out eventNamePrefix))
                 eventNamePrefix = string.Empty;
-            
+
             if (null == manifest)
             {
                 Console.WriteLine($"Unable to locate ETW provider {providerId} in CLOG macro {decodedTraceLine.macro.MacroName}");
@@ -168,7 +167,7 @@ namespace clog.TraceEmitterModules
                 newEvent = doc.CreateElement("event", manifest.events.NamespaceURI);
                 manifest.events.AppendChild(newEvent);
                 _dirty = true;
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix +hash} to ETW manifest {xmlFileName}");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix + hash} to ETW manifest {xmlFileName}");
             }
 
             int hashUInt;
@@ -191,11 +190,11 @@ namespace clog.TraceEmitterModules
             // Store the eventID for future decode as well as every configuration setting attached to this module
             //
             decodedTraceLine.AddConfigFileProperty(ModuleName, "EventID", eventId.ToString());
-            foreach(var setting in moduleSettings.CustomSettings)
+            foreach (var setting in moduleSettings.CustomSettings)
             {
                 decodedTraceLine.AddConfigFileProperty(ModuleName, setting.Key, setting.Value);
             }
-            
+
 
             SetAttribute(newEvent, "symbol", eventNamePrefix + hash);
 
@@ -450,20 +449,20 @@ namespace clog.TraceEmitterModules
                         break;
 
                     case CLogEncodingType.ByteArray:
-                    {
-                        templateNode.Type = "win:UInt8";
-                        templateNode.Hash = "ui8_";
-                        templateNode.Name += "_len";
-                        listOfTemplateArgs.Add(templateNode);
+                        {
+                            templateNode.Type = "win:UInt8";
+                            templateNode.Hash = "ui8_";
+                            templateNode.Name += "_len";
+                            listOfTemplateArgs.Add(templateNode);
 
 
-                        templateNode = new TemplateNode();
-                        templateNode.ArgBundle = a2;
-                        templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
-                        templateNode.LengthOfSelf = arg.VariableInfo.SuggestedTelemetryName + "_len";
-                        templateNode.Type = "win:Binary";
-                        templateNode.Hash = "binary_";
-                    }
+                            templateNode = new TemplateNode();
+                            templateNode.ArgBundle = a2;
+                            templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
+                            templateNode.LengthOfSelf = arg.VariableInfo.SuggestedTelemetryName + "_len";
+                            templateNode.Type = "win:Binary";
+                            templateNode.Hash = "binary_";
+                        }
                         break;
 
                     case CLogEncodingType.Synthesized:
@@ -553,7 +552,7 @@ namespace clog.TraceEmitterModules
                 }
 
                 // Only apply a template ID if it's not empty - otherwise choose the default
-                if(!templateId.Equals("templateId_"))
+                if (!templateId.Equals("templateId_"))
                     template.SetAttribute("tid", templateId);
 
                 manifest.templates.AppendChild(template);
@@ -580,7 +579,7 @@ namespace clog.TraceEmitterModules
                 string inType = pe.GetAttribute("inType");
                 string name = pe.GetAttribute("name");
 
-                if(listofArgsAsSpecifiedBySourceFile.Count <= argIdx)
+                if (listofArgsAsSpecifiedBySourceFile.Count <= argIdx)
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch - manifested ETW template and CLOG string differ");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"         Event ID : {eventId}");
@@ -590,7 +589,7 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
-                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch,  traceLine.match);
+                    throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch, traceLine.match);
                 }
 
                 TemplateNode templateReference = listofArgsAsSpecifiedBySourceFile[argIdx];

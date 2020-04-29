@@ -10,7 +10,6 @@ Abstract:
 --*/
 
 using clogutils;
-using clogutils.ConfigFile;
 using CommandLine;
 
 namespace clog
@@ -38,7 +37,7 @@ namespace clog
             set;
         }
 
-        [Option('p', "configProfile",  HelpText = "Configuration profile name")]
+        [Option('p', "configProfile", HelpText = "Configuration profile name")]
         public string ConfigurationProfile
         {
             get;
@@ -109,7 +108,7 @@ namespace clog
             }
             else
             {
-                if(string.IsNullOrEmpty(this.InputFile) || string.IsNullOrEmpty(this.OutputFile))
+                if (string.IsNullOrEmpty(this.InputFile) || string.IsNullOrEmpty(this.OutputFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "please specify both an input and and output file");
                     return false;
@@ -149,9 +148,9 @@ namespace clog
             //
             // Makesure ConfigurationProfile is specified for all but those who do not need it
             //
-            if(!RefreshCustomTypeProcessor)
+            if (!RefreshCustomTypeProcessor)
             {
-                if(string.IsNullOrEmpty(this.ConfigurationProfile))
+                if (string.IsNullOrEmpty(this.ConfigurationProfile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
                     return false;

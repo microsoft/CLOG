@@ -11,12 +11,12 @@ Abstract:
 
 --*/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using clogutils;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace clog
 {
@@ -231,7 +231,7 @@ namespace clog
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
                             }
 
-                            throw new CLogEnterReadOnlyModeException("TraceIDNotUnique", CLogHandledException.ExceptionType.TaceIDNotUnique,  decodedTraceLine.match);
+                            throw new CLogEnterReadOnlyModeException("TraceIDNotUnique", CLogHandledException.ExceptionType.TaceIDNotUnique, decodedTraceLine.match);
                         }
                     }
 

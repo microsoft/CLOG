@@ -10,8 +10,6 @@ Abstract:
 --*/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace clogutils
@@ -24,7 +22,7 @@ namespace clogutils
 
         public CLogLineMatch(string sourcefile, Match m)
         {
-            if(string.IsNullOrEmpty(sourcefile))
+            if (string.IsNullOrEmpty(sourcefile))
                 throw new ArgumentException();
 
             SourceFile = sourcefile;

@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
+using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using clogutils;
 
 namespace clog.TraceEmitterModules
 {
@@ -43,7 +43,7 @@ namespace clog.TraceEmitterModules
         }
 
         public void InitHeader(StringBuilder header)
-        {           
+        {
         }
 
         public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
@@ -52,7 +52,7 @@ namespace clog.TraceEmitterModules
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
-            if(!emittedHeader)
+            if (!emittedHeader)
             {
                 function.AppendLine($"// SYSTEMTAP {DateTime.Now}------");
                 function.AppendLine("#include <sys/sdt.h>");
@@ -68,12 +68,12 @@ namespace clog.TraceEmitterModules
             uid = uid.Replace("{", "");
             uid = uid.Replace("}", "");
             uid = uid.Replace("-", "");
-            
+
             //
             // Only emit the function once;  we may be called multiple times should someone emit an event multiple times in the same file 
             //    (usually error paths)
             //
-            if(alreadyEmitted.Contains(uid))
+            if (alreadyEmitted.Contains(uid))
             {
                 return;
             }
@@ -83,33 +83,36 @@ namespace clog.TraceEmitterModules
             string argsString = string.Empty;
             string macroString = string.Empty;
 
-            foreach(var arg in decodedTraceLine.splitArgs)
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
                 CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
-                if(!v.Synthesized)
+                if (!v.Synthesized)
                 {
                     string seperatorA = "";
                     string seperatorB = "";
 
-                    if(string.IsNullOrEmpty(argsString)){
+                    if (string.IsNullOrEmpty(argsString))
+                    {
                         seperatorA = ",";
                         seperatorB = "";
-                    } else {
+                    }
+                    else
+                    {
                         seperatorA = "";
                         seperatorB = ",";
                     }
-                
+
                     // If the encided type is 'binary' (length and payload) - for DTrace we emit the payload
                     //   length with the variable name <suggestedName>_len
-                    if(CLogEncodingType.ByteArray == v.EncodingType)
+                    if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
                         argsString += $"{seperatorB} unsigned int {arg.VariableInfo.SuggestedTelemetryName}_len{seperatorA}";
                         macroString += $"{seperatorB} {arg.MacroVariableName}_len{seperatorA}";
                     }
 
                     argsString += $"{seperatorB} {v.CType} {arg.MacroVariableName}";
-                    macroString += $"{seperatorB} {arg.MacroVariableName}";                   
+                    macroString += $"{seperatorB} {arg.MacroVariableName}";
                 }
             }
 
@@ -122,24 +125,24 @@ namespace clog.TraceEmitterModules
             // Emit into the CLOG macro (this is the actual code that goes into the product)
             // 
             macroPrefix.AppendLine("void " + uid + "(" + argsString + ");\r\n");
-            
+
             //
             // Emit our implementation into the .c file that CLOG generates
             //
-            function.AppendLine($"void {uid}({argsString})" + "{");  
+            function.AppendLine($"void {uid}({argsString})" + "{");
 
-            if(0 == decodedTraceLine.splitArgs.Length)
+            if (0 == decodedTraceLine.splitArgs.Length)
             {
-                function.AppendLine($"DTRACE_PROBE({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId});");               
+                function.AppendLine($"DTRACE_PROBE({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId});");
             }
-            else 
+            else
             {
                 function.Append($"DTRACE_PROBE{decodedTraceLine.splitArgs.Length}({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId}");
-                foreach(var arg in decodedTraceLine.splitArgs) 
+                foreach (var arg in decodedTraceLine.splitArgs)
                 {
                     function.Append($", {arg.MacroVariableName}");
-                } 
-                function.AppendLine(");"); 
+                }
+                function.AppendLine(");");
             }
 
             function.AppendLine("}\r\n\r\n");

@@ -9,10 +9,10 @@ Abstract:
 
 --*/
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace clogutils
 {
@@ -74,7 +74,7 @@ namespace clogutils
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if(null == UsedBySourceFile)
+            if (null == UsedBySourceFile)
                 UsedBySourceFile = new HashSet<string>();
         }
     }

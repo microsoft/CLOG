@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
+using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using clogutils;
 
 namespace clog.TraceEmitterModules
 {
@@ -65,37 +65,40 @@ namespace clog.TraceEmitterModules
             string argsString = string.Empty;
             string macroString = string.Empty;
 
-            foreach(var arg in decodedTraceLine.splitArgs)
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
                 CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
-                if(!v.Synthesized)
+                if (!v.Synthesized)
                 {
                     string seperatorA = "";
                     string seperatorB = "";
 
-                    if(string.IsNullOrEmpty(argsString)){
+                    if (string.IsNullOrEmpty(argsString))
+                    {
                         seperatorA = ",";
                         seperatorB = "";
-                    } else {
+                    }
+                    else
+                    {
                         seperatorA = "";
                         seperatorB = ",";
                     }
-                
+
                     // If the encided type is 'binary' (length and payload) - for DTrace we emit the payload
                     //   length with the variable name <suggestedName>_len
-                    if(CLogEncodingType.ByteArray == v.EncodingType)
+                    if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
                         argsString += $"{seperatorB} unsigned int {arg.VariableInfo.SuggestedTelemetryName}_len{seperatorA}";
                         macroString += $"{seperatorB} {arg.MacroVariableName}_len{seperatorA}";
                     }
 
                     argsString += $"{seperatorB} {v.CType} {arg.MacroVariableName}";
-                    macroString += $"{seperatorB} {arg.MacroVariableName}";                   
+                    macroString += $"{seperatorB} {arg.MacroVariableName}";
                 }
             }
 
-           
+
             //
             // Emit into the CLOG macro (this is the actual code that goes into the product)
             // 
@@ -105,7 +108,7 @@ namespace clog.TraceEmitterModules
             // Emit our foward delcaration and implementation into the .c file that CLOG generates
             //
             if (!alreadyEmitted.Contains(uid))
-            {                
+            {
                 inline.AppendLine($"{uid}({macroString});\\");
                 function.AppendLine($"void {uid}({argsString})" + "{}\r\n\r\n");
                 alreadyEmitted.Add(uid);

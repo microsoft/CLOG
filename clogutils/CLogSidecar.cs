@@ -9,13 +9,12 @@ Abstract:
 
 --*/
 
+using clogutils.ConfigFile;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
-using clogutils.ConfigFile;
-using Newtonsoft.Json;
 
 namespace clogutils
 {
@@ -147,14 +146,14 @@ namespace clogutils
                         }
                         else
                         {
-                            foreach(var y in hot.Value.ModuleProperites[x.Key])
+                            foreach (var y in hot.Value.ModuleProperites[x.Key])
                             {
-                                if(!old.ModuleProperites[x.Key].ContainsKey(y.Key))
+                                if (!old.ModuleProperites[x.Key].ContainsKey(y.Key))
                                 {
                                     old.ModuleProperites[x.Key][y.Key] = y.Value;
                                     AreDirty = true;
                                 }
-                                else if(!old.ModuleProperites[x.Key][y.Key].Equals(y.Value))
+                                else if (!old.ModuleProperites[x.Key][y.Key].Equals(y.Value))
                                 {
                                     old.ModuleProperites[x.Key][y.Key] = y.Value;
                                     AreDirty = true;

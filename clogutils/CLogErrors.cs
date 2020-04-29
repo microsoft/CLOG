@@ -9,8 +9,6 @@ Abstract:
 
 --*/
 
-using System.Text.RegularExpressions;
-
 namespace clogutils
 {
     public class CLogErrors

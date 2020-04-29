@@ -9,16 +9,12 @@ Abstract:
 
 --*/
 
+using clog2text_lttng;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
-using clog2text_lttng;
-using clogutils.MacroDefinations;
-using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
@@ -56,9 +52,9 @@ namespace clogutils.ConfigFile
         public void Lint()
         {
             List<CLogEncodingCLogTypeSearch> newEncoders = new List<CLogEncodingCLogTypeSearch>();
-            foreach(var encoder in FlattendTypeEncoder)
+            foreach (var encoder in FlattendTypeEncoder)
             {
-                if(encoder.UsedBySourceFile.Count > 0)
+                if (encoder.UsedBySourceFile.Count > 0)
                 {
                     newEncoders.Add(encoder);
                     encoder.MarkPhase = false;
@@ -149,7 +145,7 @@ namespace clogutils.ConfigFile
         public CLogEncodingCLogTypeSearch FindTypeX(string encoded)
         {
             int idx = 0;
-            return FindTypeAndAdvance(encoded, null,ref idx);
+            return FindTypeAndAdvance(encoded, null, ref idx);
         }
 
         public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
@@ -160,7 +156,7 @@ namespace clogutils.ConfigFile
             CLogTypeSearchNode prev = null;
             int? prevIdx = null;
 
-            for (;;)
+            for (; ; )
             {
                 type += encoded[index];
 
@@ -168,7 +164,7 @@ namespace clogutils.ConfigFile
                 {
                     if (null != prev && null != prev.UserNode)
                     {
-                        if(null != traceLineMatch)
+                        if (null != traceLineMatch)
                             prev.UserNode.UsedBySourceFile.Add(traceLineMatch.SourceFile);
 
                         index = prevIdx.Value;

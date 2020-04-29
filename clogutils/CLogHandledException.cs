@@ -10,7 +10,6 @@ Abstract:
 --*/
 
 using System;
-using System.Text.RegularExpressions;
 
 namespace clogutils
 {
@@ -25,7 +24,7 @@ namespace clogutils
             DuplicateId = 5,
             SourceMustIncludeCLOGHeader = 6,
             IncorrectStringAndNumericalEncoding = 7,
-            TooFewArguments =8,
+            TooFewArguments = 8,
             TooManyArguments = 9,
             InvalidInput = 10,
             UndefinedType = 11,
@@ -41,13 +40,13 @@ namespace clogutils
             ETWOutOfUniqueIDs = 21,
             ETWTypeMismatch = 22,
             CustomTypeDecoderNotFound = 23,
-            InvalidUniqueId =24,
+            InvalidUniqueId = 24,
             WontWriteInReadOnlyMode = 25
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
         {
-            switch(e)
+            switch (e)
             {
                 case ExceptionType.DuplicateMacro:
                     return "Macro defined twice in chained config files";
@@ -121,7 +120,7 @@ namespace clogutils
             string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
 
-            if(!String.IsNullOrEmpty(InfoString))
+            if (!String.IsNullOrEmpty(InfoString))
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Info : " + InfoString);
         }
     }

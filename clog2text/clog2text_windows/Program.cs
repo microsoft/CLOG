@@ -11,16 +11,14 @@ Abstract:
 
 --*/
 
+using clogutils;
+using CommandLine;
+using Microsoft.Windows.EventTracing;
+using Microsoft.Windows.EventTracing.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using clogutils;
-using clogutils.ConfigFile;
-using clogutils.MacroDefinations;
-using CommandLine;
-using Microsoft.Windows.EventTracing;
-using Microsoft.Windows.EventTracing.Events;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_windows
@@ -129,7 +127,7 @@ namespace clog2text_windows
                                         }
                                         else
                                         {
-                                            if(e.ActivityName.Equals(b.Key))
+                                            if (e.ActivityName.Equals(b.Key))
                                             {
                                                 bundle = b.Value;
                                                 errorString = "ERROR:" + b.Key;
@@ -245,7 +243,8 @@ namespace clog2text_windows
 
             public byte[] AsBinary
             {
-                get {
+                get
+                {
                     switch (_event.Type)
                     {
                         case GenericEventFieldType.ByteList:
@@ -262,7 +261,7 @@ namespace clog2text_windows
             {
                 get
                 {
-                    switch(_event.Type)
+                    switch (_event.Type)
                     {
                         case GenericEventFieldType.UInt64:
                             return _event.AsUInt64;

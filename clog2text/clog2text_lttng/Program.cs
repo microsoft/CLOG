@@ -11,12 +11,11 @@ Abstract:
 
 --*/
 
+using clogutils;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using clogutils;
-using clogutils.ConfigFile;
-using CommandLine;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_lttng
@@ -33,11 +32,11 @@ namespace clog2text_lttng
             int lastEqual = -1;
             int startIndex = 0;
 
-            for(int i = 0;
+            for (int i = 0;
                     i < traceLine.Length + 1;
                     ++i) //<-- go one beyond the array, we catch this in the if block below
             {
-                if((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount && 0 == arrayCount && 0 == quotes)
+                if ((i >= traceLine.Length || traceLine[i] == ',') && 0 == bracketCount && 0 == arrayCount && 0 == quotes)
                 {
                     string key = traceLine.Substring(startIndex, lastEqual - startIndex).Trim();
                     string value = traceLine.Substring(lastEqual + 1, i - lastEqual - 1).Trim();
@@ -72,7 +71,7 @@ namespace clog2text_lttng
                 {
                     if (0 == quotes)
                         ++quotes;
-                    else if(1 == quotes)
+                    else if (1 == quotes)
                         quotes--;
                     else
                         throw new ArgumentException("Escaped Quotes Off");
@@ -96,7 +95,7 @@ namespace clog2text_lttng
 
                 TextReader file = Console.In;
 
-                if(!string.IsNullOrEmpty(options.BabelTrace))
+                if (!string.IsNullOrEmpty(options.BabelTrace))
                 {
                     file = new StreamReader(options.BabelTrace);
                 }
@@ -193,7 +192,7 @@ namespace clog2text_lttng
 
                 string fields = args["event.fields"].AsString.Substring(1, args["event.fields"].AsString.Length - 2).Trim();
 
-                if(0 == fields.Length)
+                if (0 == fields.Length)
                 {
                     args = new Dictionary<string, IClogEventArg>();
                 }
@@ -246,15 +245,15 @@ namespace clog2text_lttng
             {
                 get
                 {
-                    int firstOpen = AsString.IndexOf("[")+1;
-                    int lastClose = AsString.LastIndexOf("]")-1;
+                    int firstOpen = AsString.IndexOf("[") + 1;
+                    int lastClose = AsString.LastIndexOf("]") - 1;
 
                     string bits = AsString.Substring(firstOpen, AsString.Length - (AsString.Length - lastClose) - firstOpen);
                     var splits = SplitBabelTraceLine(bits);
 
                     List<byte> ret = new List<byte>();
                     int idx = 0;
-                    for(; ; )
+                    for (; ; )
                     {
                         IClogEventArg arg;
                         if (!splits.TryGetValue($"[{idx}]", out arg))

@@ -9,10 +9,10 @@ Abstract:
 
 --*/
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json;
 using System.Linq;
 
 namespace clogutils.MacroDefinations
@@ -36,7 +36,7 @@ namespace clogutils.MacroDefinations
 
         public CLogExportModuleDefination FindExportModule(string moduleName)
         {
-            return Modules.Where(x => { return x.ExportModule.Equals(moduleName); } ).FirstOrDefault();
+            return Modules.Where(x => { return x.ExportModule.Equals(moduleName); }).FirstOrDefault();
         }
 
         public List<string> ModuleNames
@@ -44,7 +44,7 @@ namespace clogutils.MacroDefinations
             get
             {
                 List<string> ret = new List<string>();
-                foreach(var mod in Modules)
+                foreach (var mod in Modules)
                 {
                     ret.Add(mod.ExportModule);
                 }
@@ -64,11 +64,11 @@ namespace clogutils.MacroDefinations
         [JsonProperty] public string EncodedPrefix { get; set; }
 
         [JsonProperty] public virtual int EncodedArgNumber { get; set; }
-              
+
         [JsonProperty] public Dictionary<string, string> MacroConfiguration { get; set; }
 
         public string ConfigFileWithMacroDefination { get; set; }
-               
+
         [DefaultValue(CLogUniqueIDEncoder.Basic)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public CLogUniqueIDEncoder UniqueIdEncoder { get; set; }
@@ -90,36 +90,36 @@ namespace clogutils.MacroDefinations
                     break;
 
                 case CLogUniqueIDEncoder.StringAndNumerical:
-                {
-                    int lastIdx = arg.LastIndexOf('_');
-
-                    if (-1 == lastIdx)
-                        throw new CLogEnterReadOnlyModeException(
-                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
-                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
-                            m);
-
-                    id = arg.Substring(0, lastIdx);
-
-                    if (string.IsNullOrEmpty(id))
                     {
-                        throw new CLogEnterReadOnlyModeException(
-                            "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
-                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
-                    }
+                        int lastIdx = arg.LastIndexOf('_');
 
-                    try
-                    {
-                        idHash = Convert.ToInt32(arg.Substring(lastIdx + 1));
+                        if (-1 == lastIdx)
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                                 CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
+                                m);
+
+                        id = arg.Substring(0, lastIdx);
+
+                        if (string.IsNullOrEmpty(id))
+                        {
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                                 CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
+                        }
+
+                        try
+                        {
+                            idHash = Convert.ToInt32(arg.Substring(lastIdx + 1));
+                        }
+                        catch (FormatException)
+                        {
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID was located but is not in the correct format, please follow the 'StringAndNumerical' format",
+                                 CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
+                                m);
+                        }
                     }
-                    catch (FormatException)
-                    {
-                        throw new CLogEnterReadOnlyModeException(
-                            "Unique ID was located but is not in the correct format, please follow the 'StringAndNumerical' format",
-                             CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
-                            m);
-                    }
-                }
                     break;
 
                 default:
