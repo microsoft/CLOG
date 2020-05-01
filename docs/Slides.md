@@ -7,14 +7,14 @@
 
 
 # Tracing on Windows
-|              |   OS    | Capability         | printf() style | Manifest Location | Popular |
-|--------------|---------|--------------------|------------|------------|
-| Manifested   | Windows | DiagTrack/OneTrace | No | External/OnBox | Among some |
-| Tracelogging | Windows | DiagTrack/OneTrace | No | Internal to event | Equally uncomfortable |
-| WPP          | Windows | -                  | Yes | External/PDB |  Among some |
-| Lttng        | Linux   | -                  | No | Yes | Among some|
-| printf()     | All     | -                  | No | Yes | :/ |
-|-----------|
+|               |   OS    | Capability         | printf() style | Manifest Location |
+| ------------- | ------- | ------------------ |--------------- | ----------------- | 
+| Manifested    | Windows | DiagTrack/OneTrace | No             | External/OnBox    |
+| Tracelogging  | Windows | DiagTrack/OneTrace | No             | Internal          |
+| WPP           | Windows | -                  | Yes            | External/PDB      | 
+| Lttng         | Linux   | -                  | No             | Internal          |
+| printf()      | All     | -                  | No             | Internal          |
+
 
 
 # CLog Interesting Decisions (ones with lots of thought)
