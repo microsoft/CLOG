@@ -38,7 +38,7 @@ namespace clog
             _inputSourceFile = inputSourceFile;
             _sidecar = sidecar;
             _sourceFile.AppendLine($"// CLOG generated {DateTimeOffset.Now}");
-            _sourceFile.AppendLine("#include \"clog.h\"");
+            _sourceFile.AppendLine("#include <clog.h>");
         }
 
         public string HeaderInit
@@ -92,7 +92,7 @@ namespace clog
 
             string implSignature = $" clogTraceImpl_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}(";
 
-            string macroName = $"CLOG_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}";
+            string macroName = $"_clog_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}";
             _headerFile.AppendLine($"#ifndef {macroName}");
 
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)

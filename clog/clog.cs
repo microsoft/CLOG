@@ -6,7 +6,7 @@
 Abstract:
 
     This class implements the main configuration and setup for reading clog config files, your source code, side cars etc.
-    
+
     By implementing the main() for clog, it's mostly connecting up other clases
 
 --*/
@@ -164,16 +164,16 @@ namespace clog
                         fullyDecodedMacroEmitter.FinishedProcessing();
 
                         StringBuilder clogFile = new StringBuilder();
-                        clogFile.AppendLine("#include \"clog.h\"");
+                        clogFile.AppendLine("#include <clog.h>");
 
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
 
                         foreach (var macro in processor.MacrosInUse)
                         {
-                            clogFile.AppendLine($"#ifndef CLOG_MACRO_{macro.MacroName}");
-                            clogFile.AppendLine($"#define CLOG_MACRO_{macro.MacroName}  1");
+                            clogFile.AppendLine($"#ifndef _clog_MACRO_{macro.MacroName}");
+                            clogFile.AppendLine($"#define _clog_MACRO_{macro.MacroName}  1");
                             clogFile.AppendLine(
-                                $"#define {macro.MacroName}(a, ...) CLOG_CAT(CLOG_ARGN_SELECTOR(__VA_ARGS__), CLOG_CAT(_,a(#a, __VA_ARGS__)))");
+                                $"#define {macro.MacroName}(a, ...) _clog_CAT(_clog_ARGN_SELECTOR(__VA_ARGS__), _clog_CAT(_,a(#a, __VA_ARGS__)))");
                             clogFile.AppendLine("#endif");
                         }
 
