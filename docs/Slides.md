@@ -1,26 +1,26 @@
 
 # At a high level, whats the problem?
 * Backend infra, analysis tooling, and trace API are tightly coupled - lots of duplicated work
-* Product/OS needs often dictate bit encoder - which leads to the cart(encoder) leading the horse (API/tools)
-* Once you've chosen API, you're basically locked for life
-* Windows has at least 3 bit encoders - and they're basically 
+* Product/OS needs often mandates bit encoder - which leads to the cart(encoder) leading the horse (API/tools)
+* Once you've chosen API, you also chosen tooling
+* Windows has at least 3 similar bit encoders; Linux has even more
 
 
 # Tracing on Windows
 |              |   OS    | Capability         | printf() style | Manifest Location | Popular |
 |--------------|---------|--------------------|------------|------------|
-| Manifested   | Windows | DiagTrack/OneTrace | No | External/OnBox | No; hated by all but FUN |
+| Manifested   | Windows | DiagTrack/OneTrace | No | External/OnBox | Among some |
 | Tracelogging | Windows | DiagTrack/OneTrace | No | Internal to event | Equally uncomfortable |
-| WPP          | Windows | -                  | Yes | External/PDB | Loved by all but FUN|
-| Lttng        | Linux   | -                  | No | Yes| No; universally disliked but accepted |
-| printf()     | All     | -                  | No | Yes| OMG :/ |
+| WPP          | Windows | -                  | Yes | External/PDB |  Among some |
+| Lttng        | Linux   | -                  | No | Yes | Among some|
+| printf()     | All     | -                  | No | Yes | :/ |
 |-----------|
 
 
 # CLog Interesting Decisions (ones with lots of thought)
 * Decouples the API surface from the bit encoder
-* API choice should introduce *zero* instructions; ruling out inheritance
-* Durable ID's are always required to support tooling
+* API choice should introduce *zero* instructions beyond what the target encoder requires (eliminating classes/inheritance)
+* Durable ID's are always required to support advanced tooling tooling
 * Events should be created with zero friction to the programmer; manifests are friction
 * Debugging strings shouldnt ship, unless you want to
 * Tools should be usable, no matter if the bit encoders change
