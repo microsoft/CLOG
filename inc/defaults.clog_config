@@ -1,0 +1,119 @@
+{
+  "MacroConfigurations": {},
+  "Version": 1,
+  "CustomTypeClogCSharpFile": "../decoderTest/defaults.clog.cs",
+  "TypeEncoders": {
+    "Version": 0,
+    "TypeEncoder": [
+      {
+        "EncodingType": "ByteArray",
+        "CType": "CLOG_PTR",
+        "DefinationEncoding": "!BYTEARRAY!"
+      },
+      {
+        "EncodingType": "UInt32",
+        "CType": "CLOG_INT32",
+        "DefinationEncoding": "d",
+        "CustomDecoder": "defaults.clog_config.Types.DecodeUInt32"
+      },
+      {
+        "EncodingType": "UInt8",
+        "CType": "CLOG_UINT8",
+        "DefinationEncoding": "hhu"
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hu"
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hd"
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hx"
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hX"
+      },
+      {
+        "EncodingType": "UInt8",
+        "CType": "CLOG_UINT8",
+        "DefinationEncoding": "c"
+      },
+      {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "ld"
+      },
+      {
+        "EncodingType": "UInt64",
+        "CType": "CLOG_UINT64",
+        "DefinationEncoding": "lu"
+      },
+      {
+        "EncodingType": "UInt64",
+        "CType": "CLOG_UINT64",
+        "DefinationEncoding": "llu"
+      },
+      {
+        "EncodingType": "UInt64",
+        "CType": "CLOG_UINT64",
+        "DefinationEncoding": "llx"
+      },
+      {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "lld"
+      },
+      {
+        "EncodingType": "UInt64",
+        "CType": "CLOG_UINT64",
+        "DefinationEncoding": "llX"
+      },
+      {
+        "EncodingType": "Int64",
+        "CType": "CLOG_INT64",
+        "DefinationEncoding": "zd"
+      },
+      {
+        "EncodingType": "Int32",
+        "CType": "CLOG_INT32",
+        "DefinationEncoding": "4.4x"
+      },
+      {
+        "EncodingType": "UInt32",
+        "CType": "CLOG_UINT32",
+        "DefinationEncoding": "u"
+      },
+      {
+        "EncodingType": "UNICODE_String",
+        "CType": "const unsigned short *",
+        "DefinationEncoding": "S"
+      },
+      {
+        "EncodingType": "ANSI_String",
+        "CType": "const char *",
+        "DefinationEncoding": "s"
+      },
+      {
+        "EncodingType": "Pointer",
+        "CType": "CLOG_PTR",
+        "DefinationEncoding": "p",
+        "CustomDecoder": "defaults.clog_config.Types.DecodePointer"
+      },
+      {
+        "EncodingType": "UInt32",
+        "CType": "CLOG_UINT32",
+        "DefinationEncoding": "x"
+      }
+    ]
+  },
+  "SourceCodeMacros": [],
+  "ChainedConfigFiles": []
+}

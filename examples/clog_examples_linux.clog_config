@@ -1,0 +1,39 @@
+{
+  "MacroConfigurations": {
+    "lttng_plus": {
+      "Modules": [
+        {
+          "ExportModule": "DTRACE",
+          "CustomSettings": {}
+        }
+      ]
+    }
+  },
+  "Version": 0,
+  "CustomTypeClogCSharpFile": null,
+  "TypeEncoders": {
+    "Version": 0,
+    "TypeEncoder": []
+  },
+  "SourceCodeMacros": [
+    {
+      "MacroName": "TraceInfo",
+      "EncodedPrefix": null,
+      "EncodedArgNumber": 1,
+      "MacroConfiguration": {
+        "linux": "lttng_plus"
+      }
+    },
+    {
+      "MacroName": "TraceInstanceInfo",
+      "EncodedPrefix": "[%p]",
+      "EncodedArgNumber": 2,
+      "MacroConfiguration": {
+        "linux": "lttng_plus"
+      }
+    }
+  ],
+  "ChainedConfigFiles": [
+    "../inc/defaults.clog_config"
+  ]
+}
