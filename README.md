@@ -29,12 +29,14 @@ Clog argues a tool (and not a library) best solves the range of problems we face
 
 * Using a “printf like” syntax for event description
     ```cpp
-    TraceLogWarning(DroppedPacket, "[conn][%p] DROP packet[%I] Dst=%!IPADDR! Src=%!IPADDR! Reason=%s.",
-                                    Owner,
-                                    Packet->PacketNumberSet ? UINT64_MAX : Packet->PacketNumber,
-                                    CLOG_BYTEARRAY(LOG_ADDR_LEN(Datagram->Tuple->LocalAddress), (uint8_t*)&Datagram->Tuple->LocalAddress),
-                                    CLOG_BYTEARRAY(LOG_ADDR_LEN(Datagram->Tuple->RemoteAddress), (uint8_t*)&Datagram->Tuple->RemoteAddress),
-                                    Reason);
+    TraceLogWarning(
+        DroppedPacket,
+        "[conn][%p] DROP packet[%I] Dst=%!IPADDR! Src=%!IPADDR! Reason=%s.",
+        Owner,
+        Packet->PacketNumberSet ? UINT64_MAX : Packet->PacketNumber,
+        CLOG_BYTEARRAY(LOG_ADDR_LEN(Datagram->Tuple->LocalAddress), (uint8_t*)&Datagram->Tuple->LocalAddress),
+        CLOG_BYTEARRAY(LOG_ADDR_LEN(Datagram->Tuple->RemoteAddress), (uint8_t*)&Datagram->Tuple->RemoteAddress),
+        Reason);
     ```
 
 
