@@ -191,8 +191,8 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        TraceID:{existingTraceInfo.TraceID}");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
 
-                            _sidecar.ModuleUniqueness.Remove(decodedTraceLine.configFile, existingTraceInfo);
-                            _knownHashes.Remove(decodedTraceLine.UniqueId);
+                            _sidecar.RemoveTraceLine(existingTraceInfo);
+							_knownHashes.Remove(decodedTraceLine.UniqueId);
                         }
                         else
                         {
@@ -237,7 +237,7 @@ namespace clog
 
                     if (!_knownHashes.Contains(decodedTraceLine.UniqueId))
                     {
-                        _sidecar.ModuleUniqueness.Insert(module, decodedTraceLine);
+                        _sidecar.InsertTraceLine(module, decodedTraceLine);
 
                         module.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
                             macroBody,

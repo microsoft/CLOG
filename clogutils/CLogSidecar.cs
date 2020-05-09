@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using static clogutils.CLogConsoleTrace;
 
 namespace clogutils
 {
@@ -55,6 +56,34 @@ namespace clogutils
             get;
             set;
         } = new CLogModuleUsageInformation();
+
+
+        private List<string> ChangesList = new List<string>();
+        public void PrintDirtyReasons()
+        {
+            foreach (string s in ChangesList)
+            {
+                CLogConsoleTrace.TraceLine(TraceType.Err, "Config Changed : " + s);
+            }
+        }
+
+        public void InsertTraceLine(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
+        {
+            CLogTraceLineInformation output;
+            if (ModuleUniqueness.IsUnique(module, traceLine, out output))
+                return;
+
+            AreDirty = true;
+            ChangesList.Add("Inserting : " + traceLine.UniqueId);
+            ModuleUniqueness.Insert(module, traceLine);
+        }
+
+        public void RemoveTraceLine(CLogTraceLineInformation traceLine)
+        {
+            AreDirty = true;
+            ChangesList.Add("Removed : " + traceLine.TraceID);
+            ModuleUniqueness.Remove(traceLine);
+        }
 
         public string ModuleName
         {
@@ -174,7 +203,7 @@ namespace clogutils
         public bool AreDirty
         {
             get { MergeHot(); return _areDirty; }
-            set { _areDirty = value; }
+            private set { _areDirty = value; }
         }
 
         public CLogDecodedTraceLine FindBundle(string uid)

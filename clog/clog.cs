@@ -189,10 +189,11 @@ namespace clog
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
 
-                        if (sidecar.AreDirty)
+                        if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
                             if (options.ReadOnly)
                             {
+                                sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
                             sidecar.Save(options.SidecarFile);

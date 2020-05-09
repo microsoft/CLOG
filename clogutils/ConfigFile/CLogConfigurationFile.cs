@@ -176,7 +176,7 @@ namespace clogutils.ConfigFile
         public bool AmIDirty
         {
             get;
-            set;
+            private set;
         }
 
         public bool AreWeDirty()
