@@ -11,10 +11,11 @@ function(CLOG_ADD_SOURCEFILE)
      # message(STATUS ">>>> CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 
     foreach(arg IN LISTS ARGV)
-        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${arg}.clog.h)
-        set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}_${arg}.clog.h.c)
+        get_filename_component(RAW_FILENAME ${arg} NAME)
+        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${RAW_FILENAME}.clog.h)
+        set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}_${RAW_FILENAME}.clog.h.c)
 
-        # message(STATUS ">>>>>>> CLOG Source File = ${arg}")
+        # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
 
         add_custom_command(
             WORKING_DIRECTORY ${CLOG_SOURCE_DIRECTORY}
