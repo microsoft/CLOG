@@ -151,7 +151,7 @@ namespace syslog2clog
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
 
                         
-                        File.WriteAllText(options.OutputFile, output);
+                        File.WriteAllText(options.InputFile, output);
                     }
                     catch (CLogHandledException e)
                     {

@@ -192,7 +192,12 @@ namespace clog
                         if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
                             if (options.ReadOnly)
-                            {
+                            {                                    
+                                if(sidecar.AreDirty)
+                                    Console.WriteLine("Sidecar is dirty");
+                                if(configFile.AreWeDirty())
+                                    Console.WriteLine("ConfigFile is dirty");
+                                    
                                 sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
