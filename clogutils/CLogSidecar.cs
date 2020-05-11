@@ -194,6 +194,7 @@ namespace clogutils
                 else
                 {
                     EventBundlesV2[hot.Key] = hot.Value;
+                    ChangesList.Add("Added New Event: " + hot.Key);
                     AreDirty = true;
                 }
             }
