@@ -346,19 +346,17 @@ namespace clogutils
 
                             results.Append(keep);
 
-                            if (callbacks is ICLogPartiallyDecodedLineCallbackInterface)
+                            CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
+                        /*    if (callbacks is ICLogPartiallyDecodedLineCallbackInterfaceX)
                             {
-                                ((ICLogPartiallyDecodedLineCallbackInterface)callbacks).TraceLineDiscovered(match.Value,
-                                    ConfigFile, macro, splitArgs, results);
+                                string toAdd = ((ICLogPartiallyDecodedLineCallbackInterfaceX)callbacks).ReplaceLineWith(traceLine);
+                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
                             }
                             else
-                            {
-                                CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
-
+                            {  */                            
                                 callbacks.TraceLineDiscovered(traceLine, results);
-                            }
-
-                            start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
+                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
+                          //  }                                                        
                         }
                         catch (CLogHandledException)
                         {
@@ -455,10 +453,9 @@ namespace clogutils
             void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder results);
         }
 
-        public interface ICLogPartiallyDecodedLineCallbackInterface
+        public interface ICLogPartiallyDecodedLineCallbackInterfaceX
         {
-            void TraceLineDiscovered(CLogLineMatch m, CLogConfigurationFile configFile,
-                CLogTraceMacroDefination macro, string[] variables, StringBuilder results);
+            string ReplaceLineWith(CLogDecodedTraceLine decodedTraceLine);
         }
     }
 }
