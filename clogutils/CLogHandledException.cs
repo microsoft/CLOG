@@ -41,7 +41,8 @@ namespace clogutils
             ETWTypeMismatch = 22,
             CustomTypeDecoderNotFound = 23,
             InvalidUniqueId = 24,
-            WontWriteInReadOnlyMode = 25
+            WontWriteInReadOnlyMode = 25,
+            RequiredConfigParameterUnspecified = 26
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -94,6 +95,8 @@ namespace clogutils
                     return "CLOG Unique IDs must be alphanumeric";
                 case ExceptionType.WontWriteInReadOnlyMode:
                     return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_FORCE_WRITABLE such that manifests and sidecars will be automatically updated";
+                case ExceptionType.RequiredConfigParameterUnspecified:
+                    return "A required configuration parameter was not specified in the configuration file - this will be a user specified option required for a chosen event module";
             }
 
             return "Uknown Error";

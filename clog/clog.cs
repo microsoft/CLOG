@@ -145,6 +145,9 @@ namespace clog
                         CLogSystemTapModule systemTap = new CLogSystemTapModule();
                         fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
+                        CLogSysLogModule syslog = new CLogSysLogModule();
+                        fullyDecodedMacroEmitter.AddClogModule(syslog);
+
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
