@@ -55,6 +55,24 @@ namespace clogutils
             return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
         }
 
+        public string GetConfigurationValue(string moduleName, string key)
+        {
+            string ret; 
+            if(null != macro.CustomSettings && null != macro.CustomSettings.ContainsKey(moduleName))
+            {
+                if (macro.CustomSettings[moduleName].TryGetValue(key, out ret))
+                    return ret;
+            }
+
+            CLogExportModuleDefination moduleSettings = GetMacroConfigurationProfile().FindExportModule(moduleName);
+
+            if (null == moduleSettings || !moduleSettings.CustomSettings.ContainsKey("Priority"))
+                throw new CLogEnterReadOnlyModeException("Priority", CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+
+            return moduleSettings.CustomSettings["Priority"];
+        }
+
+
         public CLogLineMatch match { get; private set; }
 
         public string SourceFile { get; set; }

@@ -48,13 +48,8 @@ namespace clog.TraceEmitterModules
         }
 
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
-        {            
-            CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
-
-            if (null == moduleSettings || !moduleSettings.CustomSettings.ContainsKey("Priority"))
-                throw new CLogEnterReadOnlyModeException("Priority", CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, decodedTraceLine.match);
-      
-            string priority = moduleSettings.CustomSettings["Priority"];
+        {
+            string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
             for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)

@@ -29,6 +29,8 @@ namespace clogutils.MacroDefinations
 
         [JsonProperty] public Dictionary<string, string> MacroConfiguration { get; set; }
 
+        [JsonProperty] public Dictionary<string, Dictionary<string, string>> CustomSettings { get; set; }
+
         public string ConfigFileWithMacroDefination { get; set; }
 
         [DefaultValue(CLogUniqueIDEncoder.Basic)]
