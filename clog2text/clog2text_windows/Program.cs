@@ -199,7 +199,7 @@ namespace clog2text_windows
                                     }
 
                                 toPrint:
-                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs);
+                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs, null, options.ShowTimestamps, options.ShowCPUInfo);
                                 }
                                 catch (Exception)
                                 {

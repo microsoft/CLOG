@@ -2,15 +2,11 @@
 using System;
 using clogutils;
 using clogutils.ConfigFile;
-using CommandLine;
-using System;
 using System.IO;
 using System.Text;
 using clogutils.MacroDefinations;
 using static clogutils.CLogFileProcessor;
-using System.Linq;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace syslog2clog
 {
@@ -56,7 +52,7 @@ namespace syslog2clog
                     break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "ERROR : invalid input");
             }

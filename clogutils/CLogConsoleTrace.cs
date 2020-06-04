@@ -82,7 +82,7 @@ namespace clogutils
             }
         }
 
-        public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
+        public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag, EventInformation eventInfo, bool showTimeStamp, bool showCPUInfo)
         {
             try
             {
@@ -93,6 +93,22 @@ namespace clogutils
                 }
 
                 StringBuilder toPrint = new StringBuilder();
+
+                if (null != eventInfo)
+                {
+                    if (showTimeStamp)
+                    {
+                        toPrint.Append("[" + eventInfo.Timestamp.ToString("hh:mm:ss.ffffff") + "]");
+                    }
+
+                    if (showCPUInfo)
+                    {
+                        if(!String.IsNullOrEmpty(eventInfo.ThreadId))
+                            toPrint.Append("[" + eventInfo.CPUId + "," + eventInfo.ThreadId + "]");
+                        else
+                            toPrint.Append("[" + eventInfo.CPUId + "]");
+                    }
+                }
 
                 string clean;
 
