@@ -188,6 +188,15 @@ namespace clog2text_lttng
                     ei.CPUId = cpuArgs["cpu_id"].AsString;
                 }
 
+                if (args.ContainsKey("stream.event.context"))
+                {
+                    string packetContext = args["stream.event.context"].AsString;
+                    string packetFields = packetContext.Substring(1, packetContext.Length - 2).Trim();
+                    var cpuArgs = SplitBabelTraceLine(packetFields);
+                    ei.ThreadId = cpuArgs["vtid"].AsString;
+                    ei.ProcessId = cpuArgs["vpid"].AsString;
+                }
+
                 CLogDecodedTraceLine bundle = _sidecar.FindBundle(args["name"].AsString);
 
                 string fields = args["event.fields"].AsString.Substring(1, args["event.fields"].AsString.Length - 2).Trim();

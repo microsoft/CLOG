@@ -103,10 +103,34 @@ namespace clogutils
 
                     if (showCPUInfo)
                     {
-                        if(!String.IsNullOrEmpty(eventInfo.ThreadId))
-                            toPrint.Append("[" + eventInfo.CPUId + "," + eventInfo.ThreadId + "]");
-                        else
-                            toPrint.Append("[" + eventInfo.CPUId + "]");
+                        toPrint.Append("[");
+
+                        bool havePid = false, haveTID = false;
+
+                        if (!String.IsNullOrEmpty(eventInfo.ProcessId))
+                        {
+                            toPrint.Append(eventInfo.ProcessId);
+                            havePid = true;
+                        }
+
+                        if (!String.IsNullOrEmpty(eventInfo.ThreadId))
+                        {
+                            if (havePid)
+                                toPrint.Append(",");
+
+                            toPrint.Append(eventInfo.ThreadId);
+                            haveTID = true;
+                        }
+
+                        if (!String.IsNullOrEmpty(eventInfo.CPUId))
+                        {
+                            if (havePid)
+                                toPrint.Append(",");
+
+                            toPrint.Append(eventInfo.CPUId);
+                        }
+
+                        toPrint.Append("]");
                     }
                 }
 
@@ -189,6 +213,7 @@ namespace clogutils
             public System.DateTimeOffset Timestamp { get; set; }
             public string CPUId { get; set; }
             public string ThreadId { get; set; }
+            public string ProcessId { get; set; }
         }
 
         public interface IClogEventArg
