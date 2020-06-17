@@ -193,8 +193,8 @@ namespace clog2text_lttng
                     string packetContext = args["stream.event.context"].AsString;
                     string packetFields = packetContext.Substring(1, packetContext.Length - 2).Trim();
                     var cpuArgs = SplitBabelTraceLine(packetFields);
-                    ei.ThreadId = cpuArgs["vtid"].AsString;
-                    ei.ProcessId = cpuArgs["vpid"].AsString;
+                    ei.ThreadId = Convert.ToInt64(cpuArgs["vtid"].AsString).ToString("x");
+                    ei.ProcessId = Convert.ToInt64(cpuArgs["vpid"].AsString).ToString("x");
                 }
 
                 CLogDecodedTraceLine bundle = _sidecar.FindBundle(args["name"].AsString);

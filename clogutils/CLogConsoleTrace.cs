@@ -96,13 +96,13 @@ namespace clogutils
 
                 if (null != eventInfo)
                 {
-                    if (showTimeStamp)
-                    {
-                        toPrint.Append("[" + eventInfo.Timestamp.ToString("hh:mm:ss.ffffff") + "]");
-                    }
-
                     if (showCPUInfo)
                     {
+                        if (!String.IsNullOrEmpty(eventInfo.CPUId))
+                        {
+                            toPrint.Append("["+eventInfo.CPUId+"]");
+                        }
+
                         toPrint.Append("[");
 
                         bool havePid = false, haveTID = false;
@@ -116,21 +116,18 @@ namespace clogutils
                         if (!String.IsNullOrEmpty(eventInfo.ThreadId))
                         {
                             if (havePid)
-                                toPrint.Append(",");
+                                toPrint.Append(".");
 
                             toPrint.Append(eventInfo.ThreadId);
                             haveTID = true;
-                        }
-
-                        if (!String.IsNullOrEmpty(eventInfo.CPUId))
-                        {
-                            if (havePid)
-                                toPrint.Append(",");
-
-                            toPrint.Append(eventInfo.CPUId);
-                        }
+                        }                      
 
                         toPrint.Append("]");
+                    }
+
+                    if (showTimeStamp)
+                    {
+                        toPrint.Append("[" + eventInfo.Timestamp.ToString("hh:mm:ss.ffffff") + "]");
                     }
                 }
 
