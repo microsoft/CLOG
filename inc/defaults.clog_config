@@ -81,6 +81,11 @@
         "DefinationEncoding": "hhu",
       },
       {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hu",
+      },
+      {
         "EncodingType": "UInt32",
         "CType": "unsigned long int",
         "DefinationEncoding": "lu",
@@ -114,6 +119,16 @@
         "EncodingType": "UInt8",
         "CType": "unsigned char",
         "DefinationEncoding": "hhx",
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hx",
+      },
+      {
+        "EncodingType": "UInt16",
+        "CType": "unsigned short",
+        "DefinationEncoding": "hX",
       },
       {
         "EncodingType": "UInt32",

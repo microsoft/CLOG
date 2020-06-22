@@ -95,5 +95,10 @@ namespace clogutils.MacroDefinations
         {
             return UniqueIdEncoder != CLogUniqueIDEncoder.Basic;
         }
+
+        public bool ShouldSerializeCustomSettings()
+        {
+            return null != CustomSettings;
+        }
     }
 }
