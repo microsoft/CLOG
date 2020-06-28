@@ -637,7 +637,7 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)"));
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
 
                     foreach (var t in listofArgsAsSpecifiedBySourceFile)
                     {

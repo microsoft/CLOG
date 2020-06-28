@@ -58,7 +58,7 @@ namespace clogutils
         public string GetConfigurationValue(string moduleName, string key)
         {
             string ret; 
-            if(null != macro.CustomSettings && null != macro.CustomSettings.ContainsKey(moduleName))
+            if(null != macro.CustomSettings && macro.CustomSettings.ContainsKey(moduleName))
             {
                 if (macro.CustomSettings[moduleName].TryGetValue(key, out ret))
                     return ret;

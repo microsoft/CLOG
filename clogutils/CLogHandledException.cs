@@ -94,7 +94,7 @@ namespace clogutils
                 case ExceptionType.InvalidUniqueId:
                     return "CLOG Unique IDs must be alphanumeric";
                 case ExceptionType.WontWriteInReadOnlyMode:
-                    return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_FORCE_WRITABLE such that manifests and sidecars will be automatically updated";
+                    return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_DEVELOPMENT_MODE such that manifests and sidecars will be automatically updated";
                 case ExceptionType.RequiredConfigParameterUnspecified:
                     return "A required configuration parameter was not specified in the configuration file - this will be a user specified option required for a chosen event module";
             }

@@ -105,7 +105,7 @@ namespace clogutils
 
                         toPrint.Append("[");
 
-                        bool havePid = false, haveTID = false;
+                        bool havePid = false;
 
                         if (!String.IsNullOrEmpty(eventInfo.ProcessId))
                         {
@@ -119,7 +119,6 @@ namespace clogutils
                                 toPrint.Append(".");
 
                             toPrint.Append(eventInfo.ThreadId);
-                            haveTID = true;
                         }                      
 
                         toPrint.Append("]");
