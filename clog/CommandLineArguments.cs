@@ -72,6 +72,13 @@ namespace clog
             set;
         }
 
+        [Option("developerMode", SetName = "build", Required = false, Default = false, HelpText = "Developer Mode")]
+        public bool Devmode
+        {
+            get;
+            set;
+        }
+
         [Option("lintConfig", SetName = "lint", Required = false, Default = false, HelpText = "CAUTION: Run lint operation on config file")]
         public bool LintConfig
         {

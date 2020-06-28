@@ -51,7 +51,7 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed via --readOnly not to emit changes however this was overridden with CLOG_FORCE_WRITABLE environment variable");
                         }
 
-                        if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
+                        if (options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
                             options.OverwriteHashCollisions = true;
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
@@ -65,6 +65,14 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                        }
+
+                        if (options.Devmode  || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
+                        {
+                            options.ReadOnly = false;
+                            options.OverwriteHashCollisions = true;
+                            configFile.DeveloperMode = true;
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed to enter a developer mode");
                         }
 
                         if (options.LintConfig)

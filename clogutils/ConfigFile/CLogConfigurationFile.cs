@@ -50,6 +50,12 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        public bool DeveloperMode
+        {
+            get;
+            set;
+        } = false;
+
         [JsonProperty]
         public int Version
         {

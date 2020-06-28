@@ -44,7 +44,7 @@ namespace syslog2clog
             set;
         }
 
-        [Option('r', "readOnly", HelpText = "Put CLOG in readonly mode - use this in a build system to prevent manifest or sidecar modifications.  You can set CLOG_FORCE_WRITABLE environment if you're in a development mode")]
+        [Option('r', "readOnly", HelpText = "Put CLOG in readonly mode - use this in a build system to prevent manifest or sidecar modifications.  You can set CLOG_FORCE_WRITABLE (or the more broad CLOG_DEVELOPMENT_MODE) environment if you're in a development mode")]
         public bool ReadOnly
         {
             get;
