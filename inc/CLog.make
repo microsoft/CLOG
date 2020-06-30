@@ -66,6 +66,6 @@ function(CLOG_ADD_SOURCEFILE)
     else()
         add_library(${library} SHARED ${clogfiles})
     endif()
-
+	
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 endfunction()
