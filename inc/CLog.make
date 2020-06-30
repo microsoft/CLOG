@@ -61,7 +61,11 @@ function(CLOG_ADD_SOURCEFILE)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    add_library(${library} STATIC ${clogfiles})
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        add_library(${library} STATIC ${clogfiles})
+    else()
+        add_library(${library} SHARED ${clogfiles})
+    endif()
 
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 endfunction()
