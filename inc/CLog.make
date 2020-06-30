@@ -61,7 +61,7 @@ function(CLOG_ADD_SOURCEFILE)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    add_library(${library} STATIC ${clogfiles})
+    add_library(${library} SHARED ${clogfiles})
 
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 endfunction()
