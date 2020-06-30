@@ -66,7 +66,7 @@ function(CLOG_ADD_SOURCEFILE)
         add_library(${library} STATIC ${clogfiles})
     else()
         message(STATUS "****************<<<<<<<   CLOG(${library}:Linux))    >>>>>>>>>>>>>>>*******************")
-        add_library(${library} STATIC ${clogfiles})
+        add_library(${library} SHARED ${clogfiles})
     endif()
 	
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
