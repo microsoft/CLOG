@@ -62,6 +62,7 @@ function(CLOG_ADD_SOURCEFILE)
     endforeach()
 
     add_library(${library} STATIC ${clogfiles})
+    target_include_directories(${library} PRIVATE ${CLOG_INCLUDE_DIRECTORY})
     target_include_directories(${library} PUBLIC ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library})
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 endfunction()
