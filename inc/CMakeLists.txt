@@ -9,8 +9,6 @@ add_custom_command(
     COMMAND dotnet build ${CLOG_SOURCE_DIRECTORY}/clog.sln/clog_coreclr.sln -o ${CMAKE_CLOG_BINS_DIRECTORY}
 )
 
-
-
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_custom_command(
         WORKING_DIRECTORY ${CLOG_SOURCE_DIRECTORY}
