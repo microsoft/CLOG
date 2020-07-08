@@ -305,12 +305,17 @@ namespace clogutils
         {
             string remaining = contents;
 
-            foreach (var macro in ConfigFile.AllKnownMacros())
+            foreach (CLogTraceMacroDefination macro in ConfigFile.AllKnownMacros())
             {
                 if (macro.SkipProcessing)
                 {
                     continue;
                 }
+
+                var c = configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
+                if (0 == c.Modules.Count)
+                    continue;
+                
 
                 StringBuilder results = new StringBuilder();
                 int start = 0, end = 0;
