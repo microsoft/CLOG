@@ -307,15 +307,13 @@ namespace clogutils
 
             foreach (CLogTraceMacroDefination macro in ConfigFile.AllKnownMacros())
             {
-                if (macro.SkipProcessing)
+                var c = configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
+               
+                if(c.SkipProcessing)
                 {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Skipping Macro : {macro.MacroName} due to 'SkipProcessing' being set");
                     continue;
                 }
-
-                var c = configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
-                if (0 == c.Modules.Count)
-                    continue;
-                
 
                 StringBuilder results = new StringBuilder();
                 int start = 0, end = 0;

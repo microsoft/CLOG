@@ -21,8 +21,6 @@ namespace clogutils.MacroDefinations
     {
         [JsonProperty] public string MacroName { get; set; }
 
-        public bool SkipProcessing { get; set; }
-
         [JsonProperty] public string EncodedPrefix { get; set; }
 
         [JsonProperty] public virtual int EncodedArgNumber { get; set; }
@@ -94,11 +92,6 @@ namespace clogutils.MacroDefinations
         public bool ShouldSerializeUniqueIdEncoder()
         {
             return UniqueIdEncoder != CLogUniqueIDEncoder.Basic;
-        }
-
-        public bool ShouldSerializeCustomSettings()
-        {
-            return null != CustomSettings;
         }
     }
 }

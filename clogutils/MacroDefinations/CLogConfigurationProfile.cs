@@ -21,6 +21,8 @@ namespace clogutils.MacroDefinations
         [JsonProperty]
         public List<CLogExportModuleDefination> Modules = new List<CLogExportModuleDefination>();
 
+        [JsonProperty] public bool SkipProcessing { get; set; } = false;
+
         public CLogExportModuleDefination FindExportModule(string moduleName)
         {
             return Modules.Where(x => { return x.ExportModule.Equals(moduleName); }).FirstOrDefault();
@@ -37,6 +39,11 @@ namespace clogutils.MacroDefinations
                 }
                 return ret;
             }
+        }
+
+        public bool ShouldSerializeSkipProcessing()
+        {
+            return SkipProcessing;
         }
     }
 }
