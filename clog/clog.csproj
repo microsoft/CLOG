@@ -22,4 +22,21 @@
     <ProjectReference Include="..\clogutils\clogutils.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Version>0.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <ToolCommandName>clog</ToolCommandName>
+    <PackageId>Microsoft.Logging.CLOG</PackageId>
+    <Authors>Microsoft</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Microsoft Corporation. All rights reserved</Copyright>
+    <Title>CLOG Log Generator</Title>
+    <ProjectURL>https://github.com/microsoft/CLOG</ProjectURL>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/microsoft/CLOG</RepositoryUrl>
+  </PropertyGroup>
+
 </Project>
