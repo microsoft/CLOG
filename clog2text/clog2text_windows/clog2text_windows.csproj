@@ -14,4 +14,21 @@
     <ProjectReference Include="..\..\clogutils\clogutils.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Version>0.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
+    <PackageOutputPath>../../nupkg</PackageOutputPath>
+    <ToolCommandName>clog2text_windows</ToolCommandName>
+    <PackageId>Microsoft.Logging.CLOG2Text.Windows</PackageId>
+    <Authors>Microsoft</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Microsoft Corporation. All rights reserved</Copyright>
+    <Title>CLOG Lttng log converter</Title>
+    <ProjectURL>https://github.com/microsoft/CLOG</ProjectURL>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/microsoft/CLOG</RepositoryUrl>
+  </PropertyGroup>
+
 </Project>
