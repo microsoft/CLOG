@@ -1,5 +1,5 @@
 ﻿# Revisions
-## 0.1.0 ALPHA
+## 0.1.1 ALPHA
 * Initial drop
 * Released for purposes of starting conversations
 * We expecting substantial (breaking) changes in short order;  please do not take a dependence until verson 1.0.0
@@ -7,6 +7,9 @@
 
 
 # Introduction
+
+[![Build Status](https://dev.azure.com/ms/CLOG/_apis/build/status/CI?branchName=master)](https://dev.azure.com/ms/CLOG/_build/latest?definitionId=373&branchName=master)
+
 Within the tracing/telemetry space there are many API choices and (even if it's possible) it’s very difficult to choose correctly. The Microsoft QUIC project is in need of the ability to emit logging events cross platform, even in high performance data paths.
 
 Without introducing any new APIs for bit encoding, and exclusively using legacy encoders and tooling (ETW on Windows, LTTNG on linux) CLOG provides:
