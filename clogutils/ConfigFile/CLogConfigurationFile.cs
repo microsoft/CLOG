@@ -50,6 +50,12 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        public bool DeveloperMode
+        {
+            get;
+            set;
+        } = false;
+
         [JsonProperty]
         public int Version
         {
@@ -176,7 +182,7 @@ namespace clogutils.ConfigFile
         public bool AmIDirty
         {
             get;
-            set;
+            private set;
         }
 
         public bool AreWeDirty()

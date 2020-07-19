@@ -199,7 +199,12 @@ namespace clog2text_windows
                                     }
 
                                 toPrint:
-                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs);
+
+                                    EventInformation ei = new EventInformation();
+                                    ei.Timestamp = e.Timestamp.DateTimeOffset;
+                                    ei.ProcessId = e.ProcessId.ToString("x");
+                                    ei.ThreadId = e.ThreadId.ToString("x");
+                                    DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs, ei, options.ShowTimestamps, options.ShowCPUInfo);
                                 }
                                 catch (Exception)
                                 {

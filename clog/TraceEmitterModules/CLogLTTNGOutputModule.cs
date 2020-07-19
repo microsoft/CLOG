@@ -118,9 +118,9 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            if (usedArguments >= 12)
+            if (usedArguments >= 11)
             {
-                throw new ReadOnlyException($"Too Many arguments in {hash},  LTTNG accepts a max of 9");
+                throw new ReadOnlyException($"Too Many arguments in {hash},  LTTNG accepts a max of 10");
             }
 
             lttngFile.AppendLine("");

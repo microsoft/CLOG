@@ -51,7 +51,7 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed via --readOnly not to emit changes however this was overridden with CLOG_FORCE_WRITABLE environment variable");
                         }
 
-                        if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
+                        if (options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
                             options.OverwriteHashCollisions = true;
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
@@ -65,6 +65,14 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                        }
+
+                        if (options.Devmode  || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
+                        {
+                            options.ReadOnly = false;
+                            options.OverwriteHashCollisions = true;
+                            configFile.DeveloperMode = true;
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed to enter a developer mode");
                         }
 
                         if (options.LintConfig)
@@ -145,6 +153,9 @@ namespace clog
                         CLogSystemTapModule systemTap = new CLogSystemTapModule();
                         fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
+                        CLogSysLogModule syslog = new CLogSysLogModule();
+                        fullyDecodedMacroEmitter.AddClogModule(syslog);
+
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
@@ -189,10 +200,16 @@ namespace clog
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
 
-                        if (sidecar.AreDirty)
+                        if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
                             if (options.ReadOnly)
-                            {
+                            {                                    
+                                if(sidecar.AreDirty)
+                                    Console.WriteLine("Sidecar is dirty");
+                                if(configFile.AreWeDirty())
+                                    Console.WriteLine("ConfigFile is dirty");
+                                    
+                                sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
                             sidecar.Save(options.SidecarFile);

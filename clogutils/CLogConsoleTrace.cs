@@ -82,7 +82,7 @@ namespace clogutils
             }
         }
 
-        public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag)
+        public static void DecodeAndTraceToConsole(StreamWriter outputfile, CLogDecodedTraceLine bundle, string errorLine, CLogConfigurationFile config, Dictionary<string, IClogEventArg> valueBag, EventInformation eventInfo, bool showTimeStamp, bool showCPUInfo)
         {
             try
             {
@@ -93,6 +93,42 @@ namespace clogutils
                 }
 
                 StringBuilder toPrint = new StringBuilder();
+
+                if (null != eventInfo)
+                {
+                    if (showCPUInfo)
+                    {
+                        if (!String.IsNullOrEmpty(eventInfo.CPUId))
+                        {
+                            toPrint.Append("["+eventInfo.CPUId+"]");
+                        }
+
+                        toPrint.Append("[");
+
+                        bool havePid = false;
+
+                        if (!String.IsNullOrEmpty(eventInfo.ProcessId))
+                        {
+                            toPrint.Append(eventInfo.ProcessId);
+                            havePid = true;
+                        }
+
+                        if (!String.IsNullOrEmpty(eventInfo.ThreadId))
+                        {
+                            if (havePid)
+                                toPrint.Append(".");
+
+                            toPrint.Append(eventInfo.ThreadId);
+                        }                      
+
+                        toPrint.Append("]");
+                    }
+
+                    if (showTimeStamp)
+                    {
+                        toPrint.Append("[" + eventInfo.Timestamp.ToString("hh:mm:ss.ffffff") + "]");
+                    }
+                }
 
                 string clean;
 
@@ -173,6 +209,7 @@ namespace clogutils
             public System.DateTimeOffset Timestamp { get; set; }
             public string CPUId { get; set; }
             public string ThreadId { get; set; }
+            public string ProcessId { get; set; }
         }
 
         public interface IClogEventArg

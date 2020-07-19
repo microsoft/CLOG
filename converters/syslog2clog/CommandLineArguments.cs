@@ -5,14 +5,14 @@
 
 Abstract:
 
-    Contains commandline arguments and definations for clog2text_lttng
+    Contains commandline arguments and definations for syslog2clog
 
 --*/
 
 using clogutils;
 using CommandLine;
 
-namespace clog
+namespace syslog2clog
 {
     public class CommandLineArguments
     {
@@ -44,7 +44,7 @@ namespace clog
             set;
         }
 
-        [Option('r', "readOnly", HelpText = "Put CLOG in readonly mode - use this in a build system to prevent manifest or sidecar modifications.  You can set CLOG_FORCE_WRITABLE environment if you're in a development mode")]
+        [Option('r', "readOnly", HelpText = "Put CLOG in readonly mode - use this in a build system to prevent manifest or sidecar modifications.  You can set CLOG_FORCE_WRITABLE (or the more broad CLOG_DEVELOPMENT_MODE) environment if you're in a development mode")]
         public bool ReadOnly
         {
             get;
@@ -67,13 +67,6 @@ namespace clog
 
         [Option("overwriteHashCollisions", SetName = "build", Required = false, Default = false, HelpText = "CAUTION: overwrite trace signatures should a collsion occur.  please read documentation before using this (you may also set CLOG_OVERWRITE_COLLISIONS in your environemnt)")]
         public bool OverwriteHashCollisions
-        {
-            get;
-            set;
-        }
-
-        [Option("developerMode", SetName = "build", Required = false, Default = false, HelpText = "Developer Mode")]
-        public bool Devmode
         {
             get;
             set;

@@ -5,6 +5,14 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;3026</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;3026</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
@@ -13,5 +21,22 @@
   <ItemGroup>
     <ProjectReference Include="..\clogutils\clogutils.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <Version>0.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <ToolCommandName>clog</ToolCommandName>
+    <PackageId>Microsoft.Logging.CLOG</PackageId>
+    <Authors>Microsoft</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Microsoft Corporation. All rights reserved</Copyright>
+    <Title>CLOG Log Generator</Title>
+    <ProjectURL>https://github.com/microsoft/CLOG</ProjectURL>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/microsoft/CLOG</RepositoryUrl>
+  </PropertyGroup>
 
 </Project>

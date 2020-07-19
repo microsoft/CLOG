@@ -122,7 +122,7 @@ namespace clog2text_lttng
                         Dictionary<string, IClogEventArg> valueBag;
                         EventInformation ei;
                         CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
-                        DecodeAndTraceToConsole(outputfile, bundle, line, textManifest.ConfigFile, valueBag);
+                        DecodeAndTraceToConsole(outputfile, bundle, line, textManifest.ConfigFile, valueBag, ei, options.ShowTimestamps, options.ShowCPUInfo);
                     }
                 }
                 catch (Exception e)
@@ -188,6 +188,15 @@ namespace clog2text_lttng
                     ei.CPUId = cpuArgs["cpu_id"].AsString;
                 }
 
+                if (args.ContainsKey("stream.event.context"))
+                {
+                    string packetContext = args["stream.event.context"].AsString;
+                    string packetFields = packetContext.Substring(1, packetContext.Length - 2).Trim();
+                    var cpuArgs = SplitBabelTraceLine(packetFields);
+                    ei.ThreadId = Convert.ToInt64(cpuArgs["vtid"].AsString).ToString("x");
+                    ei.ProcessId = Convert.ToInt64(cpuArgs["vpid"].AsString).ToString("x");
+                }
+
                 CLogDecodedTraceLine bundle = _sidecar.FindBundle(args["name"].AsString);
 
                 string fields = args["event.fields"].AsString.Substring(1, args["event.fields"].AsString.Length - 2).Trim();
@@ -237,6 +246,10 @@ namespace clog2text_lttng
             {
                 get
                 {
+                    if (AsString.StartsWith("0x"))
+                    {
+                        return Convert.ToUInt64(AsString, 16);
+                    }
                     return Convert.ToUInt64(AsString);
                 }
             }
@@ -249,6 +262,11 @@ namespace clog2text_lttng
                     int lastClose = AsString.LastIndexOf("]") - 1;
 
                     string bits = AsString.Substring(firstOpen, AsString.Length - (AsString.Length - lastClose) - firstOpen);
+
+                    if(String.IsNullOrEmpty(bits))
+                    {
+                        return new byte[0];
+                    }
                     var splits = SplitBabelTraceLine(bits);
 
                     List<byte> ret = new List<byte>();

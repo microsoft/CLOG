@@ -21,13 +21,13 @@ namespace clogutils.MacroDefinations
     {
         [JsonProperty] public string MacroName { get; set; }
 
-        public bool SkipProcessing { get; set; }
-
         [JsonProperty] public string EncodedPrefix { get; set; }
 
         [JsonProperty] public virtual int EncodedArgNumber { get; set; }
 
         [JsonProperty] public Dictionary<string, string> MacroConfiguration { get; set; }
+
+        [JsonProperty] public Dictionary<string, Dictionary<string, string>> CustomSettings { get; set; }
 
         public string ConfigFileWithMacroDefination { get; set; }
 

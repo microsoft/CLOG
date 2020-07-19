@@ -34,5 +34,19 @@ namespace clog2text_lttng
             get;
             set;
         }
+
+        [Option('c', "showCpuInfo", Required = false, Default=false, HelpText = "Emit CPU Info")]
+        public bool ShowCPUInfo
+        {
+            get;
+            set;
+        }
+
+        [Option('t', "showTimestamp", Required = false, Default = false, HelpText = "Emit Timestamp Info")]
+        public bool ShowTimestamps
+        {
+            get;
+            set;
+        }
     }
 }
