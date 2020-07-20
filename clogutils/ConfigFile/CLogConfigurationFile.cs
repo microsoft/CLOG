@@ -5,7 +5,7 @@
 
 Abstract:
 
-    This class both serves to contain one configuration file.   Becuase config files may be chained, this class may contain 
+    This class both serves to contain one configuration file.   Becuase config files may be chained, this class may contain
     other instances of configuration files.
 
 --*/
@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using static clogutils.CLogConsoleTrace;
 
@@ -297,18 +298,9 @@ namespace clogutils.ConfigFile
             return ret.Values.ToArray();
         }
 
-        public static CLogConfigurationFile FromFile(string fileName)
+        private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
-            if (_loadedConfigFiles.Contains(fileName))
-            {
-                Console.WriteLine($"Circular config file detected {fileName}");
-                throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
-            }
-
-            _loadedConfigFiles.Add(fileName);
-            string json = File.ReadAllText(fileName);
-
-            JsonSerializerSettings s = new JsonSerializerSettings();
+JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
             CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
@@ -317,9 +309,16 @@ namespace clogutils.ConfigFile
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
-                string cSharp = Path.GetDirectoryName(fileName);
-                cSharp = Path.Combine(cSharp, ret.CustomTypeClogCSharpFile);
-                ret.TypeEncoders.LoadCustomCSharp(cSharp, ret);
+                if (ret.CustomTypeClogCSharpFile == "CLOGEMBEDDEDDEFAULT")
+                {
+                    ret.TypeEncoders.LoadDefaultCSharpFromEmbedded(ret);
+                }
+                else
+                {
+                    string cSharp = Path.GetDirectoryName(fileName);
+                    cSharp = Path.Combine(cSharp, ret.CustomTypeClogCSharpFile);
+                    ret.TypeEncoders.LoadCustomCSharp(cSharp, ret);
+                }
             }
 
             //
@@ -341,17 +340,32 @@ namespace clogutils.ConfigFile
 
             foreach (string downstream in ret.ChainedConfigFiles)
             {
-                string root = Path.GetDirectoryName(fileName);
-                string toOpen = Path.Combine(root, downstream);
-
-                if (!File.Exists(toOpen))
+                if (downstream == "CLOGEMBEDDEDDEFAULT")
                 {
-                    Console.WriteLine($"Chained config file {toOpen} not found");
-                    throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
+                    Assembly clogUtilsAssembly = typeof(CLogConfigurationFile).Assembly;
+                    string assemblyName = clogUtilsAssembly.GetName().Name;
+                    using (Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog_config"))
+                    using (StreamReader reader = new StreamReader(embeddedStream))
+                    {
+                        string contents = reader.ReadToEnd();
+                        var configFile = FromFileText(downstream, contents);
+                        ret.ChainedConfigurations.Add(configFile);
+                    }
                 }
+                else
+                {
+                    string root = Path.GetDirectoryName(fileName);
+                    string toOpen = Path.Combine(root, downstream);
 
-                var configFile = FromFile(toOpen);
-                ret.ChainedConfigurations.Add(configFile);
+                    if (!File.Exists(toOpen))
+                    {
+                        Console.WriteLine($"Chained config file {toOpen} not found");
+                        throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
+                    }
+
+                    var configFile = FromFile(toOpen);
+                    ret.ChainedConfigurations.Add(configFile);
+                }
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
@@ -359,6 +373,33 @@ namespace clogutils.ConfigFile
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
             return ret;
+        }
+
+        public static CLogConfigurationFile FromFileText(string fileName, string fileContents)
+        {
+            if (_loadedConfigFiles.Contains(fileName))
+            {
+                Console.WriteLine($"Circular config file detected {fileName}");
+                throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
+            }
+
+            _loadedConfigFiles.Add(fileName);
+
+            return FromLoadedFile(fileName, fileContents);
+        }
+
+        public static CLogConfigurationFile FromFile(string fileName)
+        {
+            if (_loadedConfigFiles.Contains(fileName))
+            {
+                Console.WriteLine($"Circular config file detected {fileName}");
+                throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
+            }
+
+            _loadedConfigFiles.Add(fileName);
+            string json = File.ReadAllText(fileName);
+
+            return FromLoadedFile(fileName, json);
         }
 
         /// <summary>

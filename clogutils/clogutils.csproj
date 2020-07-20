@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
+    <EmbeddedResource Include="..\defaults\clog.h" Link="clog.h" />
+    <EmbeddedResource Include="..\defaults\defaults.clog_config" Link="defaults.clog_config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.CodeDom" Version="4.7.0" />

@@ -13,4 +13,8 @@
     <NoWarn>1701;1702;3026</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
+  </ItemGroup>
+
 </Project>

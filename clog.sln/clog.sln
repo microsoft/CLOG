@@ -11,13 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "clog2text", "clog2text", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_lttng", "..\clog2text\clog2text_lttng\clog2text_lttng.csproj", "{B683F6AC-DEC3-4AFC-B156-77F303EE2986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clog2text_windows", "..\clog2text\clog2text_windows\clog2text_windows.csproj", "{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_windows", "..\clog2text\clog2text_windows\clog2text_windows.csproj", "{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "decoderTest", "..\decoderTest\decoderTest.csproj", "{A2079B4E-FF96-4DE5-80E8-8403A17C4347}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "converters", "converters", "{FE0B277E-B292-4FF2-8C69-15EECC1A3787}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "syslog2clog", "..\converters\syslog2clog\syslog2clog.csproj", "{E1FA7999-5C45-46B1-9E83-5467264F928E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslog2clog", "..\converters\syslog2clog\syslog2clog.csproj", "{E1FA7999-5C45-46B1-9E83-5467264F928E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,12 +53,12 @@ Global
 		{B683F6AC-DEC3-4AFC-B156-77F303EE2986}.Release|x64.Build.0 = Release|Any CPU
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|x64.ActiveCfg = Debug|x64
-		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|x64.Build.0 = Debug|x64
+		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Debug|x64.Build.0 = Debug|Any CPU
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.ActiveCfg = Release|x64
-		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.Build.0 = Release|x64
+		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.ActiveCfg = Release|Any CPU
+		{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}.Release|x64.Build.0 = Release|Any CPU
 		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2079B4E-FF96-4DE5-80E8-8403A17C4347}.Debug|x64.ActiveCfg = Debug|Any CPU

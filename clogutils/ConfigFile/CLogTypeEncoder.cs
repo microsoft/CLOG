@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using static clogutils.CLogConsoleTrace;
 
@@ -193,6 +194,18 @@ namespace clogutils.ConfigFile
             get
             {
                 return _traceEmittorX.CustomTypeDecoder;
+            }
+        }
+
+        public void LoadDefaultCSharpFromEmbedded(CLogConfigurationFile configFile)
+        {
+            Assembly clogUtilsAssembly = typeof(CLogTypeEncoder).Assembly;
+            string assemblyName = clogUtilsAssembly.GetName().Name;
+            using (Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog.cs"))
+            using (StreamReader reader = new StreamReader(embeddedStream))
+            {
+                string sourceCode = reader.ReadToEnd();
+                _traceEmittorX.SetSourceCode(sourceCode);
             }
         }
 

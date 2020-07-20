@@ -25,6 +25,14 @@ namespace clog
     {
         private static int Main(string[] args)
         {
+            var names = typeof(CLogTypeEncoder).Assembly.GetManifestResourceNames();
+
+            var asmName = typeof(CLogTypeEncoder).Assembly.GetName().Name;
+
+            var strm = typeof(CLogTypeEncoder).Assembly.GetManifestResourceStream($"{asmName}.clog.h");
+
+            ;
+
             ParserResult<CommandLineArguments> o = Parser.Default.ParseArguments<CommandLineArguments>(args);
 
             return o.MapResult(
