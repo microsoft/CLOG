@@ -26,7 +26,6 @@ function(CLOG_GENERATE_TARGET)
 
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
-            DEPENDS CLOG
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
             COMMENT "CLOG: clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
             COMMAND clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
