@@ -36,17 +36,27 @@ namespace clog
             Assembly utilsAssembly = typeof(CLogConsoleTrace).Assembly;
             string baseName = utilsAssembly.GetName().Name;
 
+            void ExtractFile(string name)
             {
-                using Stream embeddedStream = utilsAssembly.GetManifestResourceStream($"{baseName}.clog.h");
-                using FileStream outputStream = File.OpenWrite(Path.Combine(outputDir, "clog.h"));
-                embeddedStream.CopyTo(outputStream);
+                using Stream embeddedStream = utilsAssembly.GetManifestResourceStream($"{baseName}.{name}");
+                using StreamReader reader = new StreamReader(embeddedStream);
+                string contents = reader.ReadToEnd();
+                string fileName = Path.Combine(outputDir, name);
+                if (File.Exists(fileName))
+                {
+                    string existingContents = File.ReadAllText(fileName);
+                    if (existingContents == contents)
+                    {
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Skipping file {name} as its up to date");
+                        return;
+                    }
+                }
+                File.WriteAllText(fileName, contents);
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Installed file {name}");
             }
 
-            {
-                using Stream embeddedStream = utilsAssembly.GetManifestResourceStream($"{baseName}.CLog.cmake");
-                using FileStream outputStream = File.OpenWrite(Path.Combine(outputDir, "CLog.cmake"));
-                embeddedStream.CopyTo(outputStream);
-            }
+            ExtractFile("clog.h");
+            ExtractFile("CLog.cmake");
 
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "--installDirectory overrides all arguments. Dependencies successfully installed!");
 
