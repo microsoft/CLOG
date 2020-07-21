@@ -302,7 +302,7 @@ namespace clogutils.ConfigFile
 
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
-JsonSerializerSettings s = new JsonSerializerSettings();
+            JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
             CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
