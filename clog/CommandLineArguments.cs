@@ -9,7 +9,6 @@ Abstract:
 
 --*/
 
-using System;
 using clogutils;
 using CommandLine;
 
@@ -110,16 +109,9 @@ namespace clog
 
         public bool IsValid()
         {
-            Console.WriteLine(InstallDependencies);
             if (!string.IsNullOrWhiteSpace(this.InstallDependencies))
             {
                 return true;
-            }
-
-            if (string.IsNullOrWhiteSpace(ConfigurationFile))
-            {
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Config file must be specified");
-                return false;
             }
 
             //
