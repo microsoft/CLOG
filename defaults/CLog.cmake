@@ -42,7 +42,7 @@ function(CLOG_GENERATE_TARGET)
         add_library(${library} SHARED ${clogfiles})
     endif()
 
-    target_include_directories(${library} PRIVATE ${CLOG_INCLUDE_DIRECTORY})
+    target_include_directories(${library} PUBLIC ${CLOG_INCLUDE_DIRECTORY})
     target_include_directories(${library} PUBLIC ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library})
 
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
