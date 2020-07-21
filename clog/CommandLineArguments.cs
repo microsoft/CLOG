@@ -9,6 +9,7 @@ Abstract:
 
 --*/
 
+using System;
 using clogutils;
 using CommandLine;
 
@@ -16,6 +17,13 @@ namespace clog
 {
     public class CommandLineArguments
     {
+        [Option("installDependencies", SetName = "install", Required = false, HelpText = "Install dependencies such as clog.h can CLog.cmake to the folder specified")]
+        public string InstallDependencies
+        {
+            get;
+            set;
+        }
+
         [Option('i', "inputFile", SetName = "build", Required = false, HelpText = "Full path to one WPP source file for conversion")]
         public string InputFile
         {
@@ -102,6 +110,18 @@ namespace clog
 
         public bool IsValid()
         {
+            Console.WriteLine(InstallDependencies);
+            if (!string.IsNullOrWhiteSpace(this.InstallDependencies))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(ConfigurationFile))
+            {
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Config file must be specified");
+                return false;
+            }
+
             //
             // If either input or output is empty, require that we're linting or upgrading
             //
