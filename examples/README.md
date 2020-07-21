@@ -1,6 +1,20 @@
-# Linux
-mkdir bld && cd bld
-cmake -G "Unix Makefiles" ..
-cmake --build .
+# Prerequisites
+Need dotnet core 3.1 or later. Instructions found at https://dotnet.microsoft.com/download
 
-cmake -G "Visual Studio 16 2019"
+Install latest clog nuget tool. Download from here into nupkg folder https://github.com/microsoft/CLOG/releases
+
+Then run
+
+```
+dotnet took install --global --add-source nupkg Microsoft.Logging.CLOG
+```
+
+# Build (using pwsh)
+```
+mkdir build
+clog --installDirectory build/clog
+cd build
+$env:CLOG_DEVELOPMENT_MODE = 1
+cmake ..
+cmake --build .
+```

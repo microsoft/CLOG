@@ -1,4 +1,10 @@
 ﻿# Revisions
+
+## 0.1.2 ALPHA
+* Update to netcoreapp3.1
+* Adds method to extract downstream dependencies from tool
+* Embedded default configurations into executable for downstream users to use
+
 ## 0.1.1 ALPHA
 * Initial drop
 * Released for purposes of starting conversations
@@ -82,7 +88,7 @@ Requiring a “side car” (external manifest) for event presentation to a human
 ## Modules
 
 * clog.exe
-    
+
     Build time tool to generate source code based on regex parsing of C/C++ code.  This is the main tool for clog.
 
 * clog2text_lttng.exe
@@ -91,8 +97,8 @@ Requiring a “side car” (external manifest) for event presentation to a human
 
 * clog2text_windows.exe
 
-    WINDOWS ONLY : Combines CLOG events that are stored with ETW into human readable text 
-    
+    WINDOWS ONLY : Combines CLOG events that are stored with ETW into human readable text
+
 * clogutils.dll
 
     Utility library used between clog.exe and other clog tools.

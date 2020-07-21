@@ -7,7 +7,10 @@
           "CustomSettings": {}
         }
       ]
-    }
+    },
+    "empty": {
+      "Modules": []
+    },
   },
   "Version": 0,
   "CustomTypeClogCSharpFile": null,
@@ -21,7 +24,11 @@
       "EncodedPrefix": null,
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
-        "linux": "lttng_plus"
+        "linux": "lttng_plus",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "empty"
       }
     },
     {
@@ -29,7 +36,11 @@
       "EncodedPrefix": "[%p]",
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
-        "linux": "lttng_plus"
+        "linux": "lttng_plus",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "empty"
       }
     }
   ],
