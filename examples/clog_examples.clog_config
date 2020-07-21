@@ -25,6 +25,7 @@
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
         "linux": "lttng_plus",
+        "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
         "windows": "empty"
@@ -36,6 +37,7 @@
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
         "linux": "lttng_plus",
+        "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
         "windows": "empty"
