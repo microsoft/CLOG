@@ -17,14 +17,69 @@ using clogutils.ConfigFile;
 using CommandLine;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace clog
 {
     internal class clog
     {
+        private static int PerformInstall(string outputDir)
+        {
+            if (File.Exists(outputDir))
+            {
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Output file for install cannot be a file. It either must not exist, or be a directory");
+                return -11;
+            }
+            Directory.CreateDirectory(outputDir);
+
+            Assembly utilsAssembly = typeof(CLogConsoleTrace).Assembly;
+            string baseName = utilsAssembly.GetName().Name;
+
+            void ExtractFile(string name)
+            {
+                using Stream embeddedStream = utilsAssembly.GetManifestResourceStream($"{baseName}.{name}");
+                using StreamReader reader = new StreamReader(embeddedStream);
+                string contents = reader.ReadToEnd();
+                string fileName = Path.Combine(outputDir, name);
+                if (File.Exists(fileName))
+                {
+                    string existingContents = File.ReadAllText(fileName);
+                    if (existingContents == contents)
+                    {
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Skipping file {name} as its up to date");
+                        return;
+                    }
+                }
+                File.WriteAllText(fileName, contents);
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Installed file {name}");
+            }
+
+            ExtractFile("clog.h");
+            ExtractFile("CLog.cmake");
+
+            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "--installDirectory overrides all arguments. Dependencies successfully installed!");
+
+            return 0;
+        }
+
         private static int Main(string[] args)
         {
+            // Manually parse installDirectory, as it interferes with the required configFile
+            // The argument still shows up in CommandLineArguments to be shown in help.
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--installDirectory")
+                {
+                    if (i + 1 == args.Length)
+                    {
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Must pass an argument to --installDirectory");
+                        return -1;
+                    }
+                    return PerformInstall(args[i + 1]);
+                }
+            }
+
             ParserResult<CommandLineArguments> o = Parser.Default.ParseArguments<CommandLineArguments>(args);
 
             return o.MapResult(
@@ -39,6 +94,12 @@ namespace clog
                         if (!options.IsValid())
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
+                            return -1;
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(options.InstallDependencies))
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Internal error, this should have been handled at a previous step");
                             return -1;
                         }
 
@@ -203,12 +264,12 @@ namespace clog
                         if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
                             if (options.ReadOnly)
-                            {                                    
+                            {
                                 if(sidecar.AreDirty)
                                     Console.WriteLine("Sidecar is dirty");
                                 if(configFile.AreWeDirty())
                                     Console.WriteLine("ConfigFile is dirty");
-                                    
+
                                 sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }

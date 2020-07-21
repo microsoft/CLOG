@@ -34,6 +34,6 @@
     }
   ],
   "ChainedConfigFiles": [
-    "../inc/defaults.clog_config"
+    "DEFAULTS"
   ]
 }
