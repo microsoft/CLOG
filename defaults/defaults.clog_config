@@ -1,7 +1,7 @@
 {
   "MacroConfigurations": {},
   "Version": 1,
-  "CustomTypeClogCSharpFile": "CLOGEMBEDDEDDEFAULT",
+  "CustomTypeClogCSharpFile": "DEFAULTS",
   "TypeEncoders": {
     "Version": 0,
     "TypeEncoder": [

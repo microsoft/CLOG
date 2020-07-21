@@ -27,6 +27,8 @@ namespace clogutils.ConfigFile
     {
         public static int _version = 1;
 
+        public const string EmbeddedDefaultName = "DEFAULTS";
+
         private static HashSet<string> _loadedConfigFiles = new HashSet<string>();
 
         public string ScopePrefix
@@ -309,7 +311,7 @@ JsonSerializerSettings s = new JsonSerializerSettings();
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
-                if (ret.CustomTypeClogCSharpFile == "CLOGEMBEDDEDDEFAULT")
+                if (ret.CustomTypeClogCSharpFile == EmbeddedDefaultName)
                 {
                     ret.TypeEncoders.LoadDefaultCSharpFromEmbedded(ret);
                 }
@@ -340,7 +342,7 @@ JsonSerializerSettings s = new JsonSerializerSettings();
 
             foreach (string downstream in ret.ChainedConfigFiles)
             {
-                if (downstream == "CLOGEMBEDDEDDEFAULT")
+                if (downstream == EmbeddedDefaultName)
                 {
                     Assembly clogUtilsAssembly = typeof(CLogConfigurationFile).Assembly;
                     string assemblyName = clogUtilsAssembly.GetName().Name;
