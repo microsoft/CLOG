@@ -11,6 +11,8 @@ Abstract:
 
 using clogutils;
 using CommandLine;
+using System.IO;
+
 
 namespace clog
 {
@@ -37,6 +39,13 @@ namespace clog
             set;
         }
 
+        [Option("outputDirectory", SetName = "build", Required = false, HelpText = "If you'd prefer to specify an output directory over an outputfile, CLOG will output a file into this directory with the postfix .clog.h")]
+        public string OutputDirectory
+        {
+            get;
+            set;
+        }
+
         [Option("refreshCustomTypeProcessor", SetName = "debug", Required = false, HelpText = "[DEBUGGING] update the C# custom type processor for the specified sidecar ")]
         public bool RefreshCustomTypeProcessor
         {
@@ -44,7 +53,7 @@ namespace clog
             set;
         }
 
-        [Option('p', "configProfile", HelpText = "Configuration profile name")]
+        [Option('p', "configProfile", HelpText = "Configuration profile name;  this value selects configuration from the specified configuration file")]
         public string ConfigurationProfile
         {
             get;
@@ -58,7 +67,7 @@ namespace clog
             set;
         }
 
-        [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix")]
+        [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix;  this value will prefix CLOG functions() and helps to provide scope.  Typically this value is reused by an entire module or directory (your choice)")]
         public string ScopePrefix
         {
             get;
@@ -112,6 +121,24 @@ namespace clog
             if (!string.IsNullOrWhiteSpace(this.InstallDependencies))
             {
                 return true;
+            }
+
+            if(!string.IsNullOrEmpty(this.OutputDirectory))
+            {
+                if(string.IsNullOrEmpty(this.InputFile))
+                {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, and InputFile is empty");
+                    return false;   
+                }
+
+                if(!string.IsNullOrEmpty(this.OutputFile))
+                {
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, but OutputFile is not empty");
+                    return false;   
+                }
+                this.OutputFile = Path.Combine(this.OutputDirectory, Path.GetFileName(this.InputFile));
+                this.OutputFile += ".clog.h";
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "Setting Output file to : " + this.OutputFile);
             }
 
             //
