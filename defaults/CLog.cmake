@@ -7,6 +7,8 @@
 #
 function(CLOG_GENERATE_TARGET)
     set(library ${ARGV0})
+    set(library_type ${ARGV1})
+    list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
      # message(STATUS "****************<<<<<<<   CLOG(${library}))    >>>>>>>>>>>>>>>*******************")
      # message(STATUS ">>>> CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -36,11 +38,7 @@ function(CLOG_GENERATE_TARGET)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        add_library(${library} STATIC ${clogfiles})
-    else()
-        add_library(${library} SHARED ${clogfiles})
-    endif()
+    add_library(${library} ${library_type} ${clogfiles})
 
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)

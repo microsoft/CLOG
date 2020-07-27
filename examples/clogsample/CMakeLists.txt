@@ -12,7 +12,7 @@ set(SOURCES
 # Create a clog target for all the source files. This target is then used
 # as a normal cmake target dependency
 #
-CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB ${SOURCES})
+CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB STATIC ${SOURCES})
 
 add_executable (clogsample ${SOURCES})
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
