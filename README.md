@@ -1,5 +1,9 @@
 ﻿# Revisions
 
+## 0.1.3 ALPHA
+* Make headers only included in the target when building
+* Allows build type to be selected by consuming projects in cmake
+
 ## 0.1.2 ALPHA
 * Update to netcoreapp3.1
 * Adds method to extract downstream dependencies from tool
