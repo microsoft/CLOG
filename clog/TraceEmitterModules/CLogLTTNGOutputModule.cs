@@ -88,6 +88,7 @@ namespace clog.TraceEmitterModules
 
             sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
             sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
+            sourceFile.AppendLine("#define TRACEPOINT_PROBE_DYNAMIC_LINKAGE");            
             sourceFile.AppendLine($"#include \"{Path.GetFullPath(_clogFile)}\"");
         }
 
