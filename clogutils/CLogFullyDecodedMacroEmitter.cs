@@ -60,6 +60,9 @@ namespace clogutils
         {
             r = null;
 
+            if (_knownHashes.Contains(decodedTraceLine.UniqueId))
+                return;
+
             string argsString = "";
             int clogArgCountForMacroAlignment = 2; // decodedTraceLine.splitArgs.Length + 1;
 
@@ -142,31 +145,29 @@ namespace clogutils
             implSignature += ")";
 
             StringBuilder macroBody = new StringBuilder();
+            
+            _headerFile.AppendLine("");
+            _headerFile.AppendLine("");
+            _headerFile.AppendLine("");
+            _headerFile.AppendLine("/*----------------------------------------------------------");
+            _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
+            _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
+            _headerFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
 
-            if (!_knownHashes.Contains(decodedTraceLine.UniqueId))
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
-                _headerFile.AppendLine("");
-                _headerFile.AppendLine("");
-                _headerFile.AppendLine("");
-                _headerFile.AppendLine("/*----------------------------------------------------------");
-                _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
-                _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
-                _headerFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
-
-                foreach (var arg in decodedTraceLine.splitArgs)
-                {
-                    _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
-                }
-
-                _headerFile.AppendLine("----------------------------------------------------------*/");
-
-                //
-                // BUGBUG: not fully implemented - the intent of 'implSignature' is to give a turn key
-                //    way for a module to emit code without the need for the module to emit its own function
-                //
-                //_headerFile.AppendLine($"void {implSignature};");
-                macroBody.AppendLine($"#define {macroName}({argsString})" + "\\");
+                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
             }
+
+            _headerFile.AppendLine("----------------------------------------------------------*/");
+
+            //
+            // BUGBUG: not fully implemented - the intent of 'implSignature' is to give a turn key
+            //    way for a module to emit code without the need for the module to emit its own function
+            //
+            //_headerFile.AppendLine($"void {implSignature};");
+            macroBody.AppendLine($"#define {macroName}({argsString})" + "\\");
+        
 
             foreach (ICLogOutputModule module in _modules)
             {
