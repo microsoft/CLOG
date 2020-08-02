@@ -1,5 +1,11 @@
 ﻿# Revisions
 
+## 0.1.4 ALPHA
+* introduce --outputDirectory to be used instead of -o, such that the filename of the resulting .h file is the input file with .clog.h (this helps in some build environments)
+* flip LTTNG to use dynamic linkage (TRACEPOINT_PROBE_DYNAMIC_LINKAGE)
+* introduce CLOG_INLINE_IMPLEMENTATION, such that the generated .c file can be included into the produced .h file (to simplify some build systems)
+* misc help output cleanup
+
 ## 0.1.3 ALPHA
 * Make headers only included in the target when building
 * Allows build type to be selected by consuming projects in cmake
