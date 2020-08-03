@@ -45,6 +45,14 @@ function(CLOG_GENERATE_TARGET)
 
     
 
+
+
+
+
+
+
+
+
     
 
     if (${library_type} STREQUAL "SHARED")
