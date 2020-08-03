@@ -29,4 +29,4 @@ target_link_libraries(clogsampledynamictp CLOGSAMPLE_DYNLIB)
 
 add_library (clogsampletracepointprovider SHARED $<TARGET_OBJECTS:CLOGSAMPLE_DYNLIB.provider>)
 target_link_libraries(clogsampletracepointprovider ${LTTNGUST_LIBRARIES})
-endif
+endif()
