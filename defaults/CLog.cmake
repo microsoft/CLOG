@@ -25,7 +25,7 @@ function(CLOG_GENERATE_TARGET)
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
 
         set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
-        if (${library_type} STREQUAL "SHARED")
+        if (${library_type} STREQUAL "DYNAMIC")
             set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
         endif()
 
@@ -43,7 +43,7 @@ function(CLOG_GENERATE_TARGET)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    if (${library_type} STREQUAL "SHARED")
+    if (${library_type} STREQUAL "DYNAMIC")
         add_library(${library} STATIC ${clogfiles})
 
         add_library("${library}.provider" OBJECT ${clogfiles})
@@ -54,6 +54,7 @@ function(CLOG_GENERATE_TARGET)
         target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)
     else()
         add_library(${library} ${library_type} ${clogfiles})
+        add_library("${library}.provider" INTERFACE)
     endif()
 
     target_link_libraries(${library} PUBLIC ${CMAKE_DL_LIBS})
