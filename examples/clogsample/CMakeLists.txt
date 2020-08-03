@@ -18,6 +18,10 @@ add_executable (clogsample ${SOURCES})
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
 
 if (NOT WIN32)
+
+include(FindLTTngUST)
+target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
+
 CLOG_GENERATE_TARGET(CLOGSAMPLE_DYNLIB SHARED ${SOURCES})
 
 add_executable (clogsampledynamictp ${SOURCES})
