@@ -53,6 +53,10 @@ function(CLOG_GENERATE_TARGET)
 
 
 
+
+
+
+
     
 
     if (${library_type} STREQUAL "SHARED")
@@ -60,6 +64,7 @@ function(CLOG_GENERATE_TARGET)
 
         add_library("${library}.provider" OBJECT ${clogfiles})
         target_compile_definitions("${library}.provider" PRIVATE BUILDING_TRACEPOINT_PROVIDER)
+        target_compile_options("${library}.provider" -fpic)
 
         target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
         target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)

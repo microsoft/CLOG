@@ -3,7 +3,7 @@
     "lttng_plus": {
       "Modules": [
         {
-          "ExportModule": "DTRACE",
+          "ExportModule": "LTTNG",
           "CustomSettings": {}
         }
       ]
