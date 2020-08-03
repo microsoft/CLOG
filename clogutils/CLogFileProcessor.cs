@@ -311,7 +311,7 @@ namespace clogutils
                
                 if(c.SkipProcessing)
                 {
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Skipping Macro : {macro.MacroName} due to 'SkipProcessing' being set");
+                    //CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Skipping Macro : {macro.MacroName} due to 'SkipProcessing' being set");
                     continue;
                 }
 
