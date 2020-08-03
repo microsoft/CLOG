@@ -17,7 +17,7 @@ CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB STATIC ${SOURCES})
 add_executable (clogsample ${SOURCES})
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
 
-if (NOT WIN32)
+if (NOT WIN32 AND NOT APPLE)
 
 include(FindLTTngUST)
 target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
