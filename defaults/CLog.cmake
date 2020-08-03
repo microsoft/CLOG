@@ -43,27 +43,6 @@ function(CLOG_GENERATE_TARGET)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-    
-
     if (${library_type} STREQUAL "SHARED")
         add_library(${library} STATIC ${clogfiles})
 
