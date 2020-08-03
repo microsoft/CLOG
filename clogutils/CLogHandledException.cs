@@ -42,7 +42,8 @@ namespace clogutils
             CustomTypeDecoderNotFound = 23,
             InvalidUniqueId = 24,
             WontWriteInReadOnlyMode = 25,
-            RequiredConfigParameterUnspecified = 26
+            RequiredConfigParameterUnspecified = 26,
+            InvalidInputFile = 27
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -97,6 +98,8 @@ namespace clogutils
                     return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_DEVELOPMENT_MODE such that manifests and sidecars will be automatically updated";
                 case ExceptionType.RequiredConfigParameterUnspecified:
                     return "A required configuration parameter was not specified in the configuration file - this will be a user specified option required for a chosen event module";
+                case ExceptionType.InvalidInputFile:
+                    return "Invalid input file";
             }
 
             return "Uknown Error";
@@ -120,8 +123,15 @@ namespace clogutils
         {
             CLogErrors.PrintMatchDiagnostic(TraceLine);
 
-            string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+            try
+            {
+                string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+            }
+            catch (Exception e)
+            {
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   ERR: TraceLine failure");
+            }
 
             if (!String.IsNullOrEmpty(InfoString))
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Info : " + InfoString);

@@ -70,7 +70,7 @@ namespace clogutils
         public void InsertTraceLine(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
         {
             CLogTraceLineInformation output;
-            if (ModuleUniqueness.IsUnique(module, traceLine, out output))
+            if (ModuleUniqueness.IsUnique(module, traceLine, out output) && null != output)
                 return;
 
             AreDirty = true;

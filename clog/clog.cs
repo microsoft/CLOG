@@ -224,6 +224,12 @@ namespace clog
                             options.OutputFile + ".lttng.h");
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
+                        if(!File.Exists(options.InputFile))
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File : {Path.GetFileName(options.InputFile)}");
+                            throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);       
+                        }
+
                         string content = File.ReadAllText(options.InputFile);
                         string output = processor.ConvertFile(configFile, fullyDecodedMacroEmitter, content, options.InputFile, false);
 
@@ -258,8 +264,16 @@ namespace clog
                         clogFile.AppendLine("}");
                         clogFile.AppendLine("#endif");
 
+                        clogFile.AppendLine("#ifdef CLOG_INLINE_IMPLEMENTATION");
+                        clogFile.AppendLine("#include \"" + Path.GetFileName(outputCFile) + "\"");
+                        clogFile.AppendLine("#endif");
+
+
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
+                        {
+                            Console.WriteLine("Creating Directory for Output : " + Path.GetDirectoryName(options.OutputFile));
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
+                        }
 
                         if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
