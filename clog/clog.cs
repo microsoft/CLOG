@@ -221,7 +221,7 @@ namespace clog
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
                         CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(options.InputFile, options.OutputFile,
-                            options.OutputFile + ".lttng.h");
+                            options.OutputFile + ".lttng.h", options.DynamicTracepointProvider);
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
                         if(!File.Exists(options.InputFile))

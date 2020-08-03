@@ -16,3 +16,13 @@ CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB STATIC ${SOURCES})
 
 add_executable (clogsample ${SOURCES})
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
+
+if (NOT WIN32)
+CLOG_GENERATE_TARGET(CLOGSAMPLE_DYNLIB SHARED ${SOURCES})
+
+add_executable (clogsampledynamictp ${SOURCES})
+target_link_libraries(clogsampledynamictp CLOGSAMPLE_DYNLIB)
+
+add_library (clogsampletracepointprovider SHARED $<TARGET_OBJECTS:CLOGSAMPLE_DYNLIB.provider>)
+target_link_libraries(clogsampletracepointprovider ${LTTNGUST_LIBRARIES})
+endif

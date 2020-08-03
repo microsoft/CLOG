@@ -24,11 +24,16 @@ function(CLOG_GENERATE_TARGET)
 
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
 
+        set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
+        if (${library_type} STREQUAL "SHARED")
+            set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
+        endif()
+
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
-            COMMENT "CLOG: clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
-            COMMAND clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
+            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
+            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
         )
 
         set_property(SOURCE ${arg}
@@ -38,10 +43,20 @@ function(CLOG_GENERATE_TARGET)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
+
+
     add_library(${library} ${library_type} ${clogfiles})
 
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)
+
+    if (${library_type} STREQUAL "SHARED")
+        add_library("${library}.provider" OBJECT $(clogfiles))
+        target_compile_definitions("${library}.provider" PRIVATE BUILDING_TRACEPOINT_PROVIDER)
+
+        target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
+        target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)
+    endif()
 
     # message(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 endfunction()
