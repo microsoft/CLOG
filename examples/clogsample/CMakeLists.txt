@@ -19,15 +19,15 @@ target_link_libraries(clogsample CLOGSAMPLE_LIB)
 
 if (NOT WIN32 AND NOT APPLE)
 
-include(FindLTTngUST)
-target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
+    include(FindLTTngUST)
+    target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
 
-CLOG_GENERATE_TARGET(CLOGSAMPLE_DYNLIB SHARED ${SOURCES})
+    CLOG_GENERATE_TARGET(CLOGSAMPLE_DYNLIB SHARED ${SOURCES})
 
-add_executable (clogsampledynamictp ${SOURCES})
-target_link_libraries(clogsampledynamictp CLOGSAMPLE_DYNLIB)
+    add_executable (clogsampledynamictp ${SOURCES})
+    target_link_libraries(clogsampledynamictp CLOGSAMPLE_DYNLIB)
 
-add_library (clogsampletracepointprovider SHARED $<TARGET_OBJECTS:CLOGSAMPLE_DYNLIB.provider>)
-target_link_libraries(clogsampletracepointprovider ${LTTNGUST_LIBRARIES})
+    add_library (clogsampletracepointprovider SHARED $<TARGET_OBJECTS:CLOGSAMPLE_DYNLIB.provider>)
+    target_link_libraries(clogsampletracepointprovider ${LTTNGUST_LIBRARIES})
 
 endif()
