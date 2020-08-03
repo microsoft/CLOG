@@ -123,8 +123,15 @@ namespace clogutils
         {
             CLogErrors.PrintMatchDiagnostic(TraceLine);
 
-            string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+            try
+            {
+                string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+            }
+            catch (Exception e)
+            {
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   ERR: TraceLine failure");
+            }
 
             if (!String.IsNullOrEmpty(InfoString))
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Info : " + InfoString);
