@@ -1,5 +1,8 @@
 ﻿# Revisions
 
+## 0.1.5 ALPHA
+* Add support for a dynamic tracepoint provider with lttng
+
 ## 0.1.4 ALPHA
 * introduce --outputDirectory to be used instead of -o, such that the filename of the resulting .h file is the input file with .clog.h (this helps in some build environments)
 * flip LTTNG to use dynamic linkage (TRACEPOINT_PROBE_DYNAMIC_LINKAGE)
