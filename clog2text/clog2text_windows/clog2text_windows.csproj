@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackAsTool>true</PackAsTool>
     <PackageOutputPath>../../nupkg</PackageOutputPath>

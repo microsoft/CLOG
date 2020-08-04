@@ -24,11 +24,16 @@ function(CLOG_GENERATE_TARGET)
 
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
 
+        set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
+        if (${library_type} STREQUAL "DYNAMIC")
+            set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
+        endif()
+
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
-            COMMENT "CLOG: clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
-            COMMAND clog --readOnly -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
+            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
+            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
         )
 
         set_property(SOURCE ${arg}
@@ -38,8 +43,21 @@ function(CLOG_GENERATE_TARGET)
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
     endforeach()
 
-    add_library(${library} ${library_type} ${clogfiles})
+    if (${library_type} STREQUAL "DYNAMIC")
+        add_library(${library} STATIC ${clogfiles})
 
+        add_library("${library}.provider" OBJECT ${clogfiles})
+        target_compile_definitions("${library}.provider" PRIVATE BUILDING_TRACEPOINT_PROVIDER)
+        set_property(TARGET "${library}.provider" PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+        target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
+        target_include_directories("${library}.provider" PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)
+    else()
+        add_library(${library} ${library_type} ${clogfiles})
+        add_library("${library}.provider" INTERFACE)
+    endif()
+
+    target_link_libraries(${library} PUBLIC ${CMAKE_DL_LIBS})
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CLOG_INCLUDE_DIRECTORY}>)
     target_include_directories(${library} PUBLIC $<BUILD_INTERFACE:${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}>)
 

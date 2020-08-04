@@ -116,6 +116,13 @@ namespace clog
             set;
         }
 
+        [Option('d', "dynamicTracepointProvider", Required = false, Default = false, HelpText = "[OPTIONAL] Set to use a dynamic tracepoint provider rather then static (LTTng specific)")]
+        public bool DynamicTracepointProvider
+        {
+            get;
+            set;
+        }
+
         public bool IsValid()
         {
             if (!string.IsNullOrWhiteSpace(this.InstallDependencies))

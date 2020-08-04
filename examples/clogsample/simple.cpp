@@ -13,7 +13,7 @@ Abstract:
 
 int main(int argc, char* argv[])
 {
-    printf("Hello world!");
+    printf("Hello world!\n");
     TraceInfo(LAUNCHED, "Hello world - we just started here is an int=%d", 20);
 
     char *buffer = new char[10];

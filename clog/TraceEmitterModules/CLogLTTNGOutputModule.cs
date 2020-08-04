@@ -22,13 +22,15 @@ namespace clog.TraceEmitterModules
         private readonly string _clogFile;
         private readonly string _lttngHeaderFileName;
         private readonly string _lttngProviderName;
+        private readonly bool _lttngDynamicTracepoint;
         private readonly StringBuilder lttngFile = new StringBuilder();
 
-        public CLogLTTNGOutputModule(string sourceFile, string clogFile, string lttngHeaderFileName)
+        public CLogLTTNGOutputModule(string sourceFile, string clogFile, string lttngHeaderFileName, bool dynamicTracepoint)
         {
             _clogFile = clogFile;
             _lttngHeaderFileName = lttngHeaderFileName;
             _lttngProviderName = "CLOG_" + Path.GetFileName(sourceFile).ToUpper().Replace(".", "_");
+            _lttngDynamicTracepoint = dynamicTracepoint;
 
             if (File.Exists(_lttngHeaderFileName))
             {
@@ -56,6 +58,12 @@ namespace clog.TraceEmitterModules
         {
             header.AppendLine("#undef TRACEPOINT_PROVIDER");
             header.AppendLine($"#define TRACEPOINT_PROVIDER {_lttngProviderName}");
+
+            if (_lttngDynamicTracepoint)
+            {
+                header.AppendLine("#undef TRACEPOINT_PROBE_DYNAMIC_LINKAGE");
+                header.AppendLine("#define  TRACEPOINT_PROBE_DYNAMIC_LINKAGE");
+            }
 
             header.AppendLine("#undef TRACEPOINT_INCLUDE");
             header.AppendLine($"#define TRACEPOINT_INCLUDE \"{_lttngHeaderFileName}\"");
@@ -86,9 +94,20 @@ namespace clog.TraceEmitterModules
 
             File.WriteAllText(_lttngHeaderFileName, lttngFile.ToString());
 
-            sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
-            sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
-            sourceFile.AppendLine("#define TRACEPOINT_PROBE_DYNAMIC_LINKAGE");            
+            if (_lttngDynamicTracepoint)
+            {
+                sourceFile.AppendLine("#ifdef BUILDING_TRACEPOINT_PROVIDER");
+                sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
+                sourceFile.AppendLine("#else");
+                sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
+                sourceFile.AppendLine("#endif");
+            }
+            else
+            {
+                sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
+                sourceFile.AppendLine("#define TRACEPOINT_DEFINE");  
+            }
+
             sourceFile.AppendLine($"#include \"{Path.GetFullPath(_clogFile)}\"");
         }
 
