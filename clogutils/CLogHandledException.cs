@@ -128,7 +128,7 @@ namespace clogutils
                 string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   ERR: TraceLine failure");
             }
