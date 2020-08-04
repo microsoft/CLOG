@@ -63,7 +63,7 @@ namespace clog2text_lttng
                 assemblyName,
                 new[] { syntaxTree },
                 references,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
 
             _compiledCode = new MemoryStream();
 
