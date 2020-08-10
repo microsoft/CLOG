@@ -115,6 +115,7 @@ namespace clog
                         if (options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
                             options.OverwriteHashCollisions = true;
+                            options.ReadOnly = false;
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");

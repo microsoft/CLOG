@@ -83,6 +83,8 @@ namespace clogutils
             AreDirty = true;
             ChangesList.Add("Removed : " + traceLine.TraceID);
             ModuleUniqueness.Remove(traceLine);
+
+            EventBundlesV2.Remove(traceLine.TraceID);
         }
 
         public string ModuleName

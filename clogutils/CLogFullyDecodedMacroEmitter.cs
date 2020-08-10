@@ -16,6 +16,7 @@ using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace clogutils
@@ -60,8 +61,10 @@ namespace clogutils
         {
             r = null;
 
-            if (_knownHashes.Contains(decodedTraceLine.UniqueId))
+            /*
+            if (_knownHashes.ContainsKey(decodedTraceLine.UniqueId) && _knownHashes[decodedTraceLine.UniqueId] == decodedTraceLine.
                 return;
+            */
 
             string argsString = "";
             int clogArgCountForMacroAlignment = 2; // decodedTraceLine.splitArgs.Length + 1;
@@ -194,6 +197,9 @@ namespace clogutils
 
                             _sidecar.RemoveTraceLine(existingTraceInfo);
 							_knownHashes.Remove(decodedTraceLine.UniqueId);
+                            _sidecar.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
+                                macroBody,
+                                _sourceFile);
                         }
                         else
                         {
@@ -240,9 +246,13 @@ namespace clogutils
                     {
                         _sidecar.InsertTraceLine(module, decodedTraceLine);
 
-                        module.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
-                            macroBody,
-                            _sourceFile);
+                        var c = decodedTraceLine.configFile.MacroConfigurations[decodedTraceLine.macro.MacroConfiguration[decodedTraceLine.configFile.ProfileName]];
+                        if (!c.SkipProcessing)
+                        {
+                            module.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
+                                macroBody,
+                                _sourceFile);
+                        }
                     }
                 }
             }
