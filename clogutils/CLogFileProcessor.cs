@@ -342,16 +342,8 @@ namespace clogutils
                             results.Append(keep);
 
                             CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
-                        /*    if (callbacks is ICLogPartiallyDecodedLineCallbackInterfaceX)
-                            {
-                                string toAdd = ((ICLogPartiallyDecodedLineCallbackInterfaceX)callbacks).ReplaceLineWith(traceLine);
-                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
-                            }
-                            else
-                            {  */                            
-                                callbacks.TraceLineDiscovered(traceLine, results);
-                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
-                          //  }                                                        
+                            callbacks.TraceLineDiscovered(traceLine, results);
+                            start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
                         }
                         catch (CLogHandledException)
                         {

@@ -218,6 +218,9 @@ namespace clog
                         CLogSysLogModule syslog = new CLogSysLogModule();
                         fullyDecodedMacroEmitter.AddClogModule(syslog);
 
+                        CLogSTDOUT stdout = new CLogSTDOUT();
+                        fullyDecodedMacroEmitter.AddClogModule(stdout);
+
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
