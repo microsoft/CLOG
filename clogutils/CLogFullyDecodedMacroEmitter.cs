@@ -229,7 +229,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "   Force/Clobber the event signature - indicating you desire breaking the uniqueness contract");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) frome this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    2. specify the --overwriteHashCollisions command line argument (good if you're making lots of changes that are all safe)");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    3. set environment varaible CLOG_OVERWRITE_COLLISIONS (useful if you'd like --overwriteHashCollisions but do not want to modify build scripts)");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"    3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event:");
