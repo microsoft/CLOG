@@ -307,14 +307,6 @@ namespace clogutils
 
             foreach (CLogTraceMacroDefination macro in ConfigFile.AllKnownMacros())
             {
-                var c = configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
-               
-                if(c.SkipProcessing)
-                {
-                    //CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Skipping Macro : {macro.MacroName} due to 'SkipProcessing' being set");
-                    continue;
-                }
-
                 StringBuilder results = new StringBuilder();
                 int start = 0, end = 0;
 
@@ -350,16 +342,8 @@ namespace clogutils
                             results.Append(keep);
 
                             CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
-                        /*    if (callbacks is ICLogPartiallyDecodedLineCallbackInterfaceX)
-                            {
-                                string toAdd = ((ICLogPartiallyDecodedLineCallbackInterfaceX)callbacks).ReplaceLineWith(traceLine);
-                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
-                            }
-                            else
-                            {  */                            
-                                callbacks.TraceLineDiscovered(traceLine, results);
-                                start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
-                          //  }                                                        
+                            callbacks.TraceLineDiscovered(traceLine, results);
+                            start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
                         }
                         catch (CLogHandledException)
                         {

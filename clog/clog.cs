@@ -115,6 +115,7 @@ namespace clog
                         if (options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                         {
                             options.OverwriteHashCollisions = true;
+                            options.ReadOnly = false;
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
@@ -216,6 +217,9 @@ namespace clog
 
                         CLogSysLogModule syslog = new CLogSysLogModule();
                         fullyDecodedMacroEmitter.AddClogModule(syslog);
+
+                        CLogSTDOUT stdout = new CLogSTDOUT();
+                        fullyDecodedMacroEmitter.AddClogModule(stdout);
 
                         CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                         fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
