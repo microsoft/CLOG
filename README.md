@@ -1,30 +1,3 @@
-﻿# Revisions
-
-## 0.1.5 ALPHA
-* Add support for a dynamic tracepoint provider with lttng
-
-## 0.1.4 ALPHA
-* introduce --outputDirectory to be used instead of -o, such that the filename of the resulting .h file is the input file with .clog.h (this helps in some build environments)
-* flip LTTNG to use dynamic linkage (TRACEPOINT_PROBE_DYNAMIC_LINKAGE)
-* introduce CLOG_INLINE_IMPLEMENTATION, such that the generated .c file can be included into the produced .h file (to simplify some build systems)
-* misc help output cleanup
-
-## 0.1.3 ALPHA
-* Make headers only included in the target when building
-* Allows build type to be selected by consuming projects in cmake
-
-## 0.1.2 ALPHA
-* Update to netcoreapp3.1
-* Adds method to extract downstream dependencies from tool
-* Embedded default configurations into executable for downstream users to use
-
-## 0.1.1 ALPHA
-* Initial drop
-* Released for purposes of starting conversations
-* We expecting substantial (breaking) changes in short order;  please do not take a dependence until verson 1.0.0
-* We're using semver [as a guiding light](https://semver.org/spec/v2.0.0.html)
-
-
 # Introduction
 
 [![Build Status](https://dev.azure.com/ms/CLOG/_apis/build/status/CI?branchName=master)](https://dev.azure.com/ms/CLOG/_build/latest?definitionId=373&branchName=master)
