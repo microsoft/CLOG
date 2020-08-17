@@ -14,6 +14,11 @@ namespace defaults.clog_config
             return "0x" + pointer.ToString("x");
         }
 
+        public static string DecodeChar(byte value)
+        {
+            return ((char)value).ToString();
+        }
+
         public static string DecodeUInt32(uint value)
         {
             return value.ToString();
