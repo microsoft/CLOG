@@ -241,11 +241,6 @@ namespace clog.TraceEmitterModules
                             $"        ctf_integer(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
-                    case CLogEncodingType.Char:
-                        lttngFile.AppendLine(
-                            $"        ctf_array_text(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName}, 1)");
-                        break;
-
                     case CLogEncodingType.UInt8:
                         lttngFile.AppendLine(
                             $"        ctf_integer(unsigned char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
@@ -344,7 +339,6 @@ namespace clog.TraceEmitterModules
         {
             switch (node.EncodingType)
             {
-                case CLogEncodingType.Char:
                 case CLogEncodingType.Int8:
                     return "char";
 

@@ -181,7 +181,7 @@
         "DefinationEncoding": "tX",
       },
       {
-        "EncodingType": "Char",
+        "EncodingType": "UInt8",
         "CType": "char",
         "DefinationEncoding": "c"
       },

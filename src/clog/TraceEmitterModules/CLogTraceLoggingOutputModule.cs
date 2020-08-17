@@ -85,10 +85,6 @@ namespace clog.TraceEmitterModules
                         traceloggingLine += ",\\\n    TraceLoggingInt8" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
-                    case CLogEncodingType.Char:
-                        traceloggingLine += ",\\n     TraceLoggingChar" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
-                        break;
-
                     case CLogEncodingType.UInt8:
                         traceloggingLine += ",\\\n    TraceLoggingUInt8" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
