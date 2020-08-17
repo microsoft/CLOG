@@ -77,7 +77,7 @@ namespace clogutils
                         clogArgCountForMacroAlignment += 2;
 
                         // Verify the input argument contains CLOG_BYTEARRAY - this will aid in debugging
-                        if (!arg.VariableInfo.UserSpecifiedUnModified.Contains("CLOG_BYTEARRAY"))
+                        if (!arg.VariableInfo.UserSuppliedTrimmed.Contains("CLOG_BYTEARRAY"))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains a ByteArray type that is not using the CLOG_BYTEARRAY macro");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_BYTEARRAY(length, pointer)");

@@ -298,6 +298,15 @@ namespace clogutils.ConfigFile
             return ret.Values.ToArray();
         }
 
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            if (CustomTypeClogCSharpFileContents != null)
+            {
+                CustomTypeClogCSharpFileContents = CustomTypeClogCSharpFileContents.Replace("\r\n", "\n");
+            }
+        }
+
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
             JsonSerializerSettings s = new JsonSerializerSettings();

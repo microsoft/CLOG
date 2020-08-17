@@ -67,7 +67,7 @@ namespace syslog2clog
 
             foreach(var arg in decodedTraceLine.splitArgs)
             {
-                results.Append($", {arg.VariableInfo.UserSpecifiedUnModified}");
+                results.Append($", {arg.VariableInfo.UserSuppliedTrimmed}");
             }
             results.Append(");");
         }
