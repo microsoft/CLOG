@@ -382,8 +382,6 @@ namespace clogutils
 
         public class VariableInfo
         {
-            public string UserSpecifiedUnModified { get; set; }
-
             public string UserSuppliedTrimmed { get; set; }
 
             public string SuggestedTelemetryName { get; set; }
@@ -400,7 +398,6 @@ namespace clogutils
 
                 VariableInfo v = new VariableInfo();
                 v.UserSuppliedTrimmed = user.Trim();
-                v.UserSpecifiedUnModified = user;
                 v.SuggestedTelemetryName = suggestedName;
                 return v;
             }
