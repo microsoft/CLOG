@@ -178,6 +178,7 @@ namespace clog
 
                         if (options.RefreshCustomTypeProcessor)
                         {
+                            configFile.ForceDecoderCompile();
                             sidecar.Save(options.SidecarFile);
                             return 0;
                         }
