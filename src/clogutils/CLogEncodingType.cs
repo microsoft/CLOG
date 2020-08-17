@@ -34,6 +34,7 @@ namespace clogutils
         UInt16 = 12,
         Int8 = 13,
         UInt8 = 14,
-        ByteArray = 15
+        ByteArray = 15,
+        Char = 16
     }
 }

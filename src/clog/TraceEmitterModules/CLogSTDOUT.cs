@@ -99,6 +99,9 @@ namespace clog.TraceEmitterModules
                     case CLogEncodingType.ByteArray:
                         printf += "%p";
                         break;
+                    case CLogEncodingType.Char:
+                        printf += "%c";
+                        break;
                 }
             }
           
@@ -150,6 +153,9 @@ namespace clog.TraceEmitterModules
                         break;
                     case CLogEncodingType.ByteArray:
                         cast = "(void*)";
+                        break;
+                    case CLogEncodingType.Char:
+                        cast = "(char)";
                         break;
                 }
                 inline.Append($", {cast}(" + decodedTraceLine.splitArgs[i].MacroVariableName +")");
