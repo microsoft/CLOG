@@ -9,6 +9,10 @@
     <NoWarn>1701;1702;3026</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants>TRACE;DECODERTESTBUILD</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
   </ItemGroup>

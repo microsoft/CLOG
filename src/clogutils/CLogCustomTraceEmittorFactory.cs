@@ -42,7 +42,6 @@ namespace clog2text_lttng
         public void SetSourceCode(string sourceCode)
         {
             CustomTypeDecoder = sourceCode;
-            PrepareAssemblyCompileIfNecessary();
         }
 
         public bool Inited()
@@ -50,7 +49,7 @@ namespace clog2text_lttng
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
 
-        private void PrepareAssemblyCompileIfNecessary()
+        internal void PrepareAssemblyCompileIfNecessary()
         {
             if (null != _codeAssembly)
                 return;
@@ -157,26 +156,6 @@ namespace clog2text_lttng
         public void AddConverter(CLogEncodingCLogTypeSearch type)
         {
             _converterFunctions[type.DefinationEncoding] = type;
-        }
-
-
-        [StructLayout(LayoutKind.Explicit)]
-        public struct SocketAddress
-        {
-            [FieldOffset(0)] public ushort si_family;
-
-            [FieldOffset(2)] public ushort sin_port;
-
-            // IPv4
-            [FieldOffset(4)] public ulong S_addr;
-
-
-            // IPv6
-            [FieldOffset(4)] public ulong sin6_flowinfo;
-
-            [FieldOffset(8)] public ulong S_v6Addr1;
-
-            [FieldOffset(16)] public ulong S_v6Addr2;
         }
     }
 }

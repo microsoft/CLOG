@@ -165,8 +165,6 @@ namespace clogutils.ConfigFile
                 this.TypeEncoders.InitCustomDecoder(this.CustomTypeClogCSharpFileContents);
         }
 
-
-
         /// <summary>
         /// If the MarkPhase bit isnt set, dont clutter up the config file with it - it's a rare feature and we'd like to reduce confusion/complexity
         /// </summary>
@@ -480,6 +478,11 @@ namespace clogutils.ConfigFile
                 }
             }
 #endif
+        }
+
+        public void ForceDecoderCompile() 
+        {
+            this.TypeEncoders.ForceDecoderCompile();
         }
 
         public void Save(bool persistChainedFiles)

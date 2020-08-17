@@ -291,6 +291,7 @@ namespace clog
                                 sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
+                            configFile.ForceDecoderCompile();
                             sidecar.Save(options.SidecarFile);
                         }
 
