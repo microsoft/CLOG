@@ -50,8 +50,9 @@ namespace clogutils.ConfigFile
             return me;
         }
 
-        public void ForceDecoderCompile()
+        public void ForceDecoderCompile(string customTypeClogCSharpFileContents)
         {
+            _traceEmittorX.SetSourceCode(customTypeClogCSharpFileContents);
             _traceEmittorX.PrepareAssemblyCompileIfNecessary();
         }
 

@@ -482,7 +482,7 @@ namespace clogutils.ConfigFile
 
         public void ForceDecoderCompile() 
         {
-            this.TypeEncoders.ForceDecoderCompile();
+            this.TypeEncoders.ForceDecoderCompile(CustomTypeClogCSharpFileContents);
         }
 
         public void Save(bool persistChainedFiles)
