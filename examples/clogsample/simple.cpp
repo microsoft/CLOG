@@ -23,6 +23,8 @@ int main(int argc, char* argv[])
     }
 
     TraceInfo(DATA, "%!BYTEARRAY!", CLOG_BYTEARRAY(5, "hello"));
+
+    TraceInfo(CHARDATATEST, "%c", 'a');
     delete [] buffer;
     return 0;
 }
