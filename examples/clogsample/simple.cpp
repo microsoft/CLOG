@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     TraceInfo(DATA, "%!BYTEARRAY!", CLOG_BYTEARRAY(5, "hello"));
 
-    TraceInfo(Data, "This is a char: %c", 'a');
+    TraceInfo(DATA, "This is a char: %c", 'a');
     delete [] buffer;
     return 0;
 }
