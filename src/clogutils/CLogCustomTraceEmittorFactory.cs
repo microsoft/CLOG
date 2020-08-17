@@ -96,6 +96,15 @@ namespace clog2text_lttng
         public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
             //
+            // Skip custom type decode if there is no decoder loaded
+            //
+            if (CustomTypeDecoder == null)
+            {
+                decodedValue = "";
+                return true;
+            }
+            
+            //
             // Compiling also caches the assembly
             //
             PrepareAssemblyCompileIfNecessary();
@@ -110,6 +119,10 @@ namespace clog2text_lttng
 
                 case CLogEncodingType.Int32:
                     args[0] = value.AsInt32;
+                    break;
+
+                case CLogEncodingType.UInt8:
+                    args[0] = (byte)value.AsInt32;
                     break;
 
                 case CLogEncodingType.ByteArray:
