@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
+    <Compile Include="..\..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
   </ItemGroup>
 
 </Project>

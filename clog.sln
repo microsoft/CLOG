@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog", "..\clog\clog.csproj", "{C35AA43B-DC28-4E5B-8414-176DAB5AB2C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog", "src\clog\clog.csproj", "{C35AA43B-DC28-4E5B-8414-176DAB5AB2C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clogutils", "..\clogutils\clogutils.csproj", "{076A3AA5-DEB6-45AB-B834-5416178BAF44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clogutils", "src\clogutils\clogutils.csproj", "{076A3AA5-DEB6-45AB-B834-5416178BAF44}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "clog2text", "clog2text", "{C05DAADF-AA11-4B93-A0B9-CCA2849A6A06}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "clog2text", "src\clog2text", "{C05DAADF-AA11-4B93-A0B9-CCA2849A6A06}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_lttng", "..\clog2text\clog2text_lttng\clog2text_lttng.csproj", "{B683F6AC-DEC3-4AFC-B156-77F303EE2986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_lttng", "src\clog2text\clog2text_lttng\clog2text_lttng.csproj", "{B683F6AC-DEC3-4AFC-B156-77F303EE2986}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_windows", "..\clog2text\clog2text_windows\clog2text_windows.csproj", "{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_windows", "src\clog2text\clog2text_windows\clog2text_windows.csproj", "{1ACE842F-1CA7-49E8-8E43-2C33EAF7E170}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "decoderTest", "..\decoderTest\decoderTest.csproj", "{A2079B4E-FF96-4DE5-80E8-8403A17C4347}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "decoderTest", "src\decoderTest\decoderTest.csproj", "{A2079B4E-FF96-4DE5-80E8-8403A17C4347}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "converters", "converters", "{FE0B277E-B292-4FF2-8C69-15EECC1A3787}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "converters", "src\converters", "{FE0B277E-B292-4FF2-8C69-15EECC1A3787}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslog2clog", "..\converters\syslog2clog\syslog2clog.csproj", "{E1FA7999-5C45-46B1-9E83-5467264F928E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslog2clog", "src\converters\syslog2clog\syslog2clog.csproj", "{E1FA7999-5C45-46B1-9E83-5467264F928E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

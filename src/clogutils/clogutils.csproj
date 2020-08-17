@@ -10,10 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
-    <EmbeddedResource Include="..\defaults\clog.h" Link="clog.h" />
-    <EmbeddedResource Include="..\defaults\defaults.clog_config" Link="defaults.clog_config" />
-    <EmbeddedResource Include="..\defaults\CLog.cmake" Link="CLog.cmake" />
+    <EmbeddedResource Include="..\..\defaults\defaults.clog.cs" Link="defaults.clog.cs" />
+    <EmbeddedResource Include="..\..\defaults\clog.h" Link="clog.h" />
+    <EmbeddedResource Include="..\..\defaults\defaults.clog_config" Link="defaults.clog_config" />
+    <EmbeddedResource Include="..\..\defaults\CLog.cmake" Link="CLog.cmake" />
   </ItemGroup>
 
   <ItemGroup>
