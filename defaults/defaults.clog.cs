@@ -19,6 +19,8 @@ namespace defaults.clog_config
             return value.ToString();
         }
 
+        THISISBROKENONPURPOSE
+
         public static string DecodeInt32(int value)
         {
             return value.ToString();

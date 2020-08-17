@@ -314,6 +314,7 @@ namespace clogutils.ConfigFile
                 if (ret.CustomTypeClogCSharpFile == EmbeddedDefaultName)
                 {
                     ret.TypeEncoders.LoadDefaultCSharpFromEmbedded(ret);
+                    throw new InvalidOperationException();
                 }
                 else
                 {

@@ -16,6 +16,7 @@ using clogutils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using Roslyn.CodeDom;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +42,7 @@ namespace clog2text_lttng
         public void SetSourceCode(string sourceCode)
         {
             CustomTypeDecoder = sourceCode;
+            PrepareAssemblyCompileIfNecessary();
         }
 
         public bool Inited()
@@ -59,11 +61,13 @@ namespace clog2text_lttng
             var refPaths = new[] { typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll") };
             MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
 
-            CSharpCompilation compilation = CSharpCompilation.Create(
+            Compilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 new[] { syntaxTree },
-                references,
+                null,
                 new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
+
+            compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
 
             _compiledCode = new MemoryStream();
 
