@@ -101,7 +101,61 @@ namespace clog.TraceEmitterModules
                         break;
                 }
             }
-          
+
+            printf += "**CLOG**{";
+            bool needComma = false;
+            foreach (var t in types)
+            {
+                if (needComma)
+                {
+                    printf += ",";
+                    needComma = false;
+                }
+                switch (t.TypeNode.EncodingType)
+                {
+                    case CLogEncodingType.Int32:
+                        printf += "|%d|";
+                        break;
+                    case CLogEncodingType.UInt32:
+                        printf += "|%u|";
+                        break;
+                    case CLogEncodingType.Int64:
+                        printf += "|%lld|";
+                        break;
+                    case CLogEncodingType.UInt64:
+                        printf += "|%llu|";
+                        break;
+                    case CLogEncodingType.ANSI_String:
+                        printf += "|%s|";
+                        break;
+                    case CLogEncodingType.UNICODE_String:
+                        printf += "|%p|";
+                        break;
+                    case CLogEncodingType.Pointer:
+                        printf += "|%p|";
+                        break;
+                    case CLogEncodingType.GUID:
+                        printf += "|%p|";
+                        break;
+                    case CLogEncodingType.Int16:
+                        printf += "|%d|";
+                        break;
+                    case CLogEncodingType.UInt16:
+                        printf += "|%d|";
+                        break;
+                    case CLogEncodingType.Int8:
+                        printf += "|%d|";
+                        break;
+                    case CLogEncodingType.UInt8:
+                        printf += "|%d|";
+                        break;
+                    case CLogEncodingType.ByteArray:
+                        printf += "|%p|";
+                        break;
+                }
+            }
+            printf += "}**CLOG**";
+
             if (types.Length >= 1)
             {
                 string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
@@ -154,6 +208,53 @@ namespace clog.TraceEmitterModules
                 }
                 inline.Append($", {cast}(" + decodedTraceLine.splitArgs[i].MacroVariableName +")");
             }
+
+            for (int i = 0; i < decodedTraceLine.splitArgs.Length; ++i)
+            {
+                string cast = "";
+                switch (types[i].TypeNode.EncodingType)
+                {
+                    case CLogEncodingType.Int32:
+                        cast = "(int)";
+                        break;
+                    case CLogEncodingType.UInt32:
+                        cast = "(unsigned int)";
+                        break;
+                    case CLogEncodingType.Int64:
+                        cast = "(__int64)";
+                        break;
+                    case CLogEncodingType.UInt64:
+                        cast = "(unsigned __int64)";
+                        break;
+                    case CLogEncodingType.ANSI_String:
+                        break;
+                    case CLogEncodingType.UNICODE_String:
+                        throw new NotImplementedException("UNICODE NOT SUPPORTED");
+                    case CLogEncodingType.Pointer:
+                        cast = "(void*)";
+                        break;
+                    case CLogEncodingType.GUID:
+                        cast = "(void*)";
+                        break;
+                    case CLogEncodingType.Int16:
+                        cast = "(__int16)";
+                        break;
+                    case CLogEncodingType.UInt16:
+                        cast = "(unsigned __int16)";
+                        break;
+                    case CLogEncodingType.Int8:
+                        cast = "(int)";
+                        break;
+                    case CLogEncodingType.UInt8:
+                        cast = "(int)";
+                        break;
+                    case CLogEncodingType.ByteArray:
+                        cast = "(void*)";
+                        break;
+                }
+                inline.Append($", {cast}(" + decodedTraceLine.splitArgs[i].MacroVariableName + ")");
+            }
+
             inline.Append(");\\\n");
         }
     }
