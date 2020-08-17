@@ -102,7 +102,16 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            printf += "**CLOG**{";
+            // Print the remainder of user text
+            if (types.Length >= 1)
+            {
+                string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
+                printf += tail;
+            }
+
+            // Add a CLOG FOOTER (for machine decode)
+            printf += "                  **CLOG**{"+decodedTraceLine.UniqueId+",";
+
             bool needComma = false;
             foreach (var t in types)
             {
@@ -155,12 +164,6 @@ namespace clog.TraceEmitterModules
                 }
             }
             printf += "}**CLOG**";
-
-            if (types.Length >= 1)
-            {
-                string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
-                printf += tail;
-            }
 
             inline.Append($"printf(\"{printf}\\r\\n\"");
             for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)
