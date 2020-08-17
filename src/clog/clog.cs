@@ -178,6 +178,7 @@ namespace clog
 
                         if (options.RefreshCustomTypeProcessor)
                         {
+                            configFile.ForceDecoderCompile();
                             sidecar.Save(options.SidecarFile);
                             return 0;
                         }
@@ -291,6 +292,7 @@ namespace clog
                                 sidecar.PrintDirtyReasons();
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
+                            configFile.ForceDecoderCompile();
                             sidecar.Save(options.SidecarFile);
                         }
 

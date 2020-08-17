@@ -50,6 +50,12 @@ namespace clogutils.ConfigFile
             return me;
         }
 
+        public void ForceDecoderCompile(string customTypeClogCSharpFileContents)
+        {
+            _traceEmittorX.SetSourceCode(customTypeClogCSharpFileContents);
+            _traceEmittorX.PrepareAssemblyCompileIfNecessary();
+        }
+
         public void Lint()
         {
             List<CLogEncodingCLogTypeSearch> newEncoders = new List<CLogEncodingCLogTypeSearch>();

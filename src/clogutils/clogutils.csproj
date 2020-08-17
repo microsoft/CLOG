@@ -24,4 +24,5 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
 
+  <Import Project="CodeDomHelper\Generated.targets" />
 </Project>
