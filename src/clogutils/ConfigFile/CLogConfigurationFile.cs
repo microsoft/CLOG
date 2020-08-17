@@ -303,7 +303,8 @@ namespace clogutils.ConfigFile
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
         {
-            if (CustomTypeClogCSharpFileContents != null) {
+            if (CustomTypeClogCSharpFileContents != null)
+            {
                 CustomTypeClogCSharpFileContents = CustomTypeClogCSharpFileContents.Replace("\r\n", "\n");
             }
         }
