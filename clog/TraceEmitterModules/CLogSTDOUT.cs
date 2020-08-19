@@ -56,14 +56,9 @@ namespace clog.TraceEmitterModules
         bool emittedHeader = false;
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
-            //string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
             string clean;
 
             CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(decodedTraceLine.configFile, null, decodedTraceLine.TraceString, null, out clean);
-
-            //inline.Append("{");
-
-
             CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
 
             string printmacro;
@@ -80,24 +75,6 @@ namespace clog.TraceEmitterModules
                 function.AppendLine($"// STDIO {DateTime.Now}------");
                 function.AppendLine("#include <" + printHeader + ">");
                 function.AppendLine("#define CLOG_ENCODE_STDIO_BYTES(ptr, len) if((int)len <= (int)bytesRemaining) { memcpy(head, ptr, len); head+=len; bytesRemaining-=len;}");
-
-                function.AppendLine("void __cdecl PRINT(const unsigned char* msg, unsigned int len);");
-                /*function.AppendLine("{");
-                function.AppendLine("    char dest[120];");
-                function.AppendLine("    int i = 0;");
-                function.AppendLine("    while (len)");
-                function.AppendLine("    {");
-                function.AppendLine("        char a = (msg[i] & 0xF0) >> 4;");
-                function.AppendLine("        char b = (msg[i] & 0x0F);");
-                function.AppendLine("        dest[i] = a + 'a';");
-                function.AppendLine("        dest[i + 1] = b + 'a';");
-                function.AppendLine("        i += 2;");
-                function.AppendLine("        --len;");
-                function.AppendLine("    }");
-                function.AppendLine("    dest[i] = 0;");
-                function.AppendLine("    printf(\"CLOG:%s:CLOG\", dest);");
-                function.AppendLine("}");*/
-
                 emittedHeader = true;
             }
 
@@ -242,23 +219,6 @@ namespace clog.TraceEmitterModules
                 EncodeVariable(function, arg.VariableInfo.SuggestedTelemetryName, varEncoding, v.EncodingType, dataLen);
             }
 
-            /*
-            if (0 == decodedTraceLine.splitArgs.Length)
-            {
-                function.AppendLine($"DTRACE_PROBE({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId});");
-            }
-            else 
-            {
-                function.Append($"DTRACE_PROBE{decodedTraceLine.splitArgs.Length}({decodedTraceLine.configFile.ScopePrefix}, {decodedTraceLine.UniqueId}");
-                foreach (var arg in decodedTraceLine.splitArgs)
-                {
-                    function.Append($", {arg.MacroVariableName}");
-                }
-                function.AppendLine(");");
-            }*/
-
-
-
 
             string printf = "";
             foreach (var t in types)
@@ -383,7 +343,6 @@ namespace clog.TraceEmitterModules
             function.AppendLine("    " + printmacro + "(\"CLOG:%s:CLOG\\r\\n\", dest);");
 
             function.AppendLine("}\r\n\r\n");
-            //inline.Append("}");
         }
 
         private static void EncodeVariable(StringBuilder function, string SuggestedTelemetryName, string MacroVariableName, CLogEncodingType encodingType, string dataLen)
