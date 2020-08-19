@@ -491,9 +491,9 @@ namespace clogutils.ConfigFile
 
         public void ForceDecoderCompile() 
         {
-            if (CustomTypeClogCSharpFileContents != null)
+            if (TypeEncoders.CustomTypeDecoder != null)
             {
-                this.TypeEncoders.ForceDecoderCompile(CustomTypeClogCSharpFileContents);
+                this.TypeEncoders.ForceDecoderCompile(TypeEncoders.CustomTypeDecoder);
             }
             foreach (var config in ChainedConfigurations)
             {
