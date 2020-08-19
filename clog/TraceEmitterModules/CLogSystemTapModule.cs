@@ -103,7 +103,7 @@ namespace clog.TraceEmitterModules
                         seperatorB = ",";
                     }
 
-                    // If the encided type is 'binary' (length and payload) - for DTrace we emit the payload
+                    // If the encoded type is 'binary' (length and payload) - for DTrace we emit the payload
                     //   length with the variable name <suggestedName>_len
                     if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
