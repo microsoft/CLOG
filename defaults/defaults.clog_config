@@ -183,7 +183,8 @@
       {
         "EncodingType": "UInt8",
         "CType": "char",
-        "DefinationEncoding": "c"
+        "DefinationEncoding": "c",
+        "CustomDecoder": "defaults.clog_config.Types.DecodeChar"
       },
       {
         "EncodingType": "ANSI_String",

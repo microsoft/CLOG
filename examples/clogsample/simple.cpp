@@ -22,7 +22,10 @@ int main(int argc, char* argv[])
         TraceInstanceInfo(INSTANCE_TEST, buffer, "1:%d 2:%s 3:%c 4:%u 5:%u 6:%u", 1, "2", 3, 4, 5, 6);
     }
 
-    TraceInfo(DATA, "%!BYTEARRAY!", CLOG_BYTEARRAY(5, "hello"));
+    TraceInfo(DATABYTEARRAY, "%!BYTEARRAY!", CLOG_BYTEARRAY(5, "hello"));
+
+    TraceInfo(DATACHAR, "This is a char: %c", 'a');
+    TraceInfo(DATAINT, "This is an int: %d", 1234);
     delete [] buffer;
     return 0;
 }
