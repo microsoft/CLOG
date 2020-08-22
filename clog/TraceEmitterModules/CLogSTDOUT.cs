@@ -5,8 +5,10 @@
 
 Abstract:
 
-    A stream manages the send and receive queues for application data. This file
-    contains the initialization and cleanup functionality for the stream.
+    STDOUT output module for CLOG.  This module emits both human readable traces (think printf()) as well as encodes the name/value pairs into a 
+    printable string, that can be decoded into it's originating pieces.  This is useful for using STDOUT as a tranmission source
+    for CLOG logs - in doing so the user retains both human readable characteristics, as well as the ability to decode
+    into a form typically reserved for binary encoders
 
 --*/
 
@@ -339,7 +341,7 @@ namespace clog.TraceEmitterModules
             function.AppendLine("        j+=2;");
             function.AppendLine("        --len;");
             function.AppendLine("    }");
-            function.AppendLine("    dest[i] = 0;");
+            function.AppendLine("    dest[j] = 0;");
             function.AppendLine("    " + printmacro + "(\"CLOG:%s:CLOG\\r\\n\", dest);");
 
             function.AppendLine("}\r\n\r\n");
