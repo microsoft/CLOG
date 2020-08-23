@@ -153,7 +153,7 @@ namespace clog.TraceEmitterModules
             // Emit our implementation into the .c file that CLOG generates
             //
             function.AppendLine($"void {uid}({argsString})" + "{");
-            function.AppendLine($"    unsigned char encodeBuffer[160];");
+            function.AppendLine($"    unsigned char encodeBuffer[1600];");
             function.AppendLine($"    unsigned int bytesRemaining = sizeof(encodeBuffer);");
             function.AppendLine($"    unsigned int header = 0;");
             function.AppendLine($"    unsigned char *head = &encodeBuffer[0];");
@@ -161,6 +161,21 @@ namespace clog.TraceEmitterModules
 
 
             EncodeVariable(function, "CLOG_UID", "uid", CLogEncodingType.ANSI_String, "strlen(uid)");
+
+            // Encode every value specified in the config settings
+            foreach (var v in moduleSettings.CustomSettings)
+            {
+                if (v.Key.StartsWith("ENCODE_UINT32_"))
+                {
+                    function.AppendLine($"    unsigned int {v.Key} = {v.Value};");
+                    EncodeVariable(function, v.Key, "&" + v.Key, CLogEncodingType.UInt32, "4");
+                }
+                if (v.Key.StartsWith("ENCODE_UINT64_"))
+                {
+                    function.AppendLine($"    unsigned __int64 {v.Key} = {v.Value};");
+                    EncodeVariable(function, v.Key, "&" + v.Key, CLogEncodingType.UInt64, "8");
+                }
+            }
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
@@ -328,7 +343,7 @@ namespace clog.TraceEmitterModules
             function.Append(");");
 
             function.AppendLine("    unsigned int len =  sizeof(encodeBuffer) - bytesRemaining;");
-            function.AppendLine("    char dest[(160*2)+2];");
+            function.AppendLine("    char dest[(1600*2)+2];");
             function.AppendLine("    int i = 0;");
             function.AppendLine("    int j = 0;");
             function.AppendLine("    while (len)");
@@ -351,7 +366,7 @@ namespace clog.TraceEmitterModules
         {            
             function.AppendLine($"    //{SuggestedTelemetryName}");
             function.AppendLine($"    // Header = [version][EncodingType][ArgNameLen][DataLen]");
-            function.AppendLine($"    header = (1 << 24) | ({((uint)encodingType)} << 16) | ({SuggestedTelemetryName.Length} << 8) | ({dataLen} << 0);");
+            function.AppendLine($"    header = (2 << 24) | ({((uint)encodingType)} << 16) | ({SuggestedTelemetryName.Length} << 8) | ({dataLen} << 0);");
             function.AppendLine($"    CLOG_ENCODE_STDIO_BYTES(&header, 4);");
             function.AppendLine( "    CLOG_ENCODE_STDIO_BYTES(\"" + SuggestedTelemetryName + "\"" + $", {SuggestedTelemetryName.Length});");
             function.AppendLine($"    CLOG_ENCODE_STDIO_BYTES({MacroVariableName}, {dataLen});");            
