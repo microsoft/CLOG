@@ -1,6 +1,6 @@
 # Introduction
 
-[![Build Status](https://dev.azure.com/ms/CLOG/_apis/build/status/CI?branchName=master)](https://dev.azure.com/ms/CLOG/_build/latest?definitionId=373&branchName=master)
+[![Build Status](https://dev.azure.com/ms/CLOG/_apis/build/status/CI?branchName=main)](https://dev.azure.com/ms/CLOG/_build/latest?definitionId=373&branchName=main)
 
 Within the tracing and telemetry space there are many API or library choices and it's very difficult (if not impossible) to choose correctly. There is a general need for the ability to emit **structured**, **cross platform** events in **high performance** code paths.
 
