@@ -8,7 +8,7 @@ Abstract:
     Main CLOG header file - this describes the primary macros that result in calling your desired trace libraries
 
 Version:
-    0.1.7
+    0.1.8
 
 --*/
 
