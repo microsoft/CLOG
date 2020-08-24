@@ -57,6 +57,34 @@ namespace clogutils
             set;
         } = new CLogModuleUsageInformation();
 
+        public void UpdateConfigFile(CLogConfigurationFile newConfigFile)
+        {
+            // Ideally, we'd use CLogConfigurationFile.AreWeDirty, but because of the tricks
+            // we do around serialization, we can't without a major refactor
+
+            // Serialize old config
+            bool old = ConfigFile.SerializeChainedConfigurations;
+            ConfigFile.SerializeChainedConfigurations = true;
+
+            string serializedOldConfig = JsonConvert.SerializeObject(ConfigFile);
+
+            ConfigFile.SerializeChainedConfigurations = old;
+
+            // Serialize new config
+            old = newConfigFile.SerializeChainedConfigurations;
+            newConfigFile.SerializeChainedConfigurations = true;
+
+            string serializedNewConfig = JsonConvert.SerializeObject(newConfigFile);
+
+            newConfigFile.SerializeChainedConfigurations = old;
+
+            if (serializedOldConfig != serializedNewConfig)
+            {
+                AreDirty = true;
+                ChangesList.Add("Configuration file or dependencies changed");
+            }
+            ConfigFile = newConfigFile;
+        }
 
         private List<string> ChangesList = new List<string>();
         public void PrintDirtyReasons()
