@@ -62,6 +62,13 @@ namespace clogutils
             // Ideally, we'd use CLogConfigurationFile.AreWeDirty, but because of the tricks
             // we do around serialization, we can't without a major refactor
 
+            if (newConfigFile == null || ConfigFile == null) 
+            {
+                AreDirty = true;
+                ConfigFile = newConfigFile;
+                return;
+            }
+
             // Serialize old config
             bool old = ConfigFile.SerializeChainedConfigurations;
             ConfigFile.SerializeChainedConfigurations = true;
