@@ -1,8 +1,8 @@
-using Microsoft.CodeAnalysis;
-using Roslyn.CodeDom.References;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using Roslyn.CodeDom.References;
 
 namespace Roslyn.CodeDom
 {

@@ -1,12 +1,12 @@
-﻿using CommandLine;
-using System;
-using clogutils;
-using clogutils.ConfigFile;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils;
+using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
+using CommandLine;
 using static clogutils.CLogFileProcessor;
-using System.Collections.Generic;
 
 namespace syslog2clog
 {
@@ -18,7 +18,7 @@ namespace syslog2clog
             Dictionary<int, string> map = new Dictionary<int, string>();
             int idx = 1;
 
-            if(skip)
+            if (skip)
             {
                 results.Append(decodedTraceLine.match.MatchedRegEx.ToString());
                 return;
@@ -65,7 +65,7 @@ namespace syslog2clog
             results.Append("" + id);
             results.Append($", \"{decodedTraceLine.TraceString}\"");
 
-            foreach(var arg in decodedTraceLine.splitArgs)
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
                 results.Append($", {arg.VariableInfo.UserSuppliedTrimmed}");
             }
@@ -96,7 +96,7 @@ namespace syslog2clog
 
                         CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
                         configFile.ProfileName = options.ConfigurationProfile;
-                                        
+
                         CLogSidecar sidecar;
                         if (!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
@@ -134,19 +134,19 @@ namespace syslog2clog
                         CLogFileProcessor processor = new CLogFileProcessor(configFile);
                         SysLogToClog converter = new SysLogToClog();
 
-                      //  CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(options.InputFile, sidecar);
+                        //  CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(options.InputFile, sidecar);
 
-                       // fullyDecodedMacroEmitter.AddClogModule(converter);
+                        // fullyDecodedMacroEmitter.AddClogModule(converter);
 
                         string content = File.ReadAllText(options.InputFile);
                         string output = processor.ConvertFile(configFile, converter, content, options.InputFile, true);
 
-                       // fullyDecodedMacroEmitter.FinishedProcessing();
-                                               
+                        // fullyDecodedMacroEmitter.FinishedProcessing();
+
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
 
-                        
+
                         File.WriteAllText(options.InputFile, output);
                     }
                     catch (CLogHandledException e)

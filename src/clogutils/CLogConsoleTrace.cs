@@ -9,11 +9,11 @@ Abstract:
 
 --*/
 
-using clogutils.ConfigFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils.ConfigFile;
 
 namespace clogutils
 {
@@ -100,7 +100,7 @@ namespace clogutils
                     {
                         if (!String.IsNullOrEmpty(eventInfo.CPUId))
                         {
-                            toPrint.Append("["+eventInfo.CPUId+"]");
+                            toPrint.Append("[" + eventInfo.CPUId + "]");
                         }
 
                         toPrint.Append("[");
@@ -119,7 +119,7 @@ namespace clogutils
                                 toPrint.Append(".");
 
                             toPrint.Append(eventInfo.ThreadId);
-                        }                      
+                        }
 
                         toPrint.Append("]");
                     }

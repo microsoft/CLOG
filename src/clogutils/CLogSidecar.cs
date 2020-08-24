@@ -9,12 +9,12 @@ Abstract:
 
 --*/
 
-using clogutils.ConfigFile;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using clogutils.ConfigFile;
+using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils

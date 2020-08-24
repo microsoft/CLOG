@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
-using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils;
 using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
@@ -58,7 +58,7 @@ namespace clog.TraceEmitterModules
             foreach (var t in types)
             {
                 printf += t.LeadingString;
-                switch(t.TypeNode.EncodingType)
+                switch (t.TypeNode.EncodingType)
                 {
                     case CLogEncodingType.Int32:
                         printf += "%d";
@@ -101,7 +101,7 @@ namespace clog.TraceEmitterModules
                         break;
                 }
             }
-          
+
             if (types.Length >= 1)
             {
                 string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
@@ -109,7 +109,7 @@ namespace clog.TraceEmitterModules
             }
 
             inline.Append($"printf(\"{printf}\\r\\n\"");
-            for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)
+            for (int i = 0; i < decodedTraceLine.splitArgs.Length; ++i)
             {
                 string cast = "";
                 switch (types[i].TypeNode.EncodingType)
@@ -152,7 +152,7 @@ namespace clog.TraceEmitterModules
                         cast = "(void*)";
                         break;
                 }
-                inline.Append($", {cast}(" + decodedTraceLine.splitArgs[i].MacroVariableName +")");
+                inline.Append($", {cast}(" + decodedTraceLine.splitArgs[i].MacroVariableName + ")");
             }
             inline.Append(");\\\n");
         }

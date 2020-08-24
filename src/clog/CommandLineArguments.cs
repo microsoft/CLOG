@@ -9,9 +9,9 @@ Abstract:
 
 --*/
 
+using System.IO;
 using clogutils;
 using CommandLine;
-using System.IO;
 
 
 namespace clog
@@ -130,18 +130,18 @@ namespace clog
                 return true;
             }
 
-            if(!string.IsNullOrEmpty(this.OutputDirectory))
+            if (!string.IsNullOrEmpty(this.OutputDirectory))
             {
-                if(string.IsNullOrEmpty(this.InputFile))
+                if (string.IsNullOrEmpty(this.InputFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, and InputFile is empty");
-                    return false;   
+                    return false;
                 }
 
-                if(!string.IsNullOrEmpty(this.OutputFile))
+                if (!string.IsNullOrEmpty(this.OutputFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, but OutputFile is not empty");
-                    return false;   
+                    return false;
                 }
                 this.OutputFile = Path.Combine(this.OutputDirectory, Path.GetFileName(this.InputFile));
                 this.OutputFile += ".clog.h";

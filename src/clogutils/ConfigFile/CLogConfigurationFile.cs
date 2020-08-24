@@ -10,14 +10,14 @@ Abstract:
 
 --*/
 
-using clogutils.MacroDefinations;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using clogutils.MacroDefinations;
+using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
@@ -489,7 +489,7 @@ namespace clogutils.ConfigFile
 #endif
         }
 
-        public void ForceDecoderCompile() 
+        public void ForceDecoderCompile()
         {
             if (TypeEncoders.CustomTypeDecoder != null)
             {

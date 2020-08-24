@@ -12,11 +12,6 @@ Abstract:
 
 --*/
 
-using clogutils;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
-using Roslyn.CodeDom;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +19,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using clogutils;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Roslyn.CodeDom;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_lttng
@@ -103,7 +103,7 @@ namespace clog2text_lttng
                 decodedValue = "";
                 return true;
             }
-            
+
             //
             // Compiling also caches the assembly
             //

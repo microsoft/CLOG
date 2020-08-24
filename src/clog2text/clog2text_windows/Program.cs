@@ -11,14 +11,14 @@ Abstract:
 
 --*/
 
-using clogutils;
-using CommandLine;
-using Microsoft.Windows.EventTracing;
-using Microsoft.Windows.EventTracing.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using clogutils;
+using CommandLine;
+using Microsoft.Windows.EventTracing;
+using Microsoft.Windows.EventTracing.Events;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_windows
