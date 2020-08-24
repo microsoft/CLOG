@@ -180,6 +180,7 @@ namespace clogutils.ConfigFile
             set;
         } = new CLogTypeEncoder();
 
+        // TODO Actually make this set, including when the decoder files change
         public bool AmIDirty
         {
             get;

@@ -173,8 +173,9 @@ namespace clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
-                        sidecar.ConfigFile = configFile;
 
+                        // Check for outdated config file
+                        sidecar.UpdateConfigFile(configFile);
 
                         if (options.RefreshCustomTypeProcessor)
                         {
