@@ -172,7 +172,7 @@ namespace clog.TraceEmitterModules
                 }
                 if (v.Key.StartsWith("ENCODE_UINT64_"))
                 {
-                    function.AppendLine($"    unsigned __int64 {v.Key} = {v.Value};");
+                    function.AppendLine($"    unsigned long {v.Key} = {v.Value};");
                     EncodeVariable(function, v.Key, "&" + v.Key, CLogEncodingType.UInt64, "8");
                 }
             }
