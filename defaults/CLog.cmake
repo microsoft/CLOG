@@ -17,33 +17,39 @@ function(CLOG_GENERATE_TARGET)
      # message(STATUS ">>>> CLOG Library = ${library}")
      # message(STATUS ">>>> CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 
+    set(ARG_CLOG_OUTPUT_DIRECTORY ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library})
+
     foreach(arg IN LISTS ARGV)
         get_filename_component(RAW_FILENAME ${arg} NAME)
-        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${RAW_FILENAME}.clog.h)
-        set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${library}_${RAW_FILENAME}.clog.h.c)
+        set(ARG_CLOG_FILE ${ARG_CLOG_OUTPUT_DIRECTORY}/${RAW_FILENAME}.clog.h)
+        set(ARG_CLOG_C_FILE ${ARG_CLOG_OUTPUT_DIRECTORY}/${RAW_FILENAME}.clog.h.c)
 
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
-
-        set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
-        if (${library_type} STREQUAL "DYNAMIC")
-            set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
-        endif()
-
-        add_custom_command(
-            OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
-            DEPENDS ${CMAKE_CLOG_CONFIG_FILE}
-            DEPENDS ${CMAKE_CLOG_EXTRA_DEPENDENCIES}
-            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
-            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
-        )
 
         set_property(SOURCE ${arg}
             APPEND PROPERTY OBJECT_DEPENDS ${ARG_CLOG_FILE}
         )
 
+        list(APPEND cloginputfiles ${CMAKE_CURRENT_SOURCE_DIR}/${arg})
         list(APPEND clogfiles ${ARG_CLOG_C_FILE})
+        list(APPEND clogheaderfiles ${ARG_CLOG_FILE})
     endforeach()
+
+    set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
+    if (${library_type} STREQUAL "DYNAMIC")
+        set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
+    endif()
+
+    string (REPLACE ";" " " cloginputfiles_spaced "${cloginputfiles}")
+
+    add_custom_command(
+            OUTPUT ${clogfiles} ${clogheaderfiles}
+            DEPENDS ${cloginputfiles}
+            DEPENDS ${CMAKE_CLOG_CONFIG_FILE}
+            DEPENDS ${CMAKE_CLOG_EXTRA_DEPENDENCIES}
+            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${cloginputfiles_spaced} --outputDirectory ${ARG_CLOG_OUTPUT_DIRECTORY}"
+            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${cloginputfiles_spaced} --outputDirectory ${ARG_CLOG_OUTPUT_DIRECTORY}
+    )
 
     if (${library_type} STREQUAL "DYNAMIC")
         add_library(${library} STATIC ${clogfiles})
