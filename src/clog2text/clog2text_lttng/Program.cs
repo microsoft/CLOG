@@ -11,11 +11,11 @@ Abstract:
 
 --*/
 
-using clogutils;
-using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using clogutils;
+using CommandLine;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_lttng
@@ -263,7 +263,7 @@ namespace clog2text_lttng
 
                     string bits = AsString.Substring(firstOpen, AsString.Length - (AsString.Length - lastClose) - firstOpen);
 
-                    if(String.IsNullOrEmpty(bits))
+                    if (String.IsNullOrEmpty(bits))
                     {
                         return new byte[0];
                     }

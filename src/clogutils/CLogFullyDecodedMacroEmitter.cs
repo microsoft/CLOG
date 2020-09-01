@@ -11,13 +11,13 @@ Abstract:
 
 --*/
 
-using clogutils;
-using clogutils.ConfigFile;
-using clogutils.MacroDefinations;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using clogutils;
+using clogutils.ConfigFile;
+using clogutils.MacroDefinations;
 
 namespace clogutils
 {
@@ -148,7 +148,7 @@ namespace clogutils
             implSignature += ")";
 
             StringBuilder macroBody = new StringBuilder();
-            
+
             _headerFile.AppendLine("");
             _headerFile.AppendLine("");
             _headerFile.AppendLine("");
@@ -170,7 +170,7 @@ namespace clogutils
             //
             //_headerFile.AppendLine($"void {implSignature};");
             macroBody.AppendLine($"#define {macroName}({argsString})" + "\\");
-        
+
 
             foreach (ICLogOutputModule module in _modules)
             {
@@ -196,7 +196,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
 
                             _sidecar.RemoveTraceLine(existingTraceInfo);
-							_knownHashes.Remove(decodedTraceLine.UniqueId);
+                            _knownHashes.Remove(decodedTraceLine.UniqueId);
                             _sidecar.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
                                 macroBody,
                                 _sourceFile);

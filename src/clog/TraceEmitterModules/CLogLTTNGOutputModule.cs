@@ -10,10 +10,10 @@ Abstract:
 
 --*/
 
-using clogutils;
 using System.Data;
 using System.IO;
 using System.Text;
+using clogutils;
 
 namespace clog.TraceEmitterModules
 {
@@ -105,7 +105,7 @@ namespace clog.TraceEmitterModules
             else
             {
                 sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
-                sourceFile.AppendLine("#define TRACEPOINT_DEFINE");  
+                sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
             }
 
             sourceFile.AppendLine($"#include \"{Path.GetFullPath(_clogFile)}\"");

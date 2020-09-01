@@ -10,13 +10,13 @@ Abstract:
 
 --*/
 
-using clogutils;
-using clogutils.MacroDefinations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using clogutils;
+using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
 {
@@ -611,7 +611,7 @@ namespace clog.TraceEmitterModules
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch - overwriting due to developer mode");
                         _dirty = true;
-                        return DiscoverOrCreateTemplate(traceLine, sidecar, providerId, null, eventId);                        
+                        return DiscoverOrCreateTemplate(traceLine, sidecar, providerId, null, eventId);
                     }
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch: ");

@@ -9,10 +9,10 @@ Abstract:
 
 --*/
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace clogutils.ConfigFile
 {
@@ -72,7 +72,7 @@ namespace clogutils.ConfigFile
 
                 info.TraceID = traceLine.UniqueId;
                 info.UniquenessHash = hash;
-                TraceInformation.Add(info);                
+                TraceInformation.Add(info);
             }
 
             if (info.UniquenessHash != hash)
@@ -83,7 +83,7 @@ namespace clogutils.ConfigFile
 
         public void Remove(CLogTraceLineInformation trace)
         {
-            TraceInformation.Remove(trace);            
+            TraceInformation.Remove(trace);
         }
     }
 }

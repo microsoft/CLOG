@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
-using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils;
 using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
@@ -52,8 +52,8 @@ namespace clog.TraceEmitterModules
             string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
-            for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)
-            {                
+            for (int i = 0; i < decodedTraceLine.splitArgs.Length; ++i)
+            {
                 inline.Append(", " + decodedTraceLine.splitArgs[i].MacroVariableName);
             }
             inline.Append(");\\\n");

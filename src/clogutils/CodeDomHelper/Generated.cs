@@ -349,7 +349,7 @@ namespace Roslyn.CodeDom.References
         public static PortableExecutableReference SystemXmlXmlSerializer { get; } = AssemblyMetadata.CreateFromImage(NetStandard20Resources.SystemXmlXmlSerializer).GetReference(display: "System.Xml.XmlSerializer (netstandard20)");
         public static PortableExecutableReference SystemXmlXPath { get; } = AssemblyMetadata.CreateFromImage(NetStandard20Resources.SystemXmlXPath).GetReference(display: "System.Xml.XPath (netstandard20)");
         public static PortableExecutableReference SystemXmlXPathXDocument { get; } = AssemblyMetadata.CreateFromImage(NetStandard20Resources.SystemXmlXPathXDocument).GetReference(display: "System.Xml.XPath.XDocument (netstandard20)");
-        public static IEnumerable<PortableExecutableReference> All { get; }= new PortableExecutableReference[]
+        public static IEnumerable<PortableExecutableReference> All { get; } = new PortableExecutableReference[]
         {
             MicrosoftWin32Primitives,
             mscorlib,

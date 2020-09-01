@@ -9,10 +9,10 @@ Abstract:
 
 --*/
 
+using System.Collections.Generic;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace clogutils
 {
@@ -57,8 +57,8 @@ namespace clogutils
 
         public string GetConfigurationValue(string moduleName, string key)
         {
-            string ret; 
-            if(null != macro.CustomSettings && macro.CustomSettings.ContainsKey(moduleName))
+            string ret;
+            if (null != macro.CustomSettings && macro.CustomSettings.ContainsKey(moduleName))
             {
                 if (macro.CustomSettings[moduleName].TryGetValue(key, out ret))
                     return ret;

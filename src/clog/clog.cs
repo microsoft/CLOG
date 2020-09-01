@@ -11,14 +11,14 @@ Abstract:
 
 --*/
 
-using clog.TraceEmitterModules;
-using clogutils;
-using clogutils.ConfigFile;
-using CommandLine;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using clog.TraceEmitterModules;
+using clogutils;
+using clogutils.ConfigFile;
+using CommandLine;
 
 namespace clog
 {
@@ -129,7 +129,7 @@ namespace clog
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                         }
 
-                        if (options.Devmode  || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
+                        if (options.Devmode || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
                         {
                             options.ReadOnly = false;
                             options.OverwriteHashCollisions = true;
@@ -230,10 +230,10 @@ namespace clog
                             options.OutputFile + ".lttng.h", options.DynamicTracepointProvider);
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
-                        if(!File.Exists(options.InputFile))
+                        if (!File.Exists(options.InputFile))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File : {Path.GetFileName(options.InputFile)}");
-                            throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);       
+                            throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);
                         }
 
                         string content = File.ReadAllText(options.InputFile);
@@ -285,9 +285,9 @@ namespace clog
                         {
                             if (options.ReadOnly)
                             {
-                                if(sidecar.AreDirty)
+                                if (sidecar.AreDirty)
                                     Console.WriteLine("Sidecar is dirty");
-                                if(configFile.AreWeDirty())
+                                if (configFile.AreWeDirty())
                                     Console.WriteLine("ConfigFile is dirty");
 
                                 sidecar.PrintDirtyReasons();

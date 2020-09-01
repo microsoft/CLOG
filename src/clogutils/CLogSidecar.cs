@@ -9,12 +9,12 @@ Abstract:
 
 --*/
 
-using clogutils.ConfigFile;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using clogutils.ConfigFile;
+using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils
@@ -62,7 +62,7 @@ namespace clogutils
             // Ideally, we'd use CLogConfigurationFile.AreWeDirty, but because of the tricks
             // we do around serialization, we can't without a major refactor
 
-            if (newConfigFile == null || ConfigFile == null) 
+            if (newConfigFile == null || ConfigFile == null)
             {
                 AreDirty = true;
                 ConfigFile = newConfigFile;

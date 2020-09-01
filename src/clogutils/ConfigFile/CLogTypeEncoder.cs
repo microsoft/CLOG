@@ -9,13 +9,13 @@ Abstract:
 
 --*/
 
-using clog2text_lttng;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using clog2text_lttng;
+using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile

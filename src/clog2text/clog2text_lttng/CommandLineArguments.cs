@@ -35,7 +35,7 @@ namespace clog2text_lttng
             set;
         }
 
-        [Option('c', "showCpuInfo", Required = false, Default=false, HelpText = "Emit CPU Info")]
+        [Option('c', "showCpuInfo", Required = false, Default = false, HelpText = "Emit CPU Info")]
         public bool ShowCPUInfo
         {
             get;

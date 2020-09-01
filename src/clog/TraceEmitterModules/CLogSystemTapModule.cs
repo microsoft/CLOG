@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
-using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils;
 
 namespace clog.TraceEmitterModules
 {
