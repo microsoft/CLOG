@@ -105,7 +105,7 @@ namespace clogutils
             return "Uknown Error";
         }
 
-        public CLogHandledException(string msg, ExceptionType type, CLogLineMatch traceLine, Exception e = null) : base(msg)
+        public CLogHandledException(string msg, ExceptionType type, CLogLineMatch traceLine, Exception? e = null) : base(msg)
         {
             Exception = e;
             TraceLine = traceLine;
@@ -115,9 +115,9 @@ namespace clogutils
         public ExceptionType Type { get; private set; }
         public CLogLineMatch TraceLine { get; set; }
 
-        public string InfoString { get; set; }
+        public string? InfoString { get; set; }
 
-        public Exception Exception { get; set; }
+        public Exception? Exception { get; set; }
 
         public void PrintDiagnostics()
         {
