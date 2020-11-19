@@ -1,5 +1,7 @@
 // This is a generated file, please edit Generate.ps1 to change the contents
 
+#nullable disable
+
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
