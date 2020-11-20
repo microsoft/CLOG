@@ -86,6 +86,10 @@ API abstractions not a sufficient solution to our problems, due to performance. 
 
     Utility library used between clog.exe and other clog tools.
 
+## Supported Runtimes
+
+The build .NET clog tools can be ran on both .NET 5 and .NET Core 3.1. In order to build, .NET 5 is required.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
