@@ -17,8 +17,8 @@ namespace clogutils
     {
         public static bool AreReadOnly;
 
-        public CLogTypeNotFoundException(string msg, string partialType, CLogLineMatch traceLine,
-            Exception e = null) : base(msg, ExceptionType.UndefinedType, traceLine, e)
+        public CLogTypeNotFoundException(string msg, string partialType, CLogLineMatch? traceLine,
+            Exception? e = null) : base(msg, ExceptionType.UndefinedType, traceLine, e)
         {
             AreReadOnly = true;
             Exception = e;

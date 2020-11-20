@@ -37,11 +37,11 @@ namespace clogutils
             get { return _inUseMacro.ToArray(); }
         }
 
-        private static SortedList<int, CLogLineMatch> UpdateMatches(string data, string sourceFileName, CLogTraceMacroDefination inspect)
+        private static SortedList<int, CLogLineMatch?> UpdateMatches(string data, string sourceFileName, CLogTraceMacroDefination inspect)
         {
             string inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
             Regex r = new Regex(inspectToken, RegexOptions.Singleline);
-            SortedList<int, CLogLineMatch> matches = new SortedList<int, CLogLineMatch>();
+            SortedList<int, CLogLineMatch?> matches = new SortedList<int, CLogLineMatch?>();
 
             foreach (Match m in r.Matches(data))
             {
@@ -129,8 +129,8 @@ namespace clogutils
             return ret.ToArray();
         }
 
-        public static CLogTypeContainer[] BuildTypes(CLogConfigurationFile configFile, CLogLineMatch traceLineMatch, string argString,
-            string traceLine,
+        public static CLogTypeContainer[] BuildTypes(CLogConfigurationFile configFile, CLogLineMatch? traceLineMatch, string argString,
+            string? traceLine,
             out string cleanedString)
         {
             List<CLogTypeContainer> ret = new List<CLogTypeContainer>();
@@ -313,7 +313,7 @@ namespace clogutils
                 start = 0;
                 end = 0;
                 results = new StringBuilder();
-                KeyValuePair<int, CLogLineMatch> lastMatch = new KeyValuePair<int, CLogLineMatch>(0, null);
+                KeyValuePair<int, CLogLineMatch?> lastMatch = new KeyValuePair<int, CLogLineMatch?>(0, null);
 
                 try
                 {
@@ -405,9 +405,9 @@ namespace clogutils
 
         public class CLogTypeContainer
         {
-            public string LeadingString { get; set; }
+            public string? LeadingString { get; set; }
 
-            public CLogEncodingCLogTypeSearch TypeNode { get; set; }
+            public CLogEncodingCLogTypeSearch? TypeNode { get; set; }
 
             public int ArgStartingIndex { get; set; }
 
@@ -417,11 +417,11 @@ namespace clogutils
         [JsonObject(MemberSerialization.OptIn)]
         public class CLogVariableBundle
         {
-            [JsonProperty] public VariableInfo VariableInfo { get; set; }
+            [JsonProperty] public VariableInfo? VariableInfo { get; set; }
 
-            [JsonProperty] public string DefinationEncoding { get; set; }
+            [JsonProperty] public string? DefinationEncoding { get; set; }
 
-            [JsonProperty] public string MacroVariableName { get; set; }
+            [JsonProperty] public string? MacroVariableName { get; set; }
 
             public static CLogVariableBundle X(VariableInfo i, string definationEncoding)
             {

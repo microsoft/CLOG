@@ -17,7 +17,7 @@ namespace clogutils
     {
         public static bool AreReadOnly;
 
-        public CLogEnterReadOnlyModeException(string msg, CLogHandledException.ExceptionType type, CLogLineMatch traceLine, Exception? e = null) :
+        public CLogEnterReadOnlyModeException(string msg, CLogHandledException.ExceptionType type, CLogLineMatch? traceLine, Exception? e = null) :
             base(msg, type, traceLine, e)
         {
             AreReadOnly = true;

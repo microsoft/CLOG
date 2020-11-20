@@ -48,7 +48,7 @@ namespace clogutils
         [JsonProperty] public int Version { get; set; }
 
 
-        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
+        [JsonProperty] public CLogConfigurationFile? ConfigFile { get; set; }
 
         [JsonProperty]
         public CLogModuleUsageInformation ModuleUniqueness
@@ -136,7 +136,7 @@ namespace clogutils
         public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             int hashUInt;
-            string hash;
+            string? hash;
 
             traceLine.macro.DecodeUniqueId(traceLine.match, traceLine.UniqueId, out hash, out hashUInt);
             HotEventBundles[hash] = traceLine;
@@ -178,7 +178,7 @@ namespace clogutils
             ModuleTraceData[module][traceline.UniqueId] = values;
         }
 
-        public Dictionary<string, string> GetTracelineMetadata(CLogDecodedTraceLine traceline, string module)
+        public Dictionary<string, string>? GetTracelineMetadata(CLogDecodedTraceLine traceline, string module)
         {
             if (!ModuleTraceData.ContainsKey(module))
             {
@@ -244,7 +244,7 @@ namespace clogutils
             private set { _areDirty = value; }
         }
 
-        public CLogDecodedTraceLine FindBundle(string uid)
+        public CLogDecodedTraceLine? FindBundle(string uid)
         {
             string name = uid.Split(':')[1];
 
@@ -269,12 +269,12 @@ namespace clogutils
             return me;
         }
 
-        public static CLogSidecar FromJson(string json)
+        public static CLogSidecar? FromJson(string json)
         {
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
-            CLogSidecar ret = JsonConvert.DeserializeObject<CLogSidecar>(json, s);
+            CLogSidecar? ret = JsonConvert.DeserializeObject<CLogSidecar>(json, s);
 
             return ret;
         }

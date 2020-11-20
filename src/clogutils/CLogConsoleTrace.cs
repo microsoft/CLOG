@@ -55,7 +55,7 @@ namespace clogutils
             Trace(type, msg + Environment.NewLine);
         }
 
-        public static string GetFileLine(CLogLineMatch TraceLine)
+        public static string GetFileLine(CLogLineMatch? TraceLine)
         {
             if (null != TraceLine && null != TraceLine.SourceFile)
             {

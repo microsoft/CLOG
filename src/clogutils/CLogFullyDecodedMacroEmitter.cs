@@ -57,7 +57,7 @@ namespace clogutils
             get { return _sourceFile.ToString(); }
         }
 
-        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder r)
+        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder? r)
         {
             r = null;
 

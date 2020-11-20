@@ -25,11 +25,11 @@ namespace clogutils.ConfigFile
     {
         private CLogTypeSearchNode _parent = new CLogTypeSearchNode();
 
-        private CLogCustomTraceEmittorFactory _traceEmittorX;
+        private CLogCustomTraceEmittorFactory? _traceEmittorX;
 
         [JsonProperty] public int Version { get; set; }
 
-        [JsonProperty] public List<CLogEncodingCLogTypeSearch> TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();
+        [JsonProperty] public List<CLogEncodingCLogTypeSearch>? TypeEncoder { get; set; } = new List<CLogEncodingCLogTypeSearch>();
 
         public IEnumerable<CLogEncodingCLogTypeSearch> FlattendTypeEncoder
         {
@@ -39,7 +39,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public string CustomTypeDecoder
+        public string? CustomTypeDecoder
         {
             get { return _traceEmittorX.CustomTypeDecoder; }
         }
@@ -111,7 +111,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        private void AddType(CLogTypeSearchNode searchNode, CLogTypeSearchNode parentNode, CLogEncodingCLogTypeSearch fileNode, ref bool isNew, int index = 0)
+        private void AddType(CLogTypeSearchNode searchNode, CLogTypeSearchNode? parentNode, CLogEncodingCLogTypeSearch fileNode, ref bool isNew, int index = 0)
         {
             if (index == fileNode.DefinationEncoding.Length)
             {
@@ -144,23 +144,23 @@ namespace clogutils.ConfigFile
 #endif
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle)
+        public CLogEncodingCLogTypeSearch? FindTypeX(CLogFileProcessor.CLogVariableBundle bundle)
         {
             return FindTypeX(bundle.DefinationEncoding);
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeX(string encoded)
+        public CLogEncodingCLogTypeSearch? FindTypeX(string encoded)
         {
             int idx = 0;
             return FindTypeAndAdvance(encoded, null, ref idx);
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
+        public CLogEncodingCLogTypeSearch? FindTypeAndAdvance(string encoded, CLogLineMatch? traceLineMatch, ref int index)
         {
             CLogTypeSearchNode start = _parent;
             string type = "";
 
-            CLogTypeSearchNode prev = null;
+            CLogTypeSearchNode? prev = null;
             int? prevIdx = null;
 
             for (; ; )
@@ -195,7 +195,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public string CustomCSharp
+        public string? CustomCSharp
         {
             get
             {

@@ -79,7 +79,7 @@ namespace clogutils.ConfigFile
         }
 
         [JsonProperty]
-        public string CustomTypeClogCSharpFileContents
+        public string? CustomTypeClogCSharpFileContents
         {
             get;
             set;
@@ -209,7 +209,7 @@ namespace clogutils.ConfigFile
 
         public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle)
         {
-            return FindType(bundle, (CLogLineMatch)null);
+            return FindType(bundle, (CLogLineMatch?)null);
         }
 
         public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogDecodedTraceLine traceLineMatch)
@@ -217,7 +217,7 @@ namespace clogutils.ConfigFile
             return FindType(bundle, traceLineMatch.match);
         }
 
-        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
+        public CLogEncodingCLogTypeSearch FindType(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch? traceLineMatch)
         {
             int idx = 0;
             return FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
@@ -239,10 +239,10 @@ namespace clogutils.ConfigFile
             return false;
         }
 
-        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string encoded, CLogLineMatch traceLineMatch, ref int index)
+        public CLogEncodingCLogTypeSearch FindTypeAndAdvance(string? encoded, CLogLineMatch? traceLineMatch, ref int index)
         {
             int tempIndex = index;
-            CLogEncodingCLogTypeSearch ret = null;
+            CLogEncodingCLogTypeSearch? ret = null;
 
             if (null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
             {
@@ -313,7 +313,7 @@ namespace clogutils.ConfigFile
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
-            CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
+            CLogConfigurationFile? ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
             ret.FilePath = fileName;
             ret.ChainedConfigurations = new List<CLogConfigurationFile>();
 

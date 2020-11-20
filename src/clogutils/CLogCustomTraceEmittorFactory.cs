@@ -32,12 +32,12 @@ namespace clog2text_lttng
     {
         private readonly Dictionary<string, MethodInfo> _compiledConverterFunctions = new Dictionary<string, MethodInfo>();
         private readonly Dictionary<string, CLogEncodingCLogTypeSearch> _converterFunctions = new Dictionary<string, CLogEncodingCLogTypeSearch>();
-        private Assembly _codeAssembly;
-        private MemoryStream _compiledCode;
+        private Assembly? _codeAssembly;
+        private MemoryStream? _compiledCode;
 
-        private object _typesInterface;
+        private object? _typesInterface;
 
-        public string CustomTypeDecoder { get; private set; }
+        public string? CustomTypeDecoder { get; private set; }
 
         public void SetSourceCode(string sourceCode)
         {

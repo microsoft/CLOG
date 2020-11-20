@@ -79,7 +79,7 @@ namespace clogutils
 
         public void AddConfigFileProperty(string module, string key, string value)
         {
-            string oldValue = GetConfigFileProperty(module, key);
+            string? oldValue = GetConfigFileProperty(module, key);
 
             // If we already have this value, dont set it (we dont want to dirty the config file)
             if (value.Equals(oldValue))
@@ -95,7 +95,7 @@ namespace clogutils
             ModuleProperites[module][key] = value;
         }
 
-        public string GetConfigFileProperty(string module, string key)
+        public string? GetConfigFileProperty(string module, string key)
         {
             if (!ModuleProperites.ContainsKey(module))
             {

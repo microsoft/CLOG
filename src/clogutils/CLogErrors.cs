@@ -13,7 +13,7 @@ namespace clogutils
 {
     public class CLogErrors
     {
-        public static void PrintMatchDiagnostic(CLogLineMatch traceLineMatch)
+        public static void PrintMatchDiagnostic(CLogLineMatch? traceLineMatch)
         {
             if (null == traceLineMatch)
             {

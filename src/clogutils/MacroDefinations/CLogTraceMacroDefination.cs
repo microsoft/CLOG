@@ -40,7 +40,7 @@ namespace clogutils.MacroDefinations
             return EncodedPrefix + encodedString.Substring(1, encodedString.Length - 2);
         }
 
-        public void DecodeUniqueId(CLogLineMatch m, string arg, out string id, out int idHash)
+        public void DecodeUniqueId(CLogLineMatch m, string arg, out string? id, out int idHash)
         {
             id = null;
 
