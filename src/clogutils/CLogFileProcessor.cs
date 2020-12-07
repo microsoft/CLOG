@@ -295,7 +295,7 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("InvalidUniqueID", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(uniqueId, sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(uniqueId, sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination.MacroName, finalArgs.ToArray());
 
             return decodedTraceLine;
         }
