@@ -384,7 +384,7 @@ namespace clog.TraceEmitterModules
                 CLogEncodingCLogTypeSearch node = traceLine.configFile.FindType(arg, traceLine);
                 TemplateNode templateNode = new TemplateNode();
                 templateNode.ArgBundle = a2;
-                templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
+                templateNode.Name = a2.MacroVariableName;
 
                 switch (node.EncodingType)
                 {
@@ -458,8 +458,8 @@ namespace clog.TraceEmitterModules
 
                             templateNode = new TemplateNode();
                             templateNode.ArgBundle = a2;
-                            templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
-                            templateNode.LengthOfSelf = arg.VariableInfo.SuggestedTelemetryName + "_len";
+                            templateNode.Name = a2.MacroVariableName;
+                            templateNode.LengthOfSelf = arg.MacroVariableName + "_len";
                             templateNode.Type = "win:Binary";
                             templateNode.Hash = "binary_";
                         }
@@ -603,7 +603,7 @@ namespace clog.TraceEmitterModules
 
                 TemplateNode templateReference = listofArgsAsSpecifiedBySourceFile[argIdx];
 
-                argLookup[templateReference.ArgBundle.VariableInfo.SuggestedTelemetryName] = name;
+                argLookup[templateReference.ArgBundle.MacroVariableName] = name;
 
                 if (templateReference.Type != inType)
                 {

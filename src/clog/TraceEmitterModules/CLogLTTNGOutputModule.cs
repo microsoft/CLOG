@@ -153,7 +153,7 @@ namespace clog.TraceEmitterModules
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
+                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.MacroVariableName} = {arg.UserSuppliedTrimmed}");
             }
             lttngFile.AppendLine("----------------------------------------------------------*/");
 
@@ -185,23 +185,23 @@ namespace clog.TraceEmitterModules
                     {
                         lttngFile.Append(",");
                         lttngFile.AppendLine("");
-                        lttngFile.Append($"        unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len");
+                        lttngFile.Append($"        unsigned int, {arg.MacroVariableName}_len");
                     }
 
                     lttngFile.Append(",");
                     lttngFile.AppendLine("");
-                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.VariableInfo.SuggestedTelemetryName}");
+                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.MacroVariableName}");
                 }
                 else
                 {
                     if (CLogEncodingType.ByteArray == node.EncodingType)
                     {
-                        lttngFile.Append($"        unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len");
+                        lttngFile.Append($"        unsigned int, {arg.MacroVariableName}_len");
                         lttngFile.Append(",");
                         lttngFile.AppendLine("");
                     }
 
-                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.VariableInfo.SuggestedTelemetryName}");
+                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.MacroVariableName}");
                 }
 
                 ++argNum;
@@ -230,61 +230,61 @@ namespace clog.TraceEmitterModules
 
                     case CLogEncodingType.ByteArray:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len, {arg.VariableInfo.SuggestedTelemetryName}_len)");
+                            $"        ctf_integer(unsigned int, {arg.MacroVariableName}_len, {arg.MacroVariableName}_len)");
 
                         lttngFile.AppendLine(
-                            $"        ctf_sequence(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName}, unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len)");
+                            $"        ctf_sequence(char, {arg.MacroVariableName}, {arg.MacroVariableName}, unsigned int, {arg.MacroVariableName}_len)");
                         break;
 
                     case CLogEncodingType.Int8:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(char, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.UInt8:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(unsigned char, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
 
                     case CLogEncodingType.Int16:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(short, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(short, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.UInt16:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned short, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(unsigned short, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.Int32:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(int, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(int, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.UInt32:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(unsigned int, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.Int64:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(int64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(int64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.UInt64:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer(uint64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.Pointer:
                         lttngFile.AppendLine(
-                            $"        ctf_integer_hex(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer_hex(uint64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     case CLogEncodingType.ANSI_String:
                         lttngFile.AppendLine(
-                            $"        ctf_string({arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_string({arg.MacroVariableName}, {arg.MacroVariableName})");
                         break;
 
                     default:

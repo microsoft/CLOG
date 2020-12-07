@@ -278,7 +278,7 @@ namespace clogutils
                 }
 
                 CLogTypeContainer item = types.Dequeue();
-                finalArgs.Add(CLogVariableBundle.X(VariableInfo.X(splitArgs[i], vars[i].Item2), item.TypeNode.DefinationEncoding));
+                finalArgs.Add(CLogVariableBundle.X(splitArgs[i], vars[i].Item2, item.TypeNode.DefinationEncoding));
             }
 
             if (0 != types.Count)
@@ -380,29 +380,6 @@ namespace clogutils
             return contents;
         }
 
-        public class VariableInfo
-        {
-            public string UserSuppliedTrimmed { get; set; }
-
-            public string SuggestedTelemetryName { get; set; }
-
-            public static VariableInfo X(string user, string suggestedName)
-            {
-                foreach (char c in suggestedName)
-                {
-                    if (!char.IsLetter(c) && !char.IsNumber(c))
-                    {
-                        throw new Exception($"VariableName isnt valid {suggestedName}");
-                    }
-                }
-
-                VariableInfo v = new VariableInfo();
-                v.UserSuppliedTrimmed = user.Trim();
-                v.SuggestedTelemetryName = suggestedName;
-                return v;
-            }
-        }
-
         public class CLogTypeContainer
         {
             public string LeadingString { get; set; }
@@ -417,17 +394,19 @@ namespace clogutils
         [JsonObject(MemberSerialization.OptIn)]
         public class CLogVariableBundle
         {
-            [JsonProperty] public VariableInfo VariableInfo { get; set; }
 
             [JsonProperty] public string DefinationEncoding { get; set; }
 
             [JsonProperty] public string MacroVariableName { get; set; }
 
-            public static CLogVariableBundle X(VariableInfo i, string definationEncoding)
+            [JsonIgnore] public string UserSuppliedTrimmed { get; set; }
+
+            public static CLogVariableBundle X(string userString, string suggestedName, string definationEncoding)
             {
                 CLogVariableBundle b = new CLogVariableBundle();
-                b.VariableInfo = i;
+                b.MacroVariableName = suggestedName;
                 b.DefinationEncoding = definationEncoding;
+                b.UserSuppliedTrimmed = userString.Trim();
                 return b;
             }
         }

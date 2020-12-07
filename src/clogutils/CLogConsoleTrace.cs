@@ -160,9 +160,9 @@ namespace clogutils
 
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
 
-                        if (!valueBag.TryGetValue(arg.VariableInfo.SuggestedTelemetryName, out IClogEventArg value))
+                        if (!valueBag.TryGetValue(arg.MacroVariableName, out IClogEventArg value))
                         {
-                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.VariableInfo.SuggestedTelemetryName}:{payload.EncodingType}>");
+                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
                         }
                         else
                         {
