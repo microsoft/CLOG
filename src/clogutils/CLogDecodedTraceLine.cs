@@ -10,6 +10,8 @@ Abstract:
 --*/
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
@@ -22,10 +24,10 @@ namespace clogutils
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
 
         public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
-            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args)
+            string mac, CLogFileProcessor.CLogVariableBundle[] args)
         {
             SourceFile = sourceFile;
-            macro = mac;
+            macroName = mac;
             UniqueId = uniqueId;
             match = m;
             configFile = c;
@@ -48,7 +50,28 @@ namespace clogutils
         public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
 
         [JsonProperty]
-        public CLogTraceMacroDefination macro { get; private set; }
+        public string macroName { get; private set; }
+
+        [JsonIgnore]
+        private CLogTraceMacroDefination macroStore;
+
+        [JsonIgnore]
+        public CLogTraceMacroDefination macro 
+        {
+            get 
+            {
+                if (macroStore is null)
+                {
+                    CLogTraceMacroDefination def = configFile.SourceCodeMacros.Where(x => x.MacroName == macroName).FirstOrDefault();
+                    if (def is null)
+                    {
+                        throw new InvalidDataException($"Macro ${macroName} not found in configuration file");
+                    }
+                    macroStore = def;
+                }
+                return macroStore;
+            }
+        }
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
