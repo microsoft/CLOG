@@ -107,7 +107,7 @@ namespace clog.TraceEmitterModules
                     //   length with the variable name <suggestedName>_len
                     if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
-                        argsString += $"{seperatorB} unsigned int {arg.VariableInfo.SuggestedTelemetryName}_len{seperatorA}";
+                        argsString += $"{seperatorB} unsigned int {arg.MacroVariableName}_len{seperatorA}";
                         macroString += $"{seperatorB} {arg.MacroVariableName}_len{seperatorA}";
                     }
 

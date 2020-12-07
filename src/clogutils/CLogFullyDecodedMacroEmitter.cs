@@ -77,7 +77,7 @@ namespace clogutils
                         clogArgCountForMacroAlignment += 2;
 
                         // Verify the input argument contains CLOG_BYTEARRAY - this will aid in debugging
-                        if (!arg.VariableInfo.UserSuppliedTrimmed.Contains("CLOG_BYTEARRAY"))
+                        if (!arg.UserSuppliedTrimmed.Contains("CLOG_BYTEARRAY"))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains a ByteArray type that is not using the CLOG_BYTEARRAY macro");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_BYTEARRAY(length, pointer)");
@@ -85,7 +85,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegEx}");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Arg: ");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.VariableInfo.UserSuppliedTrimmed);
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.UserSuppliedTrimmed);
                             throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_BYTEARRAY", CLogHandledException.ExceptionType.ByteArrayMustUseMacro, decodedTraceLine.match);
                         }
                         break;
@@ -121,16 +121,14 @@ namespace clogutils
 
                     if (!v.Synthesized)
                     {
-                        implSignature += $", {v.CType} {arg.VariableInfo.SuggestedTelemetryName}";
-                        argsString += $", {arg.VariableInfo.SuggestedTelemetryName}";
+                        implSignature += $", {v.CType} {arg.MacroVariableName}";
+                        argsString += $", {arg.MacroVariableName}";
 
                         if (v.EncodingType == CLogEncodingType.ByteArray)
                         {
-                            implSignature += $", int {arg.VariableInfo.SuggestedTelemetryName}_len";
-                            argsString += $", {arg.VariableInfo.SuggestedTelemetryName}_len";
+                            implSignature += $", int {arg.MacroVariableName}_len";
+                            argsString += $", {arg.MacroVariableName}_len";
                         }
-
-                        arg.MacroVariableName = $"{arg.VariableInfo.SuggestedTelemetryName}";
                     }
                 }
 
@@ -159,7 +157,7 @@ namespace clogutils
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
+                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.MacroVariableName} = {arg.UserSuppliedTrimmed}");
             }
 
             _headerFile.AppendLine("----------------------------------------------------------*/");

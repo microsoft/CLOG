@@ -180,7 +180,7 @@ namespace clog2text_windows
                                                 continue;
                                         }
 
-                                        string lookupArgName = argMap[arg.VariableInfo.SuggestedTelemetryName];
+                                        string lookupArgName = argMap[arg.MacroVariableName];
 
                                         if (!args.ContainsKey(lookupArgName))
                                         {
@@ -194,7 +194,7 @@ namespace clog2text_windows
                                             throw new Exception("InvalidType : " + node.DefinationEncoding);
                                         }
 
-                                        fixedUpArgs[arg.VariableInfo.SuggestedTelemetryName] = args[lookupArgName];
+                                        fixedUpArgs[arg.MacroVariableName] = args[lookupArgName];
                                         ++argIndex;
                                     }
 
