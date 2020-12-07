@@ -56,9 +56,9 @@ namespace clogutils
         private CLogTraceMacroDefination macroStore;
 
         [JsonIgnore]
-        public CLogTraceMacroDefination macro 
+        public CLogTraceMacroDefination macro
         {
-            get 
+            get
             {
                 if (macroStore is null)
                 {
