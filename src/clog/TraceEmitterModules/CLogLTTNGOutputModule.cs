@@ -160,7 +160,7 @@ namespace clog.TraceEmitterModules
                  if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
-                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
+                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed} = {arg.VariableInfo.IndexBasedName}");
             }
             lttngFile.AppendLine("----------------------------------------------------------*/");
 

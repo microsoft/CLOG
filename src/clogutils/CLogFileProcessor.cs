@@ -348,7 +348,7 @@ namespace clogutils
                 {
 
                     CLogTypeContainer item = new CLogTypeContainer();
-                    var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2);
+                    var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
                     var bundle = new CLogVariableBundle();
                     var type = new CLogEncodingCLogTypeSearch();
                     
@@ -363,7 +363,7 @@ namespace clogutils
                     if (!macroDefination.ClassFunctionEncoding && 0 == i)
                     {
                         CLogTypeContainer item = new CLogTypeContainer();
-                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2);
+                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
                         var bundle = new CLogVariableBundle();
                         var type = new CLogEncodingCLogTypeSearch();
 
@@ -382,7 +382,7 @@ namespace clogutils
                         }
 
                         CLogTypeContainer item = types.Dequeue();
-                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2);
+                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
 
                         // If a preferred name was found in the format string, use that
                         if(!String.IsNullOrEmpty(item.PreferredName))
@@ -521,7 +521,11 @@ namespace clogutils
 
             public string SuggestedTelemetryName { get; set; }
 
-            public static VariableInfo X(string user, string suggestedName)
+            public string IndexBasedName { get { return "arg" + _index; } }
+
+            private int _index;
+
+            public static VariableInfo X(string user, string suggestedName, int index)
             {
                 foreach (char c in suggestedName)
                 {
@@ -535,6 +539,7 @@ namespace clogutils
                 v.UserSuppliedTrimmed = user.Trim();
                 v.UserSpecifiedUnModified = user;
                 v.SuggestedTelemetryName = suggestedName;
+                v._index = index;
                 return v;
             }
         }

@@ -159,8 +159,8 @@ namespace clogutils
 
                     if (!v.Synthesized)
                     {
-                        implSignature += $", {v.CType} {arg.VariableInfo.SuggestedTelemetryName}";
-                        argsString += $", {arg.VariableInfo.SuggestedTelemetryName}";
+                        implSignature += $", {v.CType} {arg.VariableInfo.IndexBasedName}";
+                        argsString += $", {arg.VariableInfo.IndexBasedName}";
 
                         if (v.EncodingType == CLogEncodingType.ByteArray ||
                             v.EncodingType == CLogEncodingType.Int32Array ||
@@ -175,11 +175,11 @@ namespace clogutils
                             v.EncodingType == CLogEncodingType.UInt16Array ||
                             v.EncodingType == CLogEncodingType.Int8Array)
                         {
-                            implSignature += $", int {arg.VariableInfo.SuggestedTelemetryName}_len";
-                            argsString += $", {arg.VariableInfo.SuggestedTelemetryName}_len";
+                            implSignature += $", int {arg.VariableInfo.IndexBasedName}_len";
+                            argsString += $", {arg.VariableInfo.IndexBasedName}_len";
                         }
 
-                        arg.MacroVariableName = $"{arg.VariableInfo.SuggestedTelemetryName}";
+                        arg.MacroVariableName = $"{arg.VariableInfo.IndexBasedName}";
                     }
                 }
 
@@ -211,7 +211,7 @@ namespace clogutils
                 if (arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier || arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString)
                     continue;
 
-                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
+                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed} = {arg.VariableInfo.IndexBasedName}");
             }
 
             _headerFile.AppendLine("----------------------------------------------------------*/");
