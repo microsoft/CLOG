@@ -1,0 +1,29 @@
+﻿<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<instrumentationManifest xmlns="http://schemas.microsoft.com/win/2004/08/events">
+  <instrumentation
+      xmlns:ut="http://manifests.microsoft.com/win/2004/08/windows/networkevents"
+      xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      >
+    <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
+      <provider
+          guid="{6b6c1d19-db92-4787-81fd-70ac01e3ea7f}"
+          messageFileName="clogsample.exe"
+          name="CLOG-SAMPLE"
+          resourceFileName="clogsample.exe"
+          symbol="CLOG_SAMPLE_PROVIDER"
+          >
+        <templates>
+        </templates>
+        <events>
+        </events>
+      </provider>
+    </events>
+  </instrumentation>
+  <localization>
+    <resources culture="en-US">
+      <stringTable>
+      </stringTable>
+    </resources>
+  </localization>
+</instrumentationManifest>
