@@ -52,9 +52,26 @@ namespace clog.TraceEmitterModules
             string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
-            for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)
-            {                
-                inline.Append(", " + decodedTraceLine.splitArgs[i].MacroVariableName);
+
+            foreach (var a in decodedTraceLine.splitArgs)
+            {
+                CLogFileProcessor.CLogVariableBundle arg = a;
+
+                if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
+                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
+
+                switch (node.EncodingType)
+                {
+                    case CLogEncodingType.Synthesized:
+                        continue;
+
+                    case CLogEncodingType.Skip:
+                        continue;
+                }
+
+                inline.Append(", " + arg.MacroVariableName);
             }
             inline.Append(");\\\n");
         }
