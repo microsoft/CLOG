@@ -6,7 +6,7 @@ Install latest clog nuget tool. Download from here into nupkg folder https://git
 Then run
 
 ```
-dotnet took install --global --add-source nupkg Microsoft.Logging.CLOG
+dotnet tool install --global --add-source nupkg Microsoft.Logging.CLOG
 ```
 
 # Build (using pwsh)
