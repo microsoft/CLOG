@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
+using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using clogutils;
 
 namespace clog.TraceEmitterModules
 {
@@ -46,11 +46,11 @@ namespace clog.TraceEmitterModules
         {
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             if (!emittedHeader)
             {
@@ -103,11 +103,11 @@ namespace clog.TraceEmitterModules
                         seperatorB = ",";
                     }
 
-                    // If the encided type is 'binary' (length and payload) - for DTrace we emit the payload
+                    // If the encoded type is 'binary' (length and payload) - for DTrace we emit the payload
                     //   length with the variable name <suggestedName>_len
                     if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
-                        argsString += $"{seperatorB} unsigned int {arg.MacroVariableName}_len{seperatorA}";
+                        argsString += $"{seperatorB} unsigned int {arg.VariableInfo.SuggestedTelemetryName}_len{seperatorA}";
                         macroString += $"{seperatorB} {arg.MacroVariableName}_len{seperatorA}";
                     }
 

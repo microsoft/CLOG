@@ -1,5 +1,10 @@
 # Standardize line endings for all text files.
-* text eol=auto
+* text=auto
 
 # Ensure text files stay text
 *.xml text
+*.png binary
+*.cs text
+*.cmake text
+*.sln text
+*.md text

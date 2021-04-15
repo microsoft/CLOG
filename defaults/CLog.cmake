@@ -19,10 +19,14 @@ function(CLOG_GENERATE_TARGET)
 
     foreach(arg IN LISTS ARGV)
         get_filename_component(RAW_FILENAME ${arg} NAME)
-        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${RAW_FILENAME}.clog.h)
+        set(ARG_CLOG_OUTPUT_DIR ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library})
+	set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${RAW_FILENAME}.clog.h)
         set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${library}_${RAW_FILENAME}.clog.h.c)
 
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
+        # message(STATUS ">>>>>>> ARG_CLOG_OUTPUT_DIR = ${ARG_CLOG_OUTPUT_DIR}")
+        # message(STATUS ">>>>>>> ARG_CLOG_FILE = ${ARG_CLOG_FILE}")
+        # message(STATUS ">>>>>>> ARG_CLOG_C_FILE = ${ARG_CLOG_C_FILE}")
 
         set(ARG_CLOG_DYNAMIC_TRACEPOINT "")
         if (${library_type} STREQUAL "DYNAMIC")
@@ -34,8 +38,8 @@ function(CLOG_GENERATE_TARGET)
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
             DEPENDS ${CMAKE_CLOG_CONFIG_FILE}
             DEPENDS ${CMAKE_CLOG_EXTRA_DEPENDENCIES}
-            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}"
-            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar -i ${CMAKE_CURRENT_SOURCE_DIR}/${arg} -o ${ARG_CLOG_FILE}
+            COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar --inputFiles ${CMAKE_CURRENT_SOURCE_DIR}/${arg} --outputDirectory ${ARG_CLOG_OUTPUT_DIR}"
+            COMMAND clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar --inputFiles ${CMAKE_CURRENT_SOURCE_DIR}/${arg} --outputDirectory ${ARG_CLOG_OUTPUT_DIR}
         )
 
         set_property(SOURCE ${arg}

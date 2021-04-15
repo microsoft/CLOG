@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,8 +13,10 @@ namespace syslog2clog
     public class SysLogToClog : ICLogFullyDecodedLineCallbackInterface
     {
         private bool skip;
-        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder results)
+        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, CLogOutputInfo outputInfo, StringBuilder results)
         {
+            throw new NotImplementedException("Not Implemented, during refactor for managed code");
+#if false
             Dictionary<int, string> map = new Dictionary<int, string>();
             int idx = 1;
 
@@ -70,6 +72,7 @@ namespace syslog2clog
                 results.Append($", {arg.UserSuppliedTrimmed}");
             }
             results.Append(");");
+#endif
         }
     }
 
@@ -139,7 +142,8 @@ namespace syslog2clog
                         // fullyDecodedMacroEmitter.AddClogModule(converter);
 
                         string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile, converter, content, options.InputFile, true);
+                        CLogOutputInfo outputInfo = null;
+                        string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
 
                         // fullyDecodedMacroEmitter.FinishedProcessing();
 

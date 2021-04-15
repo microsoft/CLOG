@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -10,10 +10,10 @@ Abstract:
 
 --*/
 
-using System.Collections.Generic;
-using System.Text;
 using clogutils;
 using clogutils.MacroDefinations;
+using System.Collections.Generic;
+using System.Text;
 
 namespace clog.TraceEmitterModules
 {
@@ -35,11 +35,11 @@ namespace clog.TraceEmitterModules
         {
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline,
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline,
             StringBuilder function)
         {
             int hashUInt;
@@ -60,10 +60,13 @@ namespace clog.TraceEmitterModules
             string traceloggingLine = "TraceLoggingWrite(clog_hTrace, \"" + decodedTraceLine.UniqueId +
                                       "\"";
 
-
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
@@ -82,51 +85,51 @@ namespace clog.TraceEmitterModules
                 switch (node.EncodingType)
                 {
                     case CLogEncodingType.Int8:
-                        traceloggingLine += ",\\\n    TraceLoggingInt8" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingInt8" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.UInt8:
-                        traceloggingLine += ",\\\n    TraceLoggingUInt8" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingUInt8" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.Int16:
-                        traceloggingLine += ",\\\n    TraceLoggingInt16" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingInt16" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.UInt16:
-                        traceloggingLine += ",\\\n    TraceLoggingUInt16" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingUInt16" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.Int32:
-                        traceloggingLine += ",\\\n    TraceLoggingInt32" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingInt32" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.UInt32:
-                        traceloggingLine += ",\\\n    TraceLoggingUInt32" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingUInt32" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.Int64:
-                        traceloggingLine += ",\\\n    TraceLoggingInt64" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingInt64" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.UInt64:
-                        traceloggingLine += ",\\\n    TraceLoggingUInt64" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingUInt64" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.Pointer:
-                        traceloggingLine += ",\\\n    TraceLoggingPointer" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingPointer" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.ByteArray:
-                        traceloggingLine += ",\\\n    TraceLoggingUInt8Array" + $"({arg.MacroVariableName}, {arg.MacroVariableName}_len, \"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingUInt8Array" + $"({arg.MacroVariableName}, {arg.MacroVariableName}_len, \"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.ANSI_String:
-                        traceloggingLine += ",\\\n    TraceLoggingString" + $"((const char *)({arg.MacroVariableName}),\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingString" + $"((const char *)({arg.MacroVariableName}),\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
 
                     case CLogEncodingType.UNICODE_String:
-                        traceloggingLine += ",\\\n    TraceLoggingWideString" + $"({arg.MacroVariableName},\"{arg.MacroVariableName}\")";
+                        traceloggingLine += ",\\\n    TraceLoggingWideString" + $"({arg.MacroVariableName},\"{arg.VariableInfo.SuggestedTelemetryName}\")";
                         break;
                 }
             }

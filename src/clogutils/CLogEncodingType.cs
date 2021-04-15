@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -34,6 +34,21 @@ namespace clogutils
         UInt16 = 12,
         Int8 = 13,
         UInt8 = 14,
-        ByteArray = 15
+        ByteArray = 15,
+        UserEncodingString = 16,
+        UniqueAndDurableIdentifier = 17,
+        Int32Array = 18,
+        UInt32Array = 19,
+        Int64Array = 20,
+        UInt64Array = 21,
+        ANSI_StringArray = 22,
+        UNICODE_StringArray = 23,
+        PointerArray = 24,
+        GUIDArray = 25,
+        Int16Array = 26,
+        UInt16Array = 27,
+        Int8Array = 28,
+        // UInt8Array, // Not used, use ByteArray
+        Struct = 29
     }
 }

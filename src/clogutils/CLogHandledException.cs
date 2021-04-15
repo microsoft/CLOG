@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -30,7 +30,7 @@ namespace clogutils
             UndefinedType = 11,
             UnableToOpenChainedConfigFile = 12,
             UnableToOpenCustomDecoder = 13,
-            ByteArrayMustUseMacro = 14,
+            ArrayMustUseMacro = 14,
             TaceIDNotUnique = 15,
             EncoderIncompatibleWithType = 16,
             MustSpecifiyETWManifest = 17,
@@ -43,7 +43,10 @@ namespace clogutils
             InvalidUniqueId = 24,
             WontWriteInReadOnlyMode = 25,
             RequiredConfigParameterUnspecified = 26,
-            InvalidInputFile = 27
+            InvalidInputFile = 27,
+            UndefinedTypeToLanguageMapping = 28,
+            InvalidNameFormatInTypeSpcifier = 29,
+            EncodedArgNumberInvalid = 30
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -74,8 +77,8 @@ namespace clogutils
                     return "Unable to opend chained config file";
                 case ExceptionType.UnableToOpenCustomDecoder:
                     return "Unable to open custom C# decoder";
-                case ExceptionType.ByteArrayMustUseMacro:
-                    return "BYTEARRAY type must specify length(in bytes) along with the pointer into the CLOG_BYTEARRAY(len, pointer); macro";
+                case ExceptionType.ArrayMustUseMacro:
+                    return "BYTEARRAY or *ARRAY type must specify length(in bytes) along with the pointer into the CLOG_BYTEARRAY(len, pointer); or CLOG_ARRAY(len, pointer); macro";
                 case ExceptionType.TaceIDNotUnique:
                     return "The encoding string, arg types, etc may not change once specified";
                 case ExceptionType.EncoderIncompatibleWithType:
@@ -100,6 +103,8 @@ namespace clogutils
                     return "A required configuration parameter was not specified in the configuration file - this will be a user specified option required for a chosen event module";
                 case ExceptionType.InvalidInputFile:
                     return "Invalid input file";
+                case ExceptionType.UndefinedTypeToLanguageMapping:
+                    return "Must specify conversion from CLOG Type to Language Type in config file";
             }
 
             return "Uknown Error";

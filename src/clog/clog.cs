@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -12,6 +12,7 @@ Abstract:
 --*/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -173,9 +174,8 @@ namespace clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
+                        sidecar.ConfigFile = configFile;
 
-                        // Check for outdated config file
-                        sidecar.UpdateConfigFile(configFile);
 
                         if (options.RefreshCustomTypeProcessor)
                         {
@@ -184,132 +184,157 @@ namespace clog
                             return 0;
                         }
 
-                        string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
-                                                 options.ScopePrefix + "_" + Path.GetFileName(options.OutputFile)) + ".c";
+                        //
+                        // BUGBUG: refactoring needed for handling batches of input files, expecially
+                        //    now that managed languages are coming along.  Leaving this unaddressed
+                        //    for now while the best way is still elusive
+                        //
+                        List<ICLogBatchingModule> batchingModules = new List<ICLogBatchingModule>();
 
-                        configFile.ScopePrefix = options.ScopePrefix;
-                        configFile.FilePath = Path.GetFullPath(options.ConfigurationFile);
-                        configFile.OverwriteHashCollisions = options.OverwriteHashCollisions;
-
-                        //Delete the output file; we want to encourage build breaks if something goes wrong
-                        if (File.Exists(options.OutputFile))
+                        foreach (string inputFile in options.InputFiles)
                         {
-                            File.Delete(options.OutputFile);
-                        }
+                            string outputFile = options.GetOutputFileName(inputFile);
+                            string outputCFile = Path.Combine(Path.GetDirectoryName(outputFile), options.ScopePrefix + "_" + Path.GetFileName(outputFile)) + ".c";
 
-                        if (File.Exists(outputCFile))
-                        {
-                            File.Delete(outputCFile);
-                        }
+                            configFile.ScopePrefix = options.ScopePrefix;
+                            configFile.FilePath = Path.GetFullPath(options.ConfigurationFile);
+                            configFile.OverwriteHashCollisions = options.OverwriteHashCollisions;
 
+                            //Delete the output file; we want to encourage build breaks if something goes wrong
+                            if (File.Exists(outputFile))
+                            {
+                                File.Delete(outputFile);
+                            }
 
-                        CLogFileProcessor processor = new CLogFileProcessor(configFile);
-                        CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(options.InputFile, sidecar);
+                            if (File.Exists(outputCFile))
+                            {
+                                File.Delete(outputCFile);
+                            }
 
-                        fullyDecodedMacroEmitter.AddClogModule(sidecar);
+                            CLogFileProcessor processor = new CLogFileProcessor(configFile);
+                            CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(inputFile, sidecar);
 
-                        CLogTraceLoggingOutputModule traceLoggingEmitter = new CLogTraceLoggingOutputModule();
-                        fullyDecodedMacroEmitter.AddClogModule(traceLoggingEmitter);
+                            fullyDecodedMacroEmitter.AddClogModule(sidecar);
 
-                        CLogDTraceOutputModule dtrace = new CLogDTraceOutputModule();
-                        fullyDecodedMacroEmitter.AddClogModule(dtrace);
+                            CLogTraceLoggingOutputModule traceLoggingEmitter = new CLogTraceLoggingOutputModule();
+                            fullyDecodedMacroEmitter.AddClogModule(traceLoggingEmitter);
 
-                        CLogSystemTapModule systemTap = new CLogSystemTapModule();
-                        fullyDecodedMacroEmitter.AddClogModule(systemTap);
+                            CLogDTraceOutputModule dtrace = new CLogDTraceOutputModule();
+                            fullyDecodedMacroEmitter.AddClogModule(dtrace);
 
-                        CLogSysLogModule syslog = new CLogSysLogModule();
-                        fullyDecodedMacroEmitter.AddClogModule(syslog);
+                            CLogSystemTapModule systemTap = new CLogSystemTapModule();
+                            fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
-                        CLogSTDOUT stdout = new CLogSTDOUT();
-                        fullyDecodedMacroEmitter.AddClogModule(stdout);
+                            CLogSysLogModule syslog = new CLogSysLogModule();
+                            fullyDecodedMacroEmitter.AddClogModule(syslog);
 
-                        CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
-                        fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
+                            CLogSTDOUT stdout = new CLogSTDOUT();
+                            fullyDecodedMacroEmitter.AddClogModule(stdout);
 
-                        CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(options.InputFile, options.OutputFile,
-                            options.OutputFile + ".lttng.h", options.DynamicTracepointProvider);
-                        fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
+                            CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
+                            fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
-                        if (!File.Exists(options.InputFile))
-                        {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File : {Path.GetFileName(options.InputFile)}");
-                            throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);
-                        }
+                            CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(inputFile, outputFile, outputFile + ".lttng.h", options.DynamicTracepointProvider);
+                            fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
-                        string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile, fullyDecodedMacroEmitter, content, options.InputFile, false);
+                            if (!File.Exists(inputFile))
+                            {
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File : {Path.GetFileName(inputFile)}");
+                                throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);
+                            }
 
-                        if (!content.Contains(Path.GetFileName(options.OutputFile)))
-                        {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"You must #include the clog output file {Path.GetFileName(options.OutputFile)}");
-                            throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
-                        }
+                            CLogOutputInfo outputInfo = new CLogOutputInfo();
+                            outputInfo.OutputDirectory = options.OutputDirectory;
+                            outputInfo.OutputFileName = outputFile;
+                            outputInfo.InputFileName = inputFile;
 
-                        fullyDecodedMacroEmitter.FinishedProcessing();
+                            string content = File.ReadAllText(inputFile);
+                            string output = processor.ConvertFile(configFile, outputInfo, fullyDecodedMacroEmitter, content, inputFile, false);
 
-                        StringBuilder clogFile = new StringBuilder();
-                        clogFile.AppendLine("#include <clog.h>");
+                            fullyDecodedMacroEmitter.FinishedProcessing(outputInfo);
 
-                        clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
+                            StringBuilder clogFile = new StringBuilder();
+                            clogFile.AppendLine("#include <clog.h>");
 
-                        foreach (var macro in processor.MacrosInUse)
-                        {
-                            clogFile.AppendLine($"#ifndef _clog_MACRO_{macro.MacroName}");
-                            clogFile.AppendLine($"#define _clog_MACRO_{macro.MacroName}  1");
-                            clogFile.AppendLine(
-                                $"#define {macro.MacroName}(a, ...) _clog_CAT(_clog_ARGN_SELECTOR(__VA_ARGS__), _clog_CAT(_,a(#a, __VA_ARGS__)))");
+                            clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
+
+                            foreach (var macro in processor.MacrosInUse)
+                            {
+                                clogFile.AppendLine($"#ifndef _clog_MACRO_{macro.MacroName}");
+                                clogFile.AppendLine($"#define _clog_MACRO_{macro.MacroName}  1");
+                                clogFile.AppendLine(
+                                    $"#define {macro.MacroName}(a, ...) _clog_CAT(_clog_ARGN_SELECTOR(__VA_ARGS__), _clog_CAT(_,a(#a, __VA_ARGS__)))");
+                                clogFile.AppendLine("#endif");
+                            }
+
+                            clogFile.AppendLine("#ifdef __cplusplus");
+                            clogFile.AppendLine("extern \"C\" {");
                             clogFile.AppendLine("#endif");
-                        }
 
-                        clogFile.AppendLine("#ifdef __cplusplus");
-                        clogFile.AppendLine("extern \"C\" {");
-                        clogFile.AppendLine("#endif");
+                            clogFile.Append(fullyDecodedMacroEmitter.HeaderFile);
+                            clogFile.AppendLine("#ifdef __cplusplus");
+                            clogFile.AppendLine("}");
+                            clogFile.AppendLine("#endif");
 
-                        clogFile.Append(fullyDecodedMacroEmitter.HeaderFile);
-                        clogFile.AppendLine("#ifdef __cplusplus");
-                        clogFile.AppendLine("}");
-                        clogFile.AppendLine("#endif");
+                            clogFile.AppendLine("#ifdef CLOG_INLINE_IMPLEMENTATION");
+                            clogFile.AppendLine("#include \"" + Path.GetFileName(outputCFile) + "\"");
+                            clogFile.AppendLine("#endif");
 
-                        clogFile.AppendLine("#ifdef CLOG_INLINE_IMPLEMENTATION");
-                        clogFile.AppendLine("#include \"" + Path.GetFileName(outputCFile) + "\"");
-                        clogFile.AppendLine("#endif");
-
-
-                        if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
-                        {
-                            Console.WriteLine("Creating Directory for Output : " + Path.GetDirectoryName(options.OutputFile));
-                            Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
-                        }
-
-                        if (sidecar.AreDirty || configFile.AreWeDirty())
-                        {
-                            if (options.ReadOnly)
+                            //
+                            // BUGBUG : the intent in saving needs to be
+                            //    1. delete any output files early - before we start, getting us into a safe state (build breaks)
+                            //    2. save sidecars and other items that make assumptions about the emitted code
+                            //    3. save emitted code
+                            //
+                            // the goal of these orderings is to be safe in the event of failure/crash
+                            //
+                            if (!Directory.Exists(Path.GetDirectoryName(outputFile)))
                             {
-                                if (sidecar.AreDirty)
-                                    Console.WriteLine("Sidecar is dirty");
-                                if (configFile.AreWeDirty())
-                                    Console.WriteLine("ConfigFile is dirty");
-
-                                sidecar.PrintDirtyReasons();
-                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                                Console.WriteLine("Creating Directory for Output : " + Path.GetDirectoryName(outputFile));
+                                Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
                             }
-                            configFile.ForceDecoderCompile();
-                            sidecar.Save(options.SidecarFile);
-                        }
 
-                        if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
-                        {
-                            if (options.ReadOnly)
+                            if (sidecar.AreDirty || configFile.AreWeDirty())
                             {
-                                throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ConfigFile", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                                if (options.ReadOnly)
+                                {
+                                if(sidecar.AreDirty)
+                                        Console.WriteLine("Sidecar is dirty");
+                                if(configFile.AreWeDirty())
+                                        Console.WriteLine("ConfigFile is dirty");
+
+                                    sidecar.PrintDirtyReasons();
+                                    throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                                }
+								configFile.ForceDecoderCompile();
+                                sidecar.Save(options.SidecarFile);
                             }
-                            Console.WriteLine("Configuration file was updated, saving...");
-                            Console.WriteLine($"    {configFile.FilePath}");
-                            configFile.Save(false);
+
+                            if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
+                            {
+                                if (options.ReadOnly)
+                                {
+                                    throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ConfigFile", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
+                                }
+                                Console.WriteLine("Configuration file was updated, saving...");
+                                Console.WriteLine($"    {configFile.FilePath}");
+                                configFile.Save(false);
+                            }
+
+                            File.WriteAllText(outputFile, clogFile.ToString());
+                            File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
                         }
 
-                        File.WriteAllText(options.OutputFile, clogFile.ToString());
-                        File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
+                        //
+                        // Enumerate batching modules, allowing them to save
+                        //
+                        foreach(var m in batchingModules)
+                        {
+                            CLogOutputInfo outputInfo = new CLogOutputInfo();
+                            outputInfo.OutputDirectory = options.OutputDirectory;
+                            m.FinishedBatch(outputInfo);
+                        }
+
                     }
                     catch (CLogHandledException e)
                     {

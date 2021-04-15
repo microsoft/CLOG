@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -49,7 +49,7 @@ namespace clog2text_lttng
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
 
-        internal void PrepareAssemblyCompileIfNecessary()
+        public void PrepareAssemblyCompileIfNecessary()
         {
             if (null != _codeAssembly)
                 return;
@@ -63,7 +63,7 @@ namespace clog2text_lttng
             Compilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 new[] { syntaxTree },
-                null,
+                references,
                 new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
 
             compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
@@ -96,15 +96,6 @@ namespace clog2text_lttng
         public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
             //
-            // Skip custom type decode if there is no decoder loaded
-            //
-            if (CustomTypeDecoder == null)
-            {
-                decodedValue = "";
-                return true;
-            }
-
-            //
             // Compiling also caches the assembly
             //
             PrepareAssemblyCompileIfNecessary();
@@ -126,6 +117,17 @@ namespace clog2text_lttng
                     break;
 
                 case CLogEncodingType.ByteArray:
+                case CLogEncodingType.UInt64Array:
+                case CLogEncodingType.Int32Array:
+                case CLogEncodingType.UInt32Array:
+                case CLogEncodingType.Int64Array:
+                case CLogEncodingType.ANSI_StringArray:
+                case CLogEncodingType.UNICODE_StringArray:
+                case CLogEncodingType.PointerArray:
+                case CLogEncodingType.GUIDArray:
+                case CLogEncodingType.Int16Array:
+                case CLogEncodingType.UInt16Array:
+                case CLogEncodingType.Int8Array:
                     args[0] = value.AsBinary;
                     break;
 

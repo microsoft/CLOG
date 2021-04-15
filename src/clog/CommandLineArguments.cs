@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -9,10 +9,11 @@ Abstract:
 
 --*/
 
-using System.IO;
 using clogutils;
 using CommandLine;
-
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace clog
 {
@@ -23,17 +24,10 @@ namespace clog
         {
             get;
             set;
-        }
+        }     
 
-        [Option('i', "inputFile", SetName = "build", Required = false, HelpText = "Full path to one WPP source file for conversion")]
-        public string InputFile
-        {
-            get;
-            set;
-        }
-
-        [Option('o', "outputFile", SetName = "build", Required = false, HelpText = "Full path to output file")]
-        public string OutputFile
+        [Option("inputFiles", SetName = "build", Required = false, HelpText = "Full path to one WPP source file for conversion")]
+        public IEnumerable<string> InputFiles
         {
             get;
             set;
@@ -122,6 +116,13 @@ namespace clog
             get;
             set;
         }
+        
+        public string GetOutputFileName(string inputFile)
+        {
+            string ret = Path.Combine(this.OutputDirectory, Path.GetFileName(inputFile));
+            ret += ".clog.h";
+            return ret;
+        }
 
         public bool IsValid()
         {
@@ -132,26 +133,17 @@ namespace clog
 
             if (!string.IsNullOrEmpty(this.OutputDirectory))
             {
-                if (string.IsNullOrEmpty(this.InputFile))
+                if (0 == this.InputFiles.Count())
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, and InputFile is empty");
                     return false;
                 }
-
-                if (!string.IsNullOrEmpty(this.OutputFile))
-                {
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, but OutputFile is not empty");
-                    return false;
-                }
-                this.OutputFile = Path.Combine(this.OutputDirectory, Path.GetFileName(this.InputFile));
-                this.OutputFile += ".clog.h";
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "Setting Output file to : " + this.OutputFile);
             }
 
             //
             // If either input or output is empty, require that we're linting or upgrading
             //
-            if (string.IsNullOrEmpty(this.InputFile) || string.IsNullOrEmpty(this.OutputFile))
+            if (0 == this.InputFiles.Count())
             {
                 if (!LintConfig && !UpgradeConfigFile && !RefreshCustomTypeProcessor)
                 {
@@ -161,7 +153,7 @@ namespace clog
             }
             else
             {
-                if (string.IsNullOrEmpty(this.InputFile) || string.IsNullOrEmpty(this.OutputFile))
+                if (0 == this.InputFiles.Count() || string.IsNullOrEmpty(this.OutputDirectory))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "please specify both an input and and output file");
                     return false;
@@ -182,7 +174,7 @@ namespace clog
 
             if (LintConfig || UpgradeConfigFile)
             {
-                if (!string.IsNullOrEmpty(this.InputFile) || !string.IsNullOrEmpty(this.OutputFile))
+                if (0 != this.InputFiles.Count() || !string.IsNullOrEmpty(this.OutputDirectory))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "do not specify input or output files if you're linting or upgrading the config file");
                     return false;

@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -61,13 +61,11 @@ namespace clogutils
             {
                 int line = 1;
                 int lastLine = 1;
-                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegEx.Index);
+                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegExX.Index);
                 for (int i = 0; i < file.Length; ++i)
                 {
                     if (file[i] == '\n')
                     {
-                        string prev = file.Substring(lastLine, i - 1 - lastLine);
-                        //Console.WriteLine("Line: " + line + " " + prev);
                         lastLine = i + 1;
                         ++line;
                     }
@@ -100,7 +98,7 @@ namespace clogutils
                     {
                         if (!String.IsNullOrEmpty(eventInfo.CPUId))
                         {
-                            toPrint.Append("[" + eventInfo.CPUId + "]");
+                            toPrint.Append("["+eventInfo.CPUId+"]");
                         }
 
                         toPrint.Append("[");
@@ -160,9 +158,9 @@ namespace clogutils
 
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
 
-                        if (!valueBag.TryGetValue(arg.MacroVariableName, out IClogEventArg value))
+                        if (!valueBag.TryGetValue(arg.VariableInfo.SuggestedTelemetryName, out IClogEventArg value))
                         {
-                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
+                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.VariableInfo.SuggestedTelemetryName}:{payload.EncodingType}>");
                         }
                         else
                         {

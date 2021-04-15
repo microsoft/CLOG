@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -10,11 +10,11 @@ Abstract:
 
 --*/
 
+using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using clogutils;
 using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
@@ -43,17 +43,17 @@ namespace clog.TraceEmitterModules
             header.AppendLine($"#include <syslog.h>");
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
-            for (int i = 0; i < decodedTraceLine.splitArgs.Length; ++i)
-            {
+            for (int i=0; i<decodedTraceLine.splitArgs.Length; ++i)
+            {                
                 inline.Append(", " + decodedTraceLine.splitArgs[i].MacroVariableName);
             }
             inline.Append(");\\\n");

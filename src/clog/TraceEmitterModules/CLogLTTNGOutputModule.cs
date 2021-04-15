@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -83,7 +83,7 @@ namespace clog.TraceEmitterModules
             header.AppendLine("#include <lttng/tracepoint-event.h>");
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
             string dir = Path.GetDirectoryName(_lttngHeaderFileName);
 
@@ -112,7 +112,7 @@ namespace clog.TraceEmitterModules
         }
 
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             int hashUInt;
             string hash;
@@ -123,6 +123,10 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                 if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
@@ -149,11 +153,14 @@ namespace clog.TraceEmitterModules
             lttngFile.AppendLine("/*----------------------------------------------------------");
             lttngFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
             lttngFile.AppendLine($"// {decodedTraceLine.TraceString}");
-            lttngFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
+            lttngFile.AppendLine($"// {decodedTraceLine.match.MatchedRegExX}");
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.MacroVariableName} = {arg.UserSuppliedTrimmed}");
+                 if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
+                lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed}");
             }
             lttngFile.AppendLine("----------------------------------------------------------*/");
 
@@ -165,6 +172,10 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                 if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
@@ -185,23 +196,23 @@ namespace clog.TraceEmitterModules
                     {
                         lttngFile.Append(",");
                         lttngFile.AppendLine("");
-                        lttngFile.Append($"        unsigned int, {arg.MacroVariableName}_len");
+                        lttngFile.Append($"        unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len");
                     }
 
                     lttngFile.Append(",");
                     lttngFile.AppendLine("");
-                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.MacroVariableName}");
+                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.VariableInfo.SuggestedTelemetryName}");
                 }
                 else
                 {
                     if (CLogEncodingType.ByteArray == node.EncodingType)
                     {
-                        lttngFile.Append($"        unsigned int, {arg.MacroVariableName}_len");
+                        lttngFile.Append($"        unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len");
                         lttngFile.Append(",");
                         lttngFile.AppendLine("");
                     }
 
-                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.MacroVariableName}");
+                    lttngFile.Append($"        {ConvertToClogType(node)}, {arg.VariableInfo.SuggestedTelemetryName}");
                 }
 
                 ++argNum;
@@ -215,6 +226,10 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                 if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
@@ -230,61 +245,61 @@ namespace clog.TraceEmitterModules
 
                     case CLogEncodingType.ByteArray:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned int, {arg.MacroVariableName}_len, {arg.MacroVariableName}_len)");
+                            $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len, {arg.VariableInfo.SuggestedTelemetryName}_len)");
 
                         lttngFile.AppendLine(
-                            $"        ctf_sequence(char, {arg.MacroVariableName}, {arg.MacroVariableName}, unsigned int, {arg.MacroVariableName}_len)");
+                            $"        ctf_sequence(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName}, unsigned int, {arg.VariableInfo.SuggestedTelemetryName}_len)");
                         break;
 
                     case CLogEncodingType.Int8:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(char, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.UInt8:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned char, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(unsigned char, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
 
                     case CLogEncodingType.Int16:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(short, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(short, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.UInt16:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned short, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(unsigned short, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.Int32:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(int, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(int, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.UInt32:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(unsigned int, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(unsigned int, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.Int64:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(int64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(int64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.UInt64:
                         lttngFile.AppendLine(
-                            $"        ctf_integer(uint64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.Pointer:
                         lttngFile.AppendLine(
-                            $"        ctf_integer_hex(uint64_t, {arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_integer_hex(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.ANSI_String:
                         lttngFile.AppendLine(
-                            $"        ctf_string({arg.MacroVariableName}, {arg.MacroVariableName})");
+                            $"        ctf_string({arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     default:
@@ -303,6 +318,10 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                 if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 if (string.IsNullOrEmpty(node.CType))

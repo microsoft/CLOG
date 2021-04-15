@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -42,14 +42,18 @@ namespace clogutils.ConfigFile
             return true;
         }
 
-        public Guid GenerateUniquenessHash(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out string asString)
+        public Guid GenerateUniquenessHash(ICLogOutputModule module, CLogDecodedTraceLine decodedTraceLine, out string asString)
         {
-            string info = traceLine.macro.MacroName + "|" + traceLine.UniqueId + "|" +
-                          traceLine.TraceString + "|";
+            string info = decodedTraceLine.macro.MacroName + "|" + decodedTraceLine.UniqueId + "|" +
+                          decodedTraceLine.TraceString + "|";
 
-            foreach (var arg in traceLine.splitArgs)
+            
+            foreach(var arg in decodedTraceLine.splitArgs)
             {
-                info += traceLine.configFile.FindType(arg, traceLine).EncodingType;
+                if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
+                    continue;
+                
+                info += arg.TypeNode.EncodingType;
             }
 
             asString = info;

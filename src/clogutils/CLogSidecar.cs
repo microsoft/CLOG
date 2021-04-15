@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -133,7 +133,7 @@ namespace clogutils
         }
 
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             int hashUInt;
             string hash;
@@ -157,7 +157,7 @@ namespace clogutils
             File.WriteAllText(fileName, s);
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
             Save(_sidecarFileName);
         }
