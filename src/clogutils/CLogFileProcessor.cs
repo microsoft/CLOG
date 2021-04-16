@@ -41,8 +41,8 @@ namespace clogutils
         private static SortedList<int, CLogLineMatch> UpdateMatches(string data, string sourceFileName, CLogTraceMacroDefination inspect)
         {
             string inspectToken;
-            
-            
+
+
             if(!inspect.ClassFunctionEncoding)
                 inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
             else
@@ -323,7 +323,7 @@ namespace clogutils
 
         private static CLogDecodedTraceLine BuildArgsFromEncodedArgsX(CLogConfigurationFile configFile, string sourcefile,
             CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine)
-        {         
+        {
             string userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
             //
             // Loop across all types, ignoring the ones that are not specified in the source code
@@ -338,7 +338,7 @@ namespace clogutils
 
                 types.Enqueue(type);
             }
-        
+
             var vars = MakeVariable(configFile, traceLineMatch.Args);
             List<CLogVariableBundle> finalArgs = new List<CLogVariableBundle>();
 
@@ -351,7 +351,7 @@ namespace clogutils
                     var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
                     var bundle = new CLogVariableBundle();
                     var type = new CLogEncodingCLogTypeSearch();
-                    
+
                     type.EncodingType = CLogEncodingType.UserEncodingString;
 
                     bundle.TypeNode = type;
@@ -420,7 +420,7 @@ namespace clogutils
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Too many arguments were specified in trace line");
                 throw new CLogEnterReadOnlyModeException("TooManyArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
             }
-            
+
             Regex rg = new Regex(@"^[a-zA-Z0-9_]*$");
             if (!rg.IsMatch(traceLineMatch.UniqueID))
             {
@@ -560,7 +560,8 @@ namespace clogutils
         [JsonObject(MemberSerialization.OptIn)]
         public class CLogVariableBundle
         {
-            [JsonProperty] public VariableInfo VariableInfo { get; set; }
+            //[JsonProperty]
+            public VariableInfo VariableInfo { get; set; }
 
             [JsonProperty] public string DefinationEncoding { get; set; }
 

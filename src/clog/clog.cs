@@ -191,8 +191,13 @@ namespace clog
                         //
                         List<ICLogBatchingModule> batchingModules = new List<ICLogBatchingModule>();
 
+
+                        Console.WriteLine("Number of files : " + (new List<string>(options.InputFiles)).Count);
+
                         foreach (string inputFile in options.InputFiles)
                         {
+                            Console.WriteLine("Processing: " + inputFile);
+
                             string outputFile = options.GetOutputFileName(inputFile);
                             string outputCFile = Path.Combine(Path.GetDirectoryName(outputFile), options.ScopePrefix + "_" + Path.GetFileName(outputFile)) + ".c";
 
@@ -239,7 +244,7 @@ namespace clog
 
                             if (!File.Exists(inputFile))
                             {
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File : {Path.GetFileName(inputFile)}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File (file doesnt exist) : {inputFile}");
                                 throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);
                             }
 

@@ -24,9 +24,9 @@ namespace clog
         {
             get;
             set;
-        }     
+        }
 
-        [Option("inputFiles", SetName = "build", Required = false, HelpText = "Full path to one WPP source file for conversion")]
+        [Option("inputFiles", SetName = "build", Required = false, HelpText = "Full path to one (or more) source file for CLOG to generate logging stubs")]
         public IEnumerable<string> InputFiles
         {
             get;
@@ -116,7 +116,7 @@ namespace clog
             get;
             set;
         }
-        
+
         public string GetOutputFileName(string inputFile)
         {
             string ret = Path.Combine(this.OutputDirectory, Path.GetFileName(inputFile));

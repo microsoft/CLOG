@@ -12,6 +12,7 @@ Abstract:
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
@@ -49,8 +50,45 @@ namespace clogutils
         [JsonProperty]
         public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
 
-        [JsonProperty]
+/*
+        private CLogFileProcessor.CLogVariableBundle[] _tempArgs;
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            List<CLogFileProcessor.CLogVariableBundle> tArgs = new List<CLogFileProcessor.CLogVariableBundle>();
+            foreach(var a in splitArgs)
+            {
+                if(!string.IsNullOrEmpty(a.DefinationEncoding))
+                    tArgs.Add(a);
+            }
+            _tempArgs = splitArgs;
+            splitArgs = tArgs.ToArray();
+        }
+
+        [OnSerialized]
+        internal void OnSerializedMethod(StreamingContext context)
+        {
+            splitArgs = _tempArgs;
+        }
+
+*/
+        //[JsonProperty]
         public CLogTraceMacroDefination macro { get; private set; }
+
+
+        private string _macroName;
+        [JsonProperty]
+        public string macroName { get {
+            if(null != macro && !string.IsNullOrEmpty(macro.MacroName))
+                return macro.MacroName;
+
+            return _macroName;
+                }
+
+            set {
+                _macroName = value;
+            }
+            }
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
