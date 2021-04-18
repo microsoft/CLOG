@@ -288,32 +288,8 @@ namespace clogutils
 
             for (int i = 0; i < args.Length; ++i)
             {
-                string name = args[i].Trim();
-                name = name.Replace("*", "").Replace("(", "").Replace(")", "").Replace(".", "");
-                name = name.Replace(",", "").Replace("-", "").Replace(">", "");
-
                 string value = args[i];
-
-                bool hasBadChars = false;
-                foreach (char c in name)
-                {
-                    if (!char.IsDigit(c) && !char.IsLetter(c) && c != '_')
-                    {
-                        hasBadChars = true;
-                    }
-                }
-
-                if (name.Length > configFile.MaximumVariableLength || hasBadChars)
-                {
-                    name = "arg" + i;
-                }
-
-                if (inUse.Contains(name))
-                {
-                    Console.WriteLine($"WARNING: {name} is already in use, using {name}{i} instead");
-                    name = name + i;
-                }
-
+                string name = "arg" + i;
                 ret.Add((value, name));
                 inUse.Add(name);
             }
