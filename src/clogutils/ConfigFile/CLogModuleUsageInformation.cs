@@ -47,12 +47,12 @@ namespace clogutils.ConfigFile
             string info = decodedTraceLine.macro.MacroName + "|" + decodedTraceLine.UniqueId + "|" +
                           decodedTraceLine.TraceString + "|";
 
-            
+
             foreach(var arg in decodedTraceLine.splitArgs)
             {
                 if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
                     continue;
-                
+
                 info += arg.TypeNode.EncodingType;
             }
 
@@ -73,6 +73,7 @@ namespace clogutils.ConfigFile
                 info = new CLogTraceLineInformation();
                 info.Unsaved = true;
                 info.PreviousFileMatch = traceLine;
+                info.EncodingString = traceLine.TraceString;
 
                 info.TraceID = traceLine.UniqueId;
                 info.UniquenessHash = hash;

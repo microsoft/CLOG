@@ -262,6 +262,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Previous Declaration: ");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"File/Line: {CLogConsoleTrace.GetFileLine(existingTraceInfo.PreviousFileMatch.match)}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{existingTraceInfo.PreviousFileMatch.match}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Existing EncodingString:{existingTraceInfo.EncodingString}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
 
@@ -287,6 +288,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event:");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        ConfigFile:{decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        TraceID:{existingTraceInfo.TraceID}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        EncodingString:{existingTraceInfo.EncodingString}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
                             }
 

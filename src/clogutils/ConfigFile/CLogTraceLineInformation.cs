@@ -21,6 +21,8 @@ namespace clogutils.ConfigFile
 
         [JsonProperty] public string TraceID { get; set; }
 
+        [JsonProperty] public string EncodingString { get; set; }
+
         public bool Unsaved { get; set; }
 
         public CLogDecodedTraceLine PreviousFileMatch { get; set; }
