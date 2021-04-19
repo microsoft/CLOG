@@ -50,7 +50,6 @@ namespace clogutils
         [JsonProperty]
         public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
 
-
         private CLogFileProcessor.CLogVariableBundle[] _tempArgs;
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
@@ -70,7 +69,6 @@ namespace clogutils
         {
             splitArgs = _tempArgs;
         }
-
 
         //[JsonProperty]
         public CLogTraceMacroDefination macro { get; private set; }
