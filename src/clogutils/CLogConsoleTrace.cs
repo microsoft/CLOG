@@ -149,18 +149,31 @@ namespace clogutils
                     {
                         var arg = bundle.splitArgs[argIndex];
 
+                        while(null == arg.DefinationEncoding) {
+                            ++argIndex;
+
+                            if(argIndex > bundle.splitArgs.Length)
+                                throw new Exception("Unable to locate variable");
+
+                            arg = bundle.splitArgs[argIndex];
+                            continue;
+                        }
+
                         if (0 != arg.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
                         {
                             Console.WriteLine("Invalid Types in Traceline");
                             throw new Exception("InvalidType : " + arg.DefinationEncoding);
                         }
 
-
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
+                        IClogEventArg value = null;
 
-                        if (!valueBag.TryGetValue(arg.VariableInfo.SuggestedTelemetryName, out IClogEventArg value))
+                        if (!valueBag.TryGetValue(arg.MacroVariableName, out  value))
+                            value = null;
+
+                        if(value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
                         {
-                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.VariableInfo.SuggestedTelemetryName}:{payload.EncodingType}>");
+                            toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
                         }
                         else
                         {
@@ -175,8 +188,6 @@ namespace clogutils
                                 toPrint.Append($"{type.LeadingString}{decodedValue}");
                             }
                         }
-
-
                         first = type;
                         ++argIndex;
                     }

@@ -180,6 +180,7 @@ namespace clogutils
                         }
 
                         arg.MacroVariableName = $"{arg.VariableInfo.IndexBasedName}";
+                        arg.EventVariableName = $"{arg.VariableInfo.SuggestedTelemetryName}";
                     }
                 }
 

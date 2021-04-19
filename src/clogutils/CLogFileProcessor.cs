@@ -543,6 +543,8 @@ namespace clogutils
 
             [JsonProperty] public string MacroVariableName { get; set; }
 
+            [JsonProperty] public string EventVariableName { get; set; }
+
             public CLogEncodingCLogTypeSearch TypeNode { get; set; }
 
             public static CLogVariableBundle X(VariableInfo i, string definationEncoding, CLogEncodingCLogTypeSearch typeNode)
