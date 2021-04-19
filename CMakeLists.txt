@@ -12,9 +12,14 @@ function(DOT_NET_BUILD)
     message(STATUS "PROJECT : ${project}")
     message(STATUS "dotnet publish ${project} --self-contained -f net5.0 -r win-x64")
 
+    foreach(arg IN LISTS ARGV)
+        message(STATUS "FILE : ${arg}")
+        list(APPEND sFiles ${arg})
+    endforeach()
+
     add_custom_command(
         OUTPUT
-            "${CMAKE_CURRENT_BINARY_DIR}/${library}"
+            "${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll"
         COMMENT
             "BUILDING ${CMAKE_CURRENT_BINARY_DIR}/${library} from ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj"
         COMMAND
