@@ -134,7 +134,7 @@ namespace syslog2clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
-                        sidecar.ConfigFile = configFile;
+                        sidecar.SetConfigFile(configFile);
 
 
                         string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
@@ -161,7 +161,7 @@ namespace syslog2clog
                         // fullyDecodedMacroEmitter.AddClogModule(converter);
 
                         string content = File.ReadAllText(options.InputFile);
-                        CLogOutputInfo outputInfo = null;
+                       // CLogOutputInfo outputInfo = null;
                         string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
 
                         // fullyDecodedMacroEmitter.FinishedProcessing();

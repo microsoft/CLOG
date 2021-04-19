@@ -35,7 +35,6 @@ namespace clog2text_windows
                     string sidecarJson = File.ReadAllText(options.SideCarFile);
                     CLogSidecar sidecar = CLogSidecar.FromJson(sidecarJson);
 
-
                     TextReader file = Console.In;
 
                     if (!File.Exists(options.ETLFile))

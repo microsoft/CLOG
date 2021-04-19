@@ -17,13 +17,27 @@ using Newtonsoft.Json;
 namespace clogutils.ConfigFile
 {
     [JsonObject(MemberSerialization.OptIn)]
+    public class CLogModuleUsageInformation_V1
+    {
+        [JsonProperty] public List<CLogTraceLineInformation> TraceInformation { get; set; } = new List<CLogTraceLineInformation>();
+    }
+
+
     public class CLogModuleUsageInformation
     {
-        [JsonProperty] private List<CLogTraceLineInformation> TraceInformation { get; set; } = new List<CLogTraceLineInformation>();
+        public CLogModuleUsageInformation(CLogModuleUsageInformation_V1 myFile)
+        {
+            _me = myFile;
+        }
+
+        private CLogModuleUsageInformation()
+        {
+        }
+        private CLogModuleUsageInformation_V1 _me; 
 
         public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation existingTraceInformation)
         {
-            existingTraceInformation = TraceInformation
+            existingTraceInformation = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
             if (null == existingTraceInformation)
@@ -60,12 +74,11 @@ namespace clogutils.ConfigFile
             return CLogFileProcessor.GenerateMD5Hash(info);
         }
 
-
         public void Insert(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
         {
             string asString;
             Guid hash = GenerateUniquenessHash(module, traceLine, out asString);
-            CLogTraceLineInformation info = TraceInformation
+            CLogTraceLineInformation info = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
             if (null == info)
@@ -77,7 +90,7 @@ namespace clogutils.ConfigFile
 
                 info.TraceID = traceLine.UniqueId;
                 info.UniquenessHash = hash;
-                TraceInformation.Add(info);
+                _me.TraceInformation.Add(info);
             }
 
             if (info.UniquenessHash != hash)
@@ -88,7 +101,7 @@ namespace clogutils.ConfigFile
 
         public void Remove(CLogTraceLineInformation trace)
         {
-            TraceInformation.Remove(trace);
+            _me.TraceInformation.Remove(trace);
         }
     }
 }

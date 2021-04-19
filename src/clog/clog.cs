@@ -174,7 +174,7 @@ namespace clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
-                        sidecar.ConfigFile = configFile;
+                        sidecar.SetConfigFile(configFile);
 
 
                         if (options.RefreshCustomTypeProcessor)
