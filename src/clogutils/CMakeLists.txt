@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 cmake_minimum_required(VERSION 3.10)
 
 project(clogUtils)
@@ -19,6 +22,4 @@ set(SOURCES
     CLogTypeSearchNode.cs
     ICLogOutputModule.cs)
 
-DOT_NET_BUILD(CLOGUTILS_DLL ${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj ${SOURCES})
-
-#add_custom_target(CLOGUTILS DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll)
+DOT_NET_BUILD(CLOGUTILS_DLL clogutils.dll ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj ${SOURCES})

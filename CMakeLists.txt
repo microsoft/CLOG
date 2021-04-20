@@ -1,6 +1,11 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 cmake_minimum_required(VERSION 3.10)
 
 project(CLog)
+
+set(CLOG_ARTIFACT_DIR ${PROJECT_BINARY_DIR}/artifacts)
 
 function(DOT_NET_BUILD)
     set(DEPENDENCY_NAME ${ARGV0})
@@ -25,7 +30,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "BUILDING ${DEST_BINARY} from "
         COMMAND
-            dotnet publish ${PROJECT_PATH} --self-contained -o ${CMAKE_CURRENT_BINARY_DIR} -f net5.0 -r win-x64
+            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r win-x64
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
@@ -38,3 +43,4 @@ endfunction()
 
 add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
+add_subdirectory(src/clog2text/clog2text_lttng)
