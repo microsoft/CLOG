@@ -383,7 +383,7 @@ namespace clogutils
                             }
                         }
 
-                        var bundle = CLogVariableBundle.X(info, item.TypeNode.DefinationEncoding, null);
+                        var bundle = CLogVariableBundle.CreateVariableBundle(info, item.TypeNode.DefinationEncoding, null);
                         CLogEncodingCLogTypeSearch type = configFile.FindType(bundle, traceLineMatch);
                         bundle.TypeNode = type;
                         finalArgs.Add(bundle);
@@ -547,15 +547,22 @@ namespace clogutils
 
             public bool ShouldSerializeEventVariableName()
             {
+                //
+                // In an attempt to reduce disk space in the sidecar
+                //    only serialize the EventVariableName if it's set and if its
+                //    different from the MacroVariableName
+                //
                 if(null == MacroVariableName)
                     return true;
+                if (null == EventVariableName)
+                    return false;
 
                 return !MacroVariableName.Equals(EventVariableName);;
             }
 
             public CLogEncodingCLogTypeSearch TypeNode { get; set; }
 
-            public static CLogVariableBundle X(VariableInfo i, string definationEncoding, CLogEncodingCLogTypeSearch typeNode)
+            public static CLogVariableBundle CreateVariableBundle(VariableInfo i, string definationEncoding, CLogEncodingCLogTypeSearch typeNode)
             {
                 CLogVariableBundle b = new CLogVariableBundle();
                 b.VariableInfo = i;

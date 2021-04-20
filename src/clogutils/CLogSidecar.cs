@@ -36,8 +36,9 @@ namespace clogutils
             set;
         }
 
-        public ClogSidecar_V1()
+        private ClogSidecar_V1()
         {
+            Version = 1;
             ModuleUniqueness = new CLogModuleUsageInformation_V1();
         }
 
@@ -60,17 +61,69 @@ namespace clogutils
         }
     }
 
+    [JsonObject(MemberSerialization.OptIn)]
+    public class ClogSidecar_V2 
+    {
+        [JsonProperty] public int Version { get; set; }
+
+        [JsonProperty]
+        public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
+
+        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
+
+        [JsonProperty]
+        public CLogModuleUsageInformation_V2 ModuleUniqueness
+        {
+            get;
+            set;
+        }
+
+        public ClogSidecar_V2()
+        {
+            Version = 2;
+            ModuleUniqueness = new CLogModuleUsageInformation_V2();
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Formatting = Formatting.Indented;
+            this.Version = 2;
+            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            return me;
+        }
+
+        public static ClogSidecar_V2 FromJson(string json)
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Context = new StreamingContext(StreamingContextStates.Other, json);
+
+            ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
+
+            if(1 == ret.Version)
+            {
+                ClogSidecar_V1 v1 = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
+                ret = new ClogSidecar_V2();
+                ret.Version = 2;
+                ret.EventBundlesV2 = v1.EventBundlesV2;
+                ret.ConfigFile = v1.ConfigFile;
+                ret.ModuleUniqueness = CLogModuleUsageInformation_V2.ConvertFromV1(v1.ModuleUniqueness);
+            }
+            return ret;
+        }
+    }
+
     public class CLogSidecar : ICLogOutputModule
     {
         private string _sidecarFileName;
 
         private Dictionary<string, Dictionary<string, Dictionary<string, string>>> ModuleTraceData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
-        private ClogSidecar_V1 _sideCarFile;
+        private ClogSidecar_V2 _sideCarFile;
 
         private CLogModuleUsageInformation _myUsageModuleInfo;
 
-        private void SetSideCar(ClogSidecar_V1 file)
+        private void SetSideCar(ClogSidecar_V2 file)
         {
             _sideCarFile = file;
             _myUsageModuleInfo = new CLogModuleUsageInformation(file.ModuleUniqueness);
@@ -78,16 +131,16 @@ namespace clogutils
 
         public CLogSidecar()
         {
-            SetSideCar(new ClogSidecar_V1());
+            SetSideCar(new ClogSidecar_V2());
         }
 
-        private CLogSidecar(ClogSidecar_V1 me)
+        private CLogSidecar(ClogSidecar_V2 me)
         {
             SetSideCar(me);
         }
         private CLogSidecar(string sidecarFileName)
         {
-            SetSideCar(new ClogSidecar_V1());
+            SetSideCar(new ClogSidecar_V2());
             _sidecarFileName = sidecarFileName;
         }
         public void SetConfigFile(CLogConfigurationFile newConfig)
@@ -124,7 +177,7 @@ namespace clogutils
         }
         public void InsertTraceLine(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
         {
-            CLogTraceLineInformation output;
+            CLogTraceLineInformation_V2 output;
             if (_myUsageModuleInfo.IsUnique(module, traceLine, out output) && null != output)
                 return;
 
@@ -132,7 +185,7 @@ namespace clogutils
             ChangesList.Add("Inserting : " + traceLine.UniqueId);
             _myUsageModuleInfo.Insert(module, traceLine);
         }
-        public void RemoveTraceLine(CLogTraceLineInformation traceLine)
+        public void RemoveTraceLine(CLogTraceLineInformation_V2 traceLine)
         {
             AreDirty = true;
             ChangesList.Add("Removed : " + traceLine.TraceID);
@@ -285,7 +338,7 @@ namespace clogutils
 
         public static CLogSidecar FromJson(string json)
         {
-            ClogSidecar_V1 me = ClogSidecar_V1.FromJson(json);
+            ClogSidecar_V2 me = ClogSidecar_V2.FromJson(json);
             CLogSidecar ret = new CLogSidecar(me);
             return ret;
         }

@@ -22,10 +22,26 @@ namespace clogutils.ConfigFile
         [JsonProperty] public List<CLogTraceLineInformation> TraceInformation { get; set; } = new List<CLogTraceLineInformation>();
     }
 
+    [JsonObject(MemberSerialization.OptIn)]
+    public class CLogModuleUsageInformation_V2
+    {
+        [JsonProperty] public List<CLogTraceLineInformation_V2> TraceInformation { get; set; } = new List<CLogTraceLineInformation_V2>();
+
+        public static CLogModuleUsageInformation_V2 ConvertFromV1(CLogModuleUsageInformation_V1 v1)
+        {
+            CLogModuleUsageInformation_V2 ret = new CLogModuleUsageInformation_V2();
+            foreach(var trace in v1.TraceInformation)
+            {
+                ret.TraceInformation.Add(CLogTraceLineInformation_V2.ConvertFromV1(trace));
+            }
+            return ret;
+        }
+    }
+
 
     public class CLogModuleUsageInformation
     {
-        public CLogModuleUsageInformation(CLogModuleUsageInformation_V1 myFile)
+        public CLogModuleUsageInformation(CLogModuleUsageInformation_V2 myFile)
         {
             _me = myFile;
         }
@@ -33,9 +49,9 @@ namespace clogutils.ConfigFile
         private CLogModuleUsageInformation()
         {
         }
-        private CLogModuleUsageInformation_V1 _me; 
+        private CLogModuleUsageInformation_V2 _me; 
 
-        public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation existingTraceInformation)
+        public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation_V2 existingTraceInformation)
         {
             existingTraceInformation = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
@@ -78,12 +94,12 @@ namespace clogutils.ConfigFile
         {
             string asString;
             Guid hash = GenerateUniquenessHash(module, traceLine, out asString);
-            CLogTraceLineInformation info = _me.TraceInformation
+            CLogTraceLineInformation_V2 info = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
             if (null == info)
             {
-                info = new CLogTraceLineInformation();
+                info = new CLogTraceLineInformation_V2();
                 info.Unsaved = true;
                 info.PreviousFileMatch = traceLine;
                 info.EncodingString = traceLine.TraceString;
@@ -99,7 +115,7 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public void Remove(CLogTraceLineInformation trace)
+        public void Remove(CLogTraceLineInformation_V2 trace)
         {
             _me.TraceInformation.Remove(trace);
         }

@@ -237,7 +237,7 @@ namespace clogutils
                         m_unusedModules.Remove(module);
                     }
 
-                    CLogTraceLineInformation existingTraceInfo;
+                    CLogTraceLineInformation_V2 existingTraceInfo;
 
                     if (!_sidecar.ModuleUniqueness.IsUnique(module, decodedTraceLine, out existingTraceInfo))
                     {
