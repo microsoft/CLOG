@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
+project(clogUtils)
 
 set(SOURCES
     CLogConsoleTrace.cs
@@ -18,6 +19,6 @@ set(SOURCES
     CLogTypeSearchNode.cs
     ICLogOutputModule.cs)
 
+DOT_NET_BUILD(CLOGUTILS_DLL ${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj ${SOURCES})
 
-DOT_NET_BUILD(clogutils.dll clogutils.csproj ${SOURCES})
-add_custom_target(${library} DEPENDS ${project})
+#add_custom_target(CLOGUTILS DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll)

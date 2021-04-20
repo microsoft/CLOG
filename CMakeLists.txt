@@ -3,36 +3,36 @@ cmake_minimum_required(VERSION 3.10)
 project(CLog)
 
 function(DOT_NET_BUILD)
-    set(library ${ARGV0})
-    set(project ${ARGV1})
+    set(DEPENDENCY_NAME ${ARGV0})
+    set(DEST_BINARY ${ARGV1})
+    set(PROJECT_PATH ${ARGV2})
+    list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
 
-    message(STATUS "BUILDING : ${library} coming from ${ARGV}")
-    message(STATUS "PROJECT : ${project}")
-    message(STATUS "dotnet publish ${project} --self-contained -f net5.0 -r win-x64")
+    message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
+    message(STATUS "PROJECT : ${PROJECT_PATH}")
+    message(STATUS "PRODUCES : ${DEST_BINARY}")
 
     foreach(arg IN LISTS ARGV)
-        message(STATUS "FILE : ${arg}")
+        message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
         list(APPEND sFiles ${arg})
     endforeach()
 
     add_custom_command(
         OUTPUT
-            "${CMAKE_CURRENT_BINARY_DIR}/clogutils.dll"
+            ${DEST_BINARY}
         COMMENT
-            "BUILDING ${CMAKE_CURRENT_BINARY_DIR}/${library} from ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj"
+            "BUILDING ${DEST_BINARY} from "
         COMMAND
-            dotnet build ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj -o ${CMAKE_CURRENT_BINARY_DIR}
+            dotnet build ${PROJECT_PATH} -o ${CMAKE_CURRENT_BINARY_DIR}
         DEPENDS
-            ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj
+            ${PROJECT_PATH}
         DEPENDS
-            ${CMAKE_CURRENT_SOURCE_DIR}/CLogFileProcessor.cs
-        DEPENDS
-            ${ARGV}
+            ${sFiles}
     )
 
-    #add_custom_target(${library} DEPENDS ${project})
+    add_custom_target(${DEPENDENCY_NAME} ALL DEPENDS ${DEST_BINARY})
 endfunction()
 
 
