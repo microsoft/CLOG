@@ -26,6 +26,7 @@ function(DOT_NET_BUILD)
     message(STATUS "PROJECT : ${PROJECT_PATH}")
     message(STATUS "PRODUCES : ${DEST_BINARY}")
     message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
+    message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
 
     foreach(arg IN LISTS ARGV)
         message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
