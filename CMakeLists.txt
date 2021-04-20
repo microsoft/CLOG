@@ -38,7 +38,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "BUILDING ${DEST_BINARY} from "
         COMMAND
-            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r ${DOTNET_RUNTIME}
+            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME} -f net5.0 -r ${DOTNET_RUNTIME}
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
@@ -52,4 +52,4 @@ endfunction()
 add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
 add_subdirectory(src/clog2text/clog2text_lttng)
-
+add_subdirectory(src/clog2text/clog2text_windows)
