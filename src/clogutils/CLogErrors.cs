@@ -19,7 +19,6 @@ namespace clogutils
             {
                 return;
             }
-
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Line : {traceLineMatch.MatchedRegExX.Value}");
         }
     }

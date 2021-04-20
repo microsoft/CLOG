@@ -15,9 +15,17 @@ function(DOT_NET_BUILD)
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
 
+    if (WIN32)
+        set(DOTNET_RUNTIME "win-x64")
+    elseif (UNIX)
+        set(DOTNET_RUNTIME "linux-x64")
+    endif()
+
+
     message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
     message(STATUS "PROJECT : ${PROJECT_PATH}")
     message(STATUS "PRODUCES : ${DEST_BINARY}")
+    message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
 
     foreach(arg IN LISTS ARGV)
         message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
@@ -30,7 +38,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "BUILDING ${DEST_BINARY} from "
         COMMAND
-            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r win-x64
+            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r ${DOTNET_RUNTIME}
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
@@ -44,3 +52,4 @@ endfunction()
 add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
 add_subdirectory(src/clog2text/clog2text_lttng)
+
