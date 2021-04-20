@@ -25,7 +25,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "BUILDING ${DEST_BINARY} from "
         COMMAND
-            dotnet build ${PROJECT_PATH} -o ${CMAKE_CURRENT_BINARY_DIR}
+            dotnet publish ${PROJECT_PATH} --self-contained -o ${CMAKE_CURRENT_BINARY_DIR} -f net5.0 -r win-x64
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
