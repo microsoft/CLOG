@@ -8,28 +8,27 @@ project(CLog)
 set(CLOG_ARTIFACT_DIR ${PROJECT_BINARY_DIR}/artifacts)
 
 function(DOT_NET_BUILD)
-    set(DEPENDENCY_NAME ${ARGV0})
-    set(DEST_BINARY ${ARGV1})
-    set(PROJECT_PATH ${ARGV2})
-    list(REMOVE_AT ARGV 0)
-    list(REMOVE_AT ARGV 0)
-    list(REMOVE_AT ARGV 0)
-
     if (WIN32)
         set(DOTNET_RUNTIME "win-x64")
     elseif (UNIX)
         set(DOTNET_RUNTIME "linux-x64")
     endif()
 
+    set(DEPENDENCY_NAME ${ARGV0})
+    set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}/${ARGV1})
+    set(PROJECT_PATH ${ARGV2})
+    list(REMOVE_AT ARGV 0)
+    list(REMOVE_AT ARGV 0)
+    list(REMOVE_AT ARGV 0)
 
-    message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
-    message(STATUS "PROJECT : ${PROJECT_PATH}")
-    message(STATUS "PRODUCES : ${DEST_BINARY}")
-    message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
-    message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
+    #message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
+    #message(STATUS "PROJECT : ${PROJECT_PATH}")
+    #message(STATUS "PRODUCES : ${DEST_BINARY}")
+    #message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
+    #message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
 
     foreach(arg IN LISTS ARGV)
-        message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
+        #message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
         list(APPEND sFiles ${arg})
     endforeach()
 
@@ -48,7 +47,6 @@ function(DOT_NET_BUILD)
 
     add_custom_target(${DEPENDENCY_NAME} ALL DEPENDS ${DEST_BINARY})
 endfunction()
-
 
 add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
