@@ -23,7 +23,6 @@ using clogutils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using Roslyn.CodeDom;
 using static clogutils.CLogConsoleTrace;
 
 namespace clog2text_lttng
@@ -65,8 +64,6 @@ namespace clog2text_lttng
                 new[] { syntaxTree },
                 references,
                 new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
-
-            compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
 
             _compiledCode = new MemoryStream();
 

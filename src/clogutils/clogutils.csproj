@@ -24,6 +24,4 @@
     <PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
-
-  <Import Project="CodeDomHelper\Generated.targets" />
 </Project>
