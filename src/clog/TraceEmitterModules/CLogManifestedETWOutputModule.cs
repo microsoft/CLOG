@@ -26,6 +26,8 @@ namespace clog.TraceEmitterModules
         private readonly Dictionary<Guid, ManifestInformation> _providerCache = new Dictionary<Guid, ManifestInformation>();
 
         public XmlDocument doc = new XmlDocument();
+        private XmlElement _stringTable;
+
         public string xmlFileName;
         private static string _ModuleName = "MANIFESTED_ETW";
         private bool _dirty = false;
@@ -52,6 +54,11 @@ namespace clog.TraceEmitterModules
 
         public void InitHeader(StringBuilder header)
         {
+        }
+
+        private string MapCLOGStringToManifestString(CLogDecodedTraceLine decodedTraceLine)
+        {
+            return decodedTraceLine.CleanedString;
         }
 
         private void SetAttribute(XmlElement e, string attribute, string newValue)
@@ -168,6 +175,24 @@ namespace clog.TraceEmitterModules
                 manifest.events.AppendChild(newEvent);
                 _dirty = true;
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix + hash} to ETW manifest {xmlFileName}");
+
+
+                //
+                // Set the string 
+                //
+                if (moduleSettings.CustomSettings.ContainsKey("EmitString") && moduleSettings.CustomSettings["EmitString"].Equals("1"))
+                {
+                    string stringName = "CLOG." + hash;
+                    string manifestString = MapCLOGStringToManifestString(decodedTraceLine);
+
+                    var stringEntry = doc.CreateElement("string", manifest.events.NamespaceURI);
+                    _stringTable.AppendChild(stringEntry);
+                    _dirty = true;
+                    SetAttribute(stringEntry, "id", stringName);
+                    SetAttribute(stringEntry, "value", manifestString);
+
+                    SetAttribute(newEvent, "message", "string.$(" + stringName + ")");
+                }
             }
 
             int hashUInt;
@@ -214,6 +239,8 @@ namespace clog.TraceEmitterModules
             else
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
+
+ 
 
             //
             // Construct the function signature
@@ -288,6 +315,32 @@ namespace clog.TraceEmitterModules
 
             var instrumentation = assembly["instrumentation"];
             var rootEvents = instrumentation["events"];
+
+            var stringEvents = assembly["localization"];
+            foreach(var culture in stringEvents.ChildNodes)
+            {
+                if (!(culture is XmlElement))
+                {
+                    continue;
+                }
+
+                XmlElement pe = (XmlElement)culture;
+                if(pe.Name == "resources")
+                {
+                    if(!pe.HasAttribute("culture"))
+                    {
+                        continue;
+                    }
+
+                    string attr = pe.GetAttribute("culture");
+
+                    if (!attr.Equals("en-US"))
+                        continue;
+
+                    XmlElement stringTable = pe["stringTable"];
+                    _stringTable = stringTable;
+                }
+            }
 
             foreach (var p in rootEvents.ChildNodes)
             {

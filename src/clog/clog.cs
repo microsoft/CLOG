@@ -347,7 +347,7 @@ namespace clog
                         return -2;
                     }
 
-                    return 0;
+                        return 0;
                 }, err =>
                 {
                     Console.WriteLine("Bad Args : " + err);

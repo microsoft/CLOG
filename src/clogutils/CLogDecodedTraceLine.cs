@@ -25,7 +25,7 @@ namespace clogutils
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
 
         public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
-            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args)
+            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args, string cleanedString)
         {
             SourceFile = sourceFile;
             macro = mac;
@@ -35,10 +35,13 @@ namespace clogutils
             TraceString = userString;
             splitArgs = args;
             TraceStringNoPrefix = userStringNoPrefix;
+            CleanedString = cleanedString;
         }
 
         [JsonProperty]
         public string TraceString { get; private set; }
+
+        public string CleanedString { get; private set; }
 
         public string TraceStringNoPrefix { get; private set; }
 

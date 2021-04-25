@@ -301,11 +301,12 @@ namespace clogutils
             CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine)
         {
             string userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
+            string cleanedString;
             //
             // Loop across all types, ignoring the ones that are not specified in the source code
             //
             Queue<CLogTypeContainer> types = new Queue<CLogTypeContainer>();
-            foreach (var type in BuildTypes(configFile, traceLineMatch, userArgs, traceLine, out _))
+            foreach (var type in BuildTypes(configFile, traceLineMatch, userArgs, traceLine, out cleanedString))
             {
                 if (type.TypeNode.Synthesized)
                 {
@@ -404,7 +405,7 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("InvalidUniqueID", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(traceLineMatch.UniqueID, sourcefile, userArgs, traceLineMatch.EncodingString, traceLineMatch, configFile, macroDefination, finalArgs.ToArray());
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(traceLineMatch.UniqueID, sourcefile, userArgs, traceLineMatch.EncodingString, traceLineMatch, configFile, macroDefination, finalArgs.ToArray(), cleanedString);
 
             return decodedTraceLine;
         }
