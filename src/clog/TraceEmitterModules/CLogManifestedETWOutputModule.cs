@@ -191,7 +191,7 @@ namespace clog.TraceEmitterModules
                     SetAttribute(stringEntry, "id", stringName);
                     SetAttribute(stringEntry, "value", manifestString);
 
-                    SetAttribute(newEvent, "message", "string.$(" + stringName + ")");
+                    SetAttribute(newEvent, "message", "$(string." + stringName + ")");
                 }
             }
 
