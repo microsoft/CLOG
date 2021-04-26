@@ -22,4 +22,4 @@ set(SOURCES
     CLogTypeSearchNode.cs
     ICLogOutputModule.cs)
 
-DOT_NET_BUILD(CLOGUTILS_DLL clogutils.dll ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj ${SOURCES})
+DOT_NET_LIBRARY_BUILD(CLOGUTILS_DLL clogutils.dll ${CMAKE_CURRENT_SOURCE_DIR}/clogutils.csproj ${SOURCES})
