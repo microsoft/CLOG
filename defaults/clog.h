@@ -19,16 +19,28 @@ Version:
 #endif
 
 // Legacy, used only for byte arrays
+#ifndef CLOG_BYTEARRAY_HELPER
 #define CLOG_BYTEARRAY_HELPER(length, pointer) pointer, length
+#endif
+#ifndef CLOG_BYTEARRAY
 #define CLOG_BYTEARRAY(length, pointer) CLOG_BYTEARRAY_HELPER(length, pointer)
+#endif
 
 // Used for other array types
+#ifndef CLOG_ARRAY_HELPER
 #define CLOG_ARRAY_HELPER(length, pointer) pointer, length
+#endif
+#ifndef CLOG_ARRAY
 #define CLOG_ARRAY(length, pointer) CLOG_ARRAY_HELPER(length, pointer)
+#endif
 
 // Used for declaring the next N fields are structs
+#ifndef CLOG_STRUCT_HELPER
 #define CLOG_STRUCT_HELPER(numFields) numFields
+#endif
+#ifndef CLOG_STRUCT
 #define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
+#endif
 
 typedef const void * CLOG_PTR;
 typedef const unsigned char CLOG_UINT8;
