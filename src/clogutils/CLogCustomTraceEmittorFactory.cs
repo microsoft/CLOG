@@ -5,7 +5,7 @@
 
 Abstract:
 
-    In some cases the human display of a CLOG event will require a type with custom formatting - 
+    In some cases the human display of a CLOG event will require a type with custom formatting -
     for example, perhaps a BYTEARRAY needs to be printed in a special way
 
     This class allows embedded C# to be include within a sidecar, and compiled on demand to do this formating
@@ -60,7 +60,7 @@ namespace clog2text_lttng
             var refPaths = new[] { typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll") };
             MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
 
-            Compilation compilation = CSharpCompilation.Create(
+            CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 new[] { syntaxTree },
                 references,
