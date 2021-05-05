@@ -196,7 +196,6 @@ namespace clogutils
                 if ('%' == argString[i])
                 {
                     pieces += argCount++;
-                    pieces += " ";
 
                     CLogTypeContainer newNode = new CLogTypeContainer();
                     newNode.LeadingString = prefixString;

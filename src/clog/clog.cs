@@ -66,21 +66,6 @@ namespace clog
 
         private static int Main(string[] args)
         {
-            // Manually parse installDirectory, as it interferes with the required configFile
-            // The argument still shows up in CommandLineArguments to be shown in help.
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i] == "--installDirectory")
-                {
-                    if (i + 1 == args.Length)
-                    {
-                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Must pass an argument to --installDirectory");
-                        return -1;
-                    }
-                    return PerformInstall(args[i + 1]);
-                }
-            }
-
             ParserResult<CommandLineArguments> o = Parser.Default.ParseArguments<CommandLineArguments>(args);
 
             return o.MapResult(
