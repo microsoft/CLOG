@@ -36,7 +36,7 @@ function(DOT_NET_BUILD)
         OUTPUT
             ${DEST_BINARY}
         COMMENT
-            "BUILDING ${DEST_BINARY} from "
+            "build CLOG, if this fails with nuget packages inspect your nuget.config and make sure nuget.org is present (add from command line using : dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org)"
         COMMAND
             dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME} -f net5.0 -r ${DOTNET_RUNTIME}
         DEPENDS
