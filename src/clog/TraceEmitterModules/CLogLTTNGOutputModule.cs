@@ -124,7 +124,7 @@ namespace clog.TraceEmitterModules
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
 
-                 if (!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
@@ -157,7 +157,7 @@ namespace clog.TraceEmitterModules
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                 if (!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
                 lttngFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed} = {arg.VariableInfo.IndexBasedName}");
@@ -173,7 +173,7 @@ namespace clog.TraceEmitterModules
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
 
-                 if (!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
@@ -227,7 +227,7 @@ namespace clog.TraceEmitterModules
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
 
-                 if (!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
@@ -319,7 +319,7 @@ namespace clog.TraceEmitterModules
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
 
-                 if (!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                     continue;
 
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);

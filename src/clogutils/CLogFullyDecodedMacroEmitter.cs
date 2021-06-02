@@ -142,7 +142,7 @@ namespace clogutils
 
                 int idx = 1;
 
-                foreach(var arg in decodedTraceLine.splitArgs)
+                foreach (var arg in decodedTraceLine.splitArgs)
                 {
                     if (arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier || arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString)
                         continue;

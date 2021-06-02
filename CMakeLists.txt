@@ -8,12 +8,6 @@ project(CLog)
 set(CLOG_ARTIFACT_DIR ${PROJECT_BINARY_DIR}/artifacts)
 
 function(DOT_NET_BUILD)
-    if (WIN32)
-        set(DOTNET_RUNTIME "win-x64")
-    elseif (UNIX)
-        set(DOTNET_RUNTIME "linux-x64")
-    endif()
-
     set(DEPENDENCY_NAME ${ARGV0})
     set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${ARGV1})
     set(PROJECT_PATH ${ARGV2})
@@ -38,7 +32,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "build CLOG, if this fails with nuget packages inspect your nuget.config and make sure nuget.org is present (add from command line using : dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org)"
         COMMAND
-            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r ${DOTNET_RUNTIME}
+            dotnet publish ${PROJECT_PATH} -o ${CLOG_ARTIFACT_DIR} -f net5.0
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS

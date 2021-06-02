@@ -58,9 +58,9 @@ namespace clogutils
         internal void OnSerializingMethod(StreamingContext context)
         {
             List<CLogFileProcessor.CLogVariableBundle> tArgs = new List<CLogFileProcessor.CLogVariableBundle>();
-            foreach(var a in splitArgs)
+            foreach (var a in splitArgs)
             {
-                if(!string.IsNullOrEmpty(a.DefinationEncoding))
+                if (!string.IsNullOrEmpty(a.DefinationEncoding))
                     tArgs.Add(a);
             }
             _tempArgs = splitArgs;
@@ -79,17 +79,21 @@ namespace clogutils
 
         private string _macroName;
         [JsonProperty]
-        public string macroName { get {
-            if(null != macro && !string.IsNullOrEmpty(macro.MacroName))
-                return macro.MacroName;
+        public string macroName
+        {
+            get
+            {
+                if (null != macro && !string.IsNullOrEmpty(macro.MacroName))
+                    return macro.MacroName;
 
-            return _macroName;
-                }
+                return _macroName;
+            }
 
-            set {
+            set
+            {
                 _macroName = value;
             }
-            }
+        }
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
