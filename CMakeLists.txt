@@ -15,7 +15,7 @@ function(DOT_NET_BUILD)
     endif()
 
     set(DEPENDENCY_NAME ${ARGV0})
-    set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}/${ARGV1})
+    set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${ARGV1})
     set(PROJECT_PATH ${ARGV2})
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
@@ -25,7 +25,7 @@ function(DOT_NET_BUILD)
     #message(STATUS "PROJECT : ${PROJECT_PATH}")
     #message(STATUS "PRODUCES : ${DEST_BINARY}")
     #message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
-    #message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
+    #message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}")
 
     foreach(arg IN LISTS ARGV)
         #message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
@@ -38,7 +38,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "build CLOG, if this fails with nuget packages inspect your nuget.config and make sure nuget.org is present (add from command line using : dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org)"
         COMMAND
-            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME} -f net5.0 -r ${DOTNET_RUNTIME}
+            dotnet publish ${PROJECT_PATH} --self-contained -o ${CLOG_ARTIFACT_DIR} -f net5.0 -r ${DOTNET_RUNTIME}
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
