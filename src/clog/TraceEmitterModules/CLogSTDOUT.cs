@@ -12,11 +12,11 @@ Abstract:
 
 --*/
 
-using clogutils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using clogutils;
 using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
@@ -65,7 +65,7 @@ namespace clog.TraceEmitterModules
 
             string printmacro;
             if (!moduleSettings.CustomSettings.TryGetValue("PrintMacro", out printmacro))
-                printmacro = "printf";           
+                printmacro = "printf";
 
 
             if (!emittedHeader)
@@ -108,7 +108,7 @@ namespace clog.TraceEmitterModules
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                if (!arg.TypeNode.Synthesized && 
+                if (!arg.TypeNode.Synthesized &&
                     arg.TypeNode.EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
                     arg.TypeNode.EncodingType != CLogEncodingType.UserEncodingString)
                 {
@@ -365,13 +365,13 @@ namespace clog.TraceEmitterModules
         }
 
         private static void EncodeVariable(StringBuilder function, string SuggestedTelemetryName, string MacroVariableName, CLogEncodingType encodingType, string dataLen)
-        {            
+        {
             function.AppendLine($"    //{SuggestedTelemetryName}");
             function.AppendLine($"    // Header = [version][EncodingType][ArgNameLen][DataLen]");
             function.AppendLine($"    header = (2 << 24) | ({((uint)encodingType)} << 16) | ({SuggestedTelemetryName.Length} << 8) | ({dataLen} << 0);");
             function.AppendLine($"    CLOG_ENCODE_STDIO_BYTES(&header, 4);");
-            function.AppendLine( "    CLOG_ENCODE_STDIO_BYTES(\"" + SuggestedTelemetryName + "\"" + $", {SuggestedTelemetryName.Length});");
-            function.AppendLine($"    CLOG_ENCODE_STDIO_BYTES({MacroVariableName}, {dataLen});");            
+            function.AppendLine("    CLOG_ENCODE_STDIO_BYTES(\"" + SuggestedTelemetryName + "\"" + $", {SuggestedTelemetryName.Length});");
+            function.AppendLine($"    CLOG_ENCODE_STDIO_BYTES({MacroVariableName}, {dataLen});");
         }
     }
 }

@@ -9,11 +9,11 @@ Abstract:
 
 --*/
 
-using clogutils;
-using CommandLine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using clogutils;
+using CommandLine;
 
 namespace clog
 {

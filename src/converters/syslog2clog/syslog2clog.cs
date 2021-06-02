@@ -46,7 +46,7 @@ namespace syslog2clog
                     while (String.IsNullOrEmpty(choice))
                     {
                         try
-                        {                            
+                        {
                             choice = Console.ReadLine();
                             c = Convert.ToInt32(choice);
                         }
@@ -75,7 +75,7 @@ namespace syslog2clog
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "UNIQUE ID");
             string id = Console.ReadLine().Trim().ToUpper();
 
-            while(takenIds.Contains(id))
+            while (takenIds.Contains(id))
             {
                 Console.WriteLine("ID is taken please use a unique ID");
                 id = Console.ReadLine().Trim().ToUpper();
@@ -86,7 +86,7 @@ namespace syslog2clog
             results.Append("" + id);
             results.Append($", \"{decodedTraceLine.TraceString}\"");
 
-            for(int i=2; i<decodedTraceLine.splitArgs.Length; ++i)
+            for (int i = 2; i < decodedTraceLine.splitArgs.Length; ++i)
             {
                 var arg = decodedTraceLine.splitArgs[i];
                 results.Append($", {arg.VariableInfo.UserSuppliedTrimmed}");
@@ -161,7 +161,7 @@ namespace syslog2clog
                         // fullyDecodedMacroEmitter.AddClogModule(converter);
 
                         string content = File.ReadAllText(options.InputFile);
-                       // CLogOutputInfo outputInfo = null;
+                        // CLogOutputInfo outputInfo = null;
                         string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
 
                         // fullyDecodedMacroEmitter.FinishedProcessing();

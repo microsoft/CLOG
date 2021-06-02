@@ -37,7 +37,8 @@ namespace clogutils
 
         public bool IsEncodableArg
         {
-            get {
+            get
+            {
                 return !Synthesized &&
                         (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
                         EncodingType != CLogEncodingType.UserEncodingString);

@@ -26,9 +26,9 @@ namespace clogutils
 
         public string AllArgs { get; private set; }
 
-        public string [] Args { get; private set; }
+        public string[] Args { get; private set; }
 
-        public CLogLineMatch(string sourcefile, Match m, string uniqueId, string encodingString, string allArgs, string [] args)
+        public CLogLineMatch(string sourcefile, Match m, string uniqueId, string encodingString, string allArgs, string[] args)
         {
             if (string.IsNullOrEmpty(sourcefile))
                 throw new ArgumentException();

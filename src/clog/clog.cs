@@ -288,15 +288,15 @@ namespace clog
                             {
                                 if (options.ReadOnly)
                                 {
-                                if(sidecar.AreDirty)
+                                    if (sidecar.AreDirty)
                                         Console.WriteLine("Sidecar is dirty");
-                                if(configFile.AreWeDirty())
+                                    if (configFile.AreWeDirty())
                                         Console.WriteLine("ConfigFile is dirty");
 
                                     sidecar.PrintDirtyReasons();
                                     throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:SideCar", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                                 }
-								configFile.ForceDecoderCompile();
+                                configFile.ForceDecoderCompile();
                                 sidecar.Save(options.SidecarFile);
                             }
 
@@ -318,7 +318,7 @@ namespace clog
                         //
                         // Enumerate batching modules, allowing them to save
                         //
-                        foreach(var m in batchingModules)
+                        foreach (var m in batchingModules)
                         {
                             CLogOutputInfo outputInfo = new CLogOutputInfo();
                             outputInfo.OutputDirectory = options.OutputDirectory;
@@ -332,7 +332,7 @@ namespace clog
                         return -2;
                     }
 
-                        return 0;
+                    return 0;
                 }, err =>
                 {
                     Console.WriteLine("Bad Args : " + err);

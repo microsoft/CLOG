@@ -30,7 +30,7 @@ namespace clogutils.ConfigFile
         public static CLogModuleUsageInformation_V2 ConvertFromV1(CLogModuleUsageInformation_V1 v1)
         {
             CLogModuleUsageInformation_V2 ret = new CLogModuleUsageInformation_V2();
-            foreach(var trace in v1.TraceInformation)
+            foreach (var trace in v1.TraceInformation)
             {
                 ret.TraceInformation.Add(CLogTraceLineInformation_V2.ConvertFromV1(trace));
             }
@@ -49,7 +49,7 @@ namespace clogutils.ConfigFile
         private CLogModuleUsageInformation()
         {
         }
-        private CLogModuleUsageInformation_V2 _me; 
+        private CLogModuleUsageInformation_V2 _me;
 
         public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation_V2 existingTraceInformation)
         {
@@ -78,7 +78,7 @@ namespace clogutils.ConfigFile
                           decodedTraceLine.TraceString + "|";
 
 
-            foreach(var arg in decodedTraceLine.splitArgs)
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
                 if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
                     continue;
