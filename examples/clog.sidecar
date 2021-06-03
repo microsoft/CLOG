@@ -1,0 +1,450 @@
+{
+  "Version": 2,
+  "EventBundlesV2": {
+    "LAUNCHED": {
+      "ModuleProperites": {},
+      "TraceString": "Hello world - we just started here is an int=%d",
+      "UniqueId": "LAUNCHED",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceInfo"
+    },
+    "DATABYTEARRAY": {
+      "ModuleProperites": {},
+      "TraceString": "%!BYTEARRAY!",
+      "UniqueId": "DATABYTEARRAY",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "!BYTEARRAY!",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceInfo"
+    },
+    "DATACHAR": {
+      "ModuleProperites": {},
+      "TraceString": "This is a char: %c",
+      "UniqueId": "DATACHAR",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "c",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceInfo"
+    },
+    "DATAINT": {
+      "ModuleProperites": {},
+      "TraceString": "This is an int: %d",
+      "UniqueId": "DATAINT",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceInfo"
+    },
+    "INSTANCE_TEST": {
+      "ModuleProperites": {},
+      "TraceString": "[%p]1:%d 2:%s 3:%c 4:%u 5:%u 6:%u",
+      "UniqueId": "INSTANCE_TEST",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "p",
+          "MacroVariableName": "arg1"
+        },
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg3"
+        },
+        {
+          "DefinationEncoding": "s",
+          "MacroVariableName": "arg4"
+        },
+        {
+          "DefinationEncoding": "c",
+          "MacroVariableName": "arg5"
+        },
+        {
+          "DefinationEncoding": "u",
+          "MacroVariableName": "arg6"
+        },
+        {
+          "DefinationEncoding": "u",
+          "MacroVariableName": "arg7"
+        },
+        {
+          "DefinationEncoding": "u",
+          "MacroVariableName": "arg8"
+        }
+      ],
+      "macroName": "TraceInstanceInfo"
+    }
+  },
+  "ConfigFile": {
+    "MacroConfigurations": {
+      "lttng_plus": {
+        "Modules": [
+          {
+            "ExportModule": "LTTNG",
+            "CustomSettings": {}
+          }
+        ]
+      },
+      "empty": {
+        "Modules": []
+      }
+    },
+    "Version": 0,
+    "CustomTypeClogCSharpFile": null,
+    "MaximumVariableLength": 20,
+    "TypeEncoders": {
+      "Version": 0,
+      "TypeEncoder": []
+    },
+    "SourceCodeMacros": [
+      {
+        "MacroName": "TraceInfo",
+        "EncodedPrefix": null,
+        "EncodedArgNumber": 1,
+        "MacroConfiguration": {
+          "linux": "lttng_plus",
+          "macos": "empty",
+          "stubs": "empty",
+          "windows_kernel": "empty",
+          "windows": "empty"
+        },
+        "CustomSettings": null
+      },
+      {
+        "MacroName": "TraceInstanceInfo",
+        "EncodedPrefix": "[%p]",
+        "EncodedArgNumber": 2,
+        "MacroConfiguration": {
+          "linux": "lttng_plus",
+          "macos": "empty",
+          "stubs": "empty",
+          "windows_kernel": "empty",
+          "windows": "empty"
+        },
+        "CustomSettings": null
+      }
+    ],
+    "ChainedConfigFiles": [
+      "DEFAULTS"
+    ],
+    "ChainedConfigurations": [
+      {
+        "MacroConfigurations": {},
+        "Version": 1,
+        "CustomTypeClogCSharpFile": "DEFAULTS",
+        "CustomTypeClogCSharpFileContents": "/*++\n\n    Copyright (c) Microsoft Corporation.\n    Licensed under the MIT License.\n\n--*/\n\nnamespace defaults.clog_config\n{\n    public class Types\n    {\n        public static string DecodePointer(ulong pointer)\n        {\n            return \"0x\" + pointer.ToString(\"x\");\n        }\n\n        public static string DecodeChar(byte value)\n        {\n            return ((char)value).ToString();\n        }\n\n        public static string DecodeUInt32(uint value)\n        {\n            return value.ToString();\n        }\n\n        public static string DecodeInt32(int value)\n        {\n            return value.ToString();\n        }\n\n        public static string DecodeInt8(byte value)\n        {\n            return value.ToString();\n        }\n    }\n}\n",
+        "MaximumVariableLength": 20,
+        "TypeEncoders": {
+          "Version": 0,
+          "TypeEncoder": [
+            {
+              "EncodingType": "ByteArray",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!BYTEARRAY!"
+            },
+            {
+              "EncodingType": "Int32Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!INT32ARRAY!"
+            },
+            {
+              "EncodingType": "Int64Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!INT64ARRAY!"
+            },
+            {
+              "EncodingType": "Int16Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!INT16ARRAY!"
+            },
+            {
+              "EncodingType": "Int8Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!INT8ARRAY!"
+            },
+            {
+              "EncodingType": "UInt32Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!UINT32ARRAY!"
+            },
+            {
+              "EncodingType": "UInt64Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!UINT64ARRAY!"
+            },
+            {
+              "EncodingType": "UInt16Array",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!UINT16ARRAY!"
+            },
+            {
+              "EncodingType": "UNICODE_StringArray",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!UNICODESTRINGARRAY!"
+            },
+            {
+              "EncodingType": "ANSI_StringArray",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!ANSISTRINGARRAY!"
+            },
+            {
+              "EncodingType": "PointerArray",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!POINTERARRAY!"
+            },
+            {
+              "EncodingType": "GUIDArray",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "!GUIDARRAY!"
+            },
+            {
+              "EncodingType": "Struct",
+              "CType": "unsigned long int",
+              "DefinationEncoding": "!STRUCT!"
+            },
+            {
+              "EncodingType": "Int32",
+              "CType": "int",
+              "DefinationEncoding": "d"
+            },
+            {
+              "EncodingType": "Int8",
+              "CType": "signed char",
+              "DefinationEncoding": "hhd"
+            },
+            {
+              "EncodingType": "Int8",
+              "CType": "signed char",
+              "DefinationEncoding": "hhi"
+            },
+            {
+              "EncodingType": "UInt8",
+              "CType": "unsigned char",
+              "DefinationEncoding": "hhu"
+            },
+            {
+              "EncodingType": "UInt8",
+              "CType": "unsigned char",
+              "DefinationEncoding": "hhx"
+            },
+            {
+              "EncodingType": "UInt8",
+              "CType": "unsigned char",
+              "DefinationEncoding": "hhX"
+            },
+            {
+              "EncodingType": "UInt16",
+              "CType": "unsigned short",
+              "DefinationEncoding": "hu"
+            },
+            {
+              "EncodingType": "UInt16",
+              "CType": "unsigned short",
+              "DefinationEncoding": "hx"
+            },
+            {
+              "EncodingType": "UInt16",
+              "CType": "unsigned short",
+              "DefinationEncoding": "hX"
+            },
+            {
+              "EncodingType": "Int32",
+              "CType": "long int",
+              "DefinationEncoding": "ld"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "long long int",
+              "DefinationEncoding": "lld"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "long long int",
+              "DefinationEncoding": "lli"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "unsigned long long int",
+              "DefinationEncoding": "llu"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "unsigned long long int",
+              "DefinationEncoding": "llx"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "unsigned long long int",
+              "DefinationEncoding": "llX"
+            },
+            {
+              "EncodingType": "Int32",
+              "CType": "long int",
+              "DefinationEncoding": "li"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned long int",
+              "DefinationEncoding": "lu"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned long int",
+              "DefinationEncoding": "lx"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned long int",
+              "DefinationEncoding": "lX"
+            },
+            {
+              "EncodingType": "UNICODE_String",
+              "CType": "const wchar_t *",
+              "DefinationEncoding": "ls"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "size_t",
+              "DefinationEncoding": "zd"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "size_t",
+              "DefinationEncoding": "zi"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "size_t",
+              "DefinationEncoding": "zu"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "size_t",
+              "DefinationEncoding": "zx"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "size_t",
+              "DefinationEncoding": "zX"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "ptrdiff_t",
+              "DefinationEncoding": "td"
+            },
+            {
+              "EncodingType": "Int64",
+              "CType": "ptrdiff_t",
+              "DefinationEncoding": "ti"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "ptrdiff_t",
+              "DefinationEncoding": "tu"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "ptrdiff_t",
+              "DefinationEncoding": "tx"
+            },
+            {
+              "EncodingType": "UInt64",
+              "CType": "ptrdiff_t",
+              "DefinationEncoding": "tX"
+            },
+            {
+              "EncodingType": "Int32",
+              "CType": "int",
+              "DefinationEncoding": "i"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned int",
+              "DefinationEncoding": "u"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned int",
+              "DefinationEncoding": "x"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned int",
+              "DefinationEncoding": "4.4x"
+            },
+            {
+              "EncodingType": "UInt32",
+              "CType": "unsigned int",
+              "DefinationEncoding": "X"
+            },
+            {
+              "EncodingType": "UInt8",
+              "CType": "char",
+              "DefinationEncoding": "c",
+              "CustomDecoder": "defaults.clog_config.Types.DecodeChar"
+            },
+            {
+              "EncodingType": "ANSI_String",
+              "CType": "const char *",
+              "DefinationEncoding": "s"
+            },
+            {
+              "EncodingType": "UNICODE_String",
+              "CType": "const wchar_t *",
+              "DefinationEncoding": "S"
+            },
+            {
+              "EncodingType": "Pointer",
+              "CType": "CLOG_PTR",
+              "DefinationEncoding": "p",
+              "CustomDecoder": "defaults.clog_config.Types.DecodePointer"
+            }
+          ]
+        },
+        "SourceCodeMacros": [],
+        "ChainedConfigFiles": [],
+        "ChainedConfigurations": []
+      }
+    ]
+  },
+  "ModuleUniqueness": {
+    "TraceInformation": [
+      {
+        "UniquenessHash": "1ba94e38-7860-c45a-131c-13e183be74c5",
+        "TraceID": "LAUNCHED",
+        "EncodingString": "Hello world - we just started here is an int=%d"
+      },
+      {
+        "UniquenessHash": "368386b1-58a0-bc3e-cf2b-bdcdb5f8a12e",
+        "TraceID": "DATABYTEARRAY",
+        "EncodingString": "%!BYTEARRAY!"
+      },
+      {
+        "UniquenessHash": "73633e68-7dc6-9310-40dd-35accdad6932",
+        "TraceID": "DATACHAR",
+        "EncodingString": "This is a char: %c"
+      },
+      {
+        "UniquenessHash": "348407f0-f2f5-c1de-a153-4005cce7a5ce",
+        "TraceID": "DATAINT",
+        "EncodingString": "This is an int: %d"
+      },
+      {
+        "UniquenessHash": "6fe4b3c0-ad93-cd49-fc8b-e30c268668f4",
+        "TraceID": "INSTANCE_TEST",
+        "EncodingString": "[%p]1:%d 2:%s 3:%c 4:%u 5:%u 6:%u"
+      }
+    ]
+  }
+}
