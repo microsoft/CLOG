@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -43,18 +43,35 @@ namespace clog.TraceEmitterModules
             header.AppendLine($"#include <syslog.h>");
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             string priority = decodedTraceLine.GetConfigurationValue(ModuleName, "Priority");
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
-            for (int i = 0; i < decodedTraceLine.splitArgs.Length; ++i)
+
+            foreach (var a in decodedTraceLine.splitArgs)
             {
-                inline.Append(", " + decodedTraceLine.splitArgs[i].MacroVariableName);
+                CLogFileProcessor.CLogVariableBundle arg = a;
+
+                if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
+                CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
+
+                switch (node.EncodingType)
+                {
+                    case CLogEncodingType.Synthesized:
+                        continue;
+
+                    case CLogEncodingType.Skip:
+                        continue;
+                }
+
+                inline.Append(", " + arg.MacroVariableName);
             }
             inline.Append(");\\\n");
         }

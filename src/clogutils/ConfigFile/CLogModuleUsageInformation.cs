@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -17,13 +17,43 @@ using Newtonsoft.Json;
 namespace clogutils.ConfigFile
 {
     [JsonObject(MemberSerialization.OptIn)]
+    public class CLogModuleUsageInformation_V1
+    {
+        [JsonProperty] public List<CLogTraceLineInformation> TraceInformation { get; set; } = new List<CLogTraceLineInformation>();
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class CLogModuleUsageInformation_V2
+    {
+        [JsonProperty] public List<CLogTraceLineInformation_V2> TraceInformation { get; set; } = new List<CLogTraceLineInformation_V2>();
+
+        public static CLogModuleUsageInformation_V2 ConvertFromV1(CLogModuleUsageInformation_V1 v1)
+        {
+            CLogModuleUsageInformation_V2 ret = new CLogModuleUsageInformation_V2();
+            foreach (var trace in v1.TraceInformation)
+            {
+                ret.TraceInformation.Add(CLogTraceLineInformation_V2.ConvertFromV1(trace));
+            }
+            return ret;
+        }
+    }
+
+
     public class CLogModuleUsageInformation
     {
-        [JsonProperty] private List<CLogTraceLineInformation> TraceInformation { get; set; } = new List<CLogTraceLineInformation>();
-
-        public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation existingTraceInformation)
+        public CLogModuleUsageInformation(CLogModuleUsageInformation_V2 myFile)
         {
-            existingTraceInformation = TraceInformation
+            _me = myFile;
+        }
+
+        private CLogModuleUsageInformation()
+        {
+        }
+        private CLogModuleUsageInformation_V2 _me;
+
+        public bool IsUnique(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out CLogTraceLineInformation_V2 existingTraceInformation)
+        {
+            existingTraceInformation = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
             if (null == existingTraceInformation)
@@ -42,37 +72,41 @@ namespace clogutils.ConfigFile
             return true;
         }
 
-        public Guid GenerateUniquenessHash(ICLogOutputModule module, CLogDecodedTraceLine traceLine, out string asString)
+        public Guid GenerateUniquenessHash(ICLogOutputModule module, CLogDecodedTraceLine decodedTraceLine, out string asString)
         {
-            string info = traceLine.macro.MacroName + "|" + traceLine.UniqueId + "|" +
-                          traceLine.TraceString + "|";
+            string info = decodedTraceLine.macro.MacroName + "|" + decodedTraceLine.UniqueId + "|" +
+                          decodedTraceLine.TraceString + "|";
 
-            foreach (var arg in traceLine.splitArgs)
+
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
-                info += traceLine.configFile.FindType(arg, traceLine).EncodingType;
+                if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
+                    continue;
+
+                info += arg.TypeNode.EncodingType;
             }
 
             asString = info;
             return CLogFileProcessor.GenerateMD5Hash(info);
         }
 
-
         public void Insert(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
         {
             string asString;
             Guid hash = GenerateUniquenessHash(module, traceLine, out asString);
-            CLogTraceLineInformation info = TraceInformation
+            CLogTraceLineInformation_V2 info = _me.TraceInformation
                 .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
             if (null == info)
             {
-                info = new CLogTraceLineInformation();
+                info = new CLogTraceLineInformation_V2();
                 info.Unsaved = true;
                 info.PreviousFileMatch = traceLine;
+                info.EncodingString = traceLine.TraceString;
 
                 info.TraceID = traceLine.UniqueId;
                 info.UniquenessHash = hash;
-                TraceInformation.Add(info);
+                _me.TraceInformation.Add(info);
             }
 
             if (info.UniquenessHash != hash)
@@ -81,9 +115,9 @@ namespace clogutils.ConfigFile
             }
         }
 
-        public void Remove(CLogTraceLineInformation trace)
+        public void Remove(CLogTraceLineInformation_V2 trace)
         {
-            TraceInformation.Remove(trace);
+            _me.TraceInformation.Remove(trace);
         }
     }
 }

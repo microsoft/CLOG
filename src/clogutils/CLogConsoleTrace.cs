@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -61,13 +61,11 @@ namespace clogutils
             {
                 int line = 1;
                 int lastLine = 1;
-                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegEx.Index);
+                string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegExX.Index);
                 for (int i = 0; i < file.Length; ++i)
                 {
                     if (file[i] == '\n')
                     {
-                        string prev = file.Substring(lastLine, i - 1 - lastLine);
-                        //Console.WriteLine("Line: " + line + " " + prev);
                         lastLine = i + 1;
                         ++line;
                     }
@@ -151,16 +149,30 @@ namespace clogutils
                     {
                         var arg = bundle.splitArgs[argIndex];
 
+                        while (null == arg.DefinationEncoding)
+                        {
+                            ++argIndex;
+
+                            if (argIndex > bundle.splitArgs.Length)
+                                throw new Exception("Unable to locate variable");
+
+                            arg = bundle.splitArgs[argIndex];
+                            continue;
+                        }
+
                         if (0 != arg.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
                         {
                             Console.WriteLine("Invalid Types in Traceline");
                             throw new Exception("InvalidType : " + arg.DefinationEncoding);
                         }
 
-
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
+                        IClogEventArg value = null;
 
-                        if (!valueBag.TryGetValue(arg.MacroVariableName, out IClogEventArg value))
+                        if (!valueBag.TryGetValue(arg.MacroVariableName, out value))
+                            value = null;
+
+                        if (value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
                         {
                             toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
                         }
@@ -177,8 +189,6 @@ namespace clogutils
                                 toPrint.Append($"{type.LeadingString}{decodedValue}");
                             }
                         }
-
-
                         first = type;
                         ++argIndex;
                     }

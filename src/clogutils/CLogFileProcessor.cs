@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 s
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -11,6 +11,7 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -39,13 +40,54 @@ namespace clogutils
 
         private static SortedList<int, CLogLineMatch> UpdateMatches(string data, string sourceFileName, CLogTraceMacroDefination inspect)
         {
-            string inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
+            string inspectToken;
+
+
+            if (!inspect.ClassFunctionEncoding)
+                inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
+            else
+                inspectToken = inspect.MacroName + "\\.(?<methodname>[A-Za-z0-9_-]*)" + @"\((?<args>.*?)\);";
+
             Regex r = new Regex(inspectToken, RegexOptions.Singleline);
             SortedList<int, CLogLineMatch> matches = new SortedList<int, CLogLineMatch>();
 
             foreach (Match m in r.Matches(data))
             {
-                CLogLineMatch lineMatch = new CLogLineMatch(sourceFileName, m);
+                string uid = "";
+                string args = "";
+                string encodedString = "";
+
+                List<string> splitArgs = new List<string>();
+                if (inspect.ClassFunctionEncoding)
+                {
+                    uid = m.Groups["methodname"].ToString();
+                    args = m.Groups["args"].ToString();
+
+                    splitArgs = new List<string>(SplitWithEscapedQuotes(args, ','));
+
+                    if (inspect.EncodedArgNumber >= splitArgs.Count)
+                    {
+                        throw new CLogHandledException("EncodedArgNumberTooLarge", CLogHandledException.ExceptionType.EncodedArgNumberInvalid, null);
+                    }
+
+                    encodedString = splitArgs[inspect.EncodedArgNumber];
+                }
+                else
+                {
+                    args = m.Groups["args"].ToString();
+
+                    splitArgs = new List<string>(SplitWithEscapedQuotes(args, ','));
+                    uid = splitArgs[0].Trim();
+
+                    if (inspect.EncodedArgNumber >= splitArgs.Count)
+                    {
+                        throw new CLogHandledException("EncodedArgNumberTooLarge", CLogHandledException.ExceptionType.EncodedArgNumberInvalid, null);
+                    }
+
+                    encodedString = splitArgs[inspect.EncodedArgNumber];
+                }
+
+                CLogLineMatch lineMatch = new CLogLineMatch(sourceFileName, m, uid, encodedString, args, splitArgs.ToArray());
                 matches.Add(m.Groups["0"].Index, lineMatch);
             }
 
@@ -154,13 +196,48 @@ namespace clogutils
                 if ('%' == argString[i])
                 {
                     pieces += argCount++;
-                    pieces += " ";
 
                     CLogTypeContainer newNode = new CLogTypeContainer();
                     newNode.LeadingString = prefixString;
                     newNode.ArgStartingIndex = i;
 
                     ++i;
+
+                    // Check to see if a custom name is specified for this type
+                    string preferredName = "";
+                    if ('{' == argString[i])
+                    {
+                        // Skip the opening brace
+                        i++;
+                        if (i == argString.Length)
+                        {
+                            throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                        }
+
+                        while (',' != argString[i])
+                        {
+                            // If we find a closing brace or a space before finding the comma, it's a parsing error
+                            if ('}' == argString[i] || ' ' == argString[i])
+                            {
+                                throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                            }
+
+                            preferredName += argString[i];
+
+                            i++;
+                            if (i == argString.Length)
+                            {
+                                throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                            }
+                        }
+
+                        // Skip the comma
+                        i++;
+                        if (i == argString.Length)
+                        {
+                            throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                        }
+                    }
 
                     CLogEncodingCLogTypeSearch t;
 
@@ -169,13 +246,26 @@ namespace clogutils
                         // 'i' will point to the final character on a match (such that i+1 is the next fresh character)
                         t = configFile.FindTypeAndAdvance(argString, traceLineMatch, ref i);
                     }
-                    catch (CLogTypeNotFoundException e)
+                    catch (CLogTypeNotFoundException)
                     {
-                        throw e;
+                        throw;
                     }
 
                     newNode.TypeNode = t;
                     newNode.ArgLength = i - newNode.ArgStartingIndex + 1;
+
+                    // If we found a preferred name, the next character after the type should be a closing brace
+                    if (preferredName.Length != 0)
+                    {
+                        i++;
+                        if (i == argString.Length || '}' != argString[i])
+                        {
+                            throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                        }
+
+                        newNode.PreferredName = preferredName;
+                    }
+
                     prefixString = "";
 
                     ret.Add(newNode);
@@ -190,55 +280,32 @@ namespace clogutils
             return ret.ToArray();
         }
 
-        private static (string, string)[] MakeVariable(string[] args)
+        private static (string, string)[] MakeVariable(CLogConfigurationFile configFile, string[] args)
         {
             List<(string, string)> ret = new List<(string, string)>();
             HashSet<string> inUse = new HashSet<string>();
 
             for (int i = 0; i < args.Length; ++i)
             {
-                string input = "_" + args[i].Trim();
-                input = input.Replace("*", "").Replace("(", "").Replace(")", "").Replace(".", "");
-                input = input.Replace(",", "").Replace("-", "").Replace(">", "");
-
-                bool hasBadChars = false;
-
-                foreach (char c in input)
-                {
-                    if (!char.IsDigit(c) && !char.IsLetter(c))
-                    {
-                        hasBadChars = true;
-                    }
-                }
-
-                if (input.Length > 20 || hasBadChars)
-                {
-                    input = "arg" + i;
-                }
-
-                if (inUse.Contains(input))
-                {
-                    Console.WriteLine($"WARNING: {input} is already in use, using {input}{i} instead");
-                    input = input + i;
-                }
-
-                ret.Add((args[i], input));
+                string value = args[i];
+                string name = "arg" + i;
+                ret.Add((value, name));
+                inUse.Add(name);
             }
 
             return ret.ToArray();
         }
 
-        private static CLogDecodedTraceLine BuildArgsFromEncodedArgs(CLogConfigurationFile configFile, string sourcefile,
-            CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine, string[] splitArgs)
+        private static CLogDecodedTraceLine BuildArgsFromEncodedArgsX(CLogConfigurationFile configFile, string sourcefile,
+            CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine)
         {
-            string userArgs = macroDefination.CombinePrefixWithEncodedString(splitArgs[macroDefination.EncodedArgNumber].Trim());
-
+            string userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
+            string cleanedString;
             //
             // Loop across all types, ignoring the ones that are not specified in the source code
             //
             Queue<CLogTypeContainer> types = new Queue<CLogTypeContainer>();
-
-            foreach (var type in BuildTypes(configFile, traceLineMatch, macroDefination.EncodedPrefix, traceLine, out _))
+            foreach (var type in BuildTypes(configFile, traceLineMatch, userArgs, traceLine, out cleanedString))
             {
                 if (type.TypeNode.Synthesized)
                 {
@@ -248,37 +315,80 @@ namespace clogutils
                 types.Enqueue(type);
             }
 
-            foreach (var type in BuildTypes(configFile, traceLineMatch, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLine, out _))
-            {
-                if (type.TypeNode.Synthesized)
-                {
-                    continue;
-                }
-
-                types.Enqueue(type);
-            }
-
-
-            var vars = MakeVariable(splitArgs);
+            var vars = MakeVariable(configFile, traceLineMatch.Args);
             List<CLogVariableBundle> finalArgs = new List<CLogVariableBundle>();
 
-            for (int i = 1; i < splitArgs.Length; ++i)
+            for (int i = 0; i < traceLineMatch.Args.Length; ++i)
             {
                 if (i == macroDefination.EncodedArgNumber)
                 {
-                    continue;
-                }
 
-                if (0 == types.Count)
+                    CLogTypeContainer item = new CLogTypeContainer();
+                    var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
+                    var bundle = new CLogVariableBundle();
+                    var type = new CLogEncodingCLogTypeSearch();
+
+                    type.EncodingType = CLogEncodingType.UserEncodingString;
+
+                    bundle.TypeNode = type;
+                    finalArgs.Add(bundle);
+                }
+                else
                 {
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Trace line is has the incorrect format - too few arguments were specified");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
+                    // If this is C/C++ encoding, the 0'th arg is the identifier
+                    if (!macroDefination.ClassFunctionEncoding && 0 == i)
+                    {
+                        CLogTypeContainer item = new CLogTypeContainer();
+                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
+                        var bundle = new CLogVariableBundle();
+                        var type = new CLogEncodingCLogTypeSearch();
 
-                    throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                        type.EncodingType = CLogEncodingType.UniqueAndDurableIdentifier;
+
+                        bundle.TypeNode = type;
+                        finalArgs.Add(bundle);
+                    }
+                    else
+                    {
+                        if (0 == types.Count)
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Trace line is has the incorrect format - too few arguments were specified");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
+                            throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                        }
+
+                        CLogTypeContainer item = types.Dequeue();
+                        var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
+
+                        // If a preferred name was found in the format string, use that
+                        if (!String.IsNullOrEmpty(item.PreferredName))
+                        {
+                            // Check to see if their preferred name is valid
+                            bool hasBadChars = false;
+                            foreach (char c in item.PreferredName)
+                            {
+                                if (!char.IsDigit(c) && !char.IsLetter(c) && c != '_')
+                                {
+                                    hasBadChars = true;
+                                }
+                            }
+
+                            if (item.PreferredName.Length > configFile.MaximumVariableLength || hasBadChars)
+                            {
+                                Console.WriteLine($"WARNING: {item.PreferredName} contains invalid characters (must be <= {configFile.MaximumVariableLength} characters and containing only alphanumeric plus underscore, using {info.SuggestedTelemetryName} instead");
+                            }
+                            else
+                            {
+                                info.SuggestedTelemetryName = item.PreferredName;
+                            }
+                        }
+
+                        var bundle = CLogVariableBundle.CreateVariableBundle(info, item.TypeNode.DefinationEncoding, null);
+                        CLogEncodingCLogTypeSearch type = configFile.FindType(bundle, traceLineMatch);
+                        bundle.TypeNode = type;
+                        finalArgs.Add(bundle);
+                    }
                 }
-
-                CLogTypeContainer item = types.Dequeue();
-                finalArgs.Add(CLogVariableBundle.X(splitArgs[i], vars[i].Item2, item.TypeNode.DefinationEncoding));
             }
 
             if (0 != types.Count)
@@ -287,20 +397,19 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("TooManyArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
             }
 
-            string uniqueId = splitArgs[0].Trim();
             Regex rg = new Regex(@"^[a-zA-Z0-9_]*$");
-            if (!rg.IsMatch(uniqueId))
+            if (!rg.IsMatch(traceLineMatch.UniqueID))
             {
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"CLOG Unique ID's must be alpha numeric and {uniqueId} is not");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"CLOG Unique ID's must be alpha numeric and {traceLineMatch.UniqueID} is not");
                 throw new CLogEnterReadOnlyModeException("InvalidUniqueID", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(uniqueId, sourcefile, userArgs, splitArgs[macroDefination.EncodedArgNumber].Trim(), traceLineMatch, configFile, macroDefination.MacroName, finalArgs.ToArray());
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(traceLineMatch.UniqueID, sourcefile, userArgs, traceLineMatch.EncodingString, traceLineMatch, configFile, macroDefination, finalArgs.ToArray(), cleanedString);
 
             return decodedTraceLine;
         }
 
-        public string ConvertFile(CLogConfigurationFile configFile, ICLogFullyDecodedLineCallbackInterface callbacks,
+        public string ConvertFile(CLogConfigurationFile configFile, CLogOutputInfo outputInfo, ICLogFullyDecodedLineCallbackInterface callbacks,
             string contents, string contentsFileName, bool conversionMode)
         {
             string remaining = contents;
@@ -326,24 +435,24 @@ namespace clogutils
                         {
                             lastMatch = match;
 
-                            string[] splitArgs = SplitWithEscapedQuotes(match.Value.MatchedRegEx.Groups["args"].ToString(), ',');
+                            string[] splitArgs = SplitWithEscapedQuotes(match.Value.AllArgs, ',');
 
-                            int idx = match.Value.MatchedRegEx.Index - 1;
+                            int idx = match.Value.MatchedRegExX.Index - 1;
 
                             while (idx > 0 && (contents[idx] == ' ' || contents[idx] == '\t'))
                             {
                                 idx--;
                             }
 
-                            end = match.Value.MatchedRegEx.Index;
+                            end = match.Value.MatchedRegExX.Index;
 
                             string keep = contents.Substring(start, end - start);
 
                             results.Append(keep);
 
-                            CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgs(configFile, contentsFileName, macro, match.Value, match.Value.MatchedRegEx.Groups["args"].ToString(), splitArgs);
-                            callbacks.TraceLineDiscovered(traceLine, results);
-                            start = end = match.Value.MatchedRegEx.Index + match.Value.MatchedRegEx.Length;
+                            CLogDecodedTraceLine traceLine = BuildArgsFromEncodedArgsX(configFile, contentsFileName, macro, match.Value, match.Value.AllArgs);
+                            callbacks.TraceLineDiscovered(traceLine, outputInfo, results);
+                            start = end = match.Value.MatchedRegExX.Index + match.Value.MatchedRegExX.Length;
                         }
                         catch (CLogHandledException)
                         {
@@ -380,6 +489,37 @@ namespace clogutils
             return contents;
         }
 
+        public class VariableInfo
+        {
+            public string UserSpecifiedUnModified { get; set; }
+
+            public string UserSuppliedTrimmed { get; set; }
+
+            public string SuggestedTelemetryName { get; set; }
+
+            public string IndexBasedName { get { return "arg" + _index; } }
+
+            private int _index;
+
+            public static VariableInfo X(string user, string suggestedName, int index)
+            {
+                foreach (char c in suggestedName)
+                {
+                    if (!char.IsLetter(c) && !char.IsNumber(c) && c != '_')
+                    {
+                        throw new Exception($"VariableName isnt valid {suggestedName}");
+                    }
+                }
+
+                VariableInfo v = new VariableInfo();
+                v.UserSuppliedTrimmed = user.Trim();
+                v.UserSpecifiedUnModified = user;
+                v.SuggestedTelemetryName = suggestedName;
+                v._index = index;
+                return v;
+            }
+        }
+
         public class CLogTypeContainer
         {
             public string LeadingString { get; set; }
@@ -389,31 +529,51 @@ namespace clogutils
             public int ArgStartingIndex { get; set; }
 
             public int ArgLength { get; set; }
+
+            public string PreferredName { get; set; }
         }
 
         [JsonObject(MemberSerialization.OptIn)]
         public class CLogVariableBundle
         {
+            //[JsonProperty]
+            public VariableInfo VariableInfo { get; set; }
 
             [JsonProperty] public string DefinationEncoding { get; set; }
 
             [JsonProperty] public string MacroVariableName { get; set; }
 
-            [JsonIgnore] public string UserSuppliedTrimmed { get; set; }
+            [JsonProperty] public string EventVariableName { get; set; }
 
-            public static CLogVariableBundle X(string userString, string suggestedName, string definationEncoding)
+            public bool ShouldSerializeEventVariableName()
+            {
+                //
+                // In an attempt to reduce disk space in the sidecar
+                //    only serialize the EventVariableName if it's set and if its
+                //    different from the MacroVariableName
+                //
+                if (null == MacroVariableName)
+                    return true;
+                if (null == EventVariableName)
+                    return false;
+
+                return !MacroVariableName.Equals(EventVariableName); ;
+            }
+
+            public CLogEncodingCLogTypeSearch TypeNode { get; set; }
+
+            public static CLogVariableBundle CreateVariableBundle(VariableInfo i, string definationEncoding, CLogEncodingCLogTypeSearch typeNode)
             {
                 CLogVariableBundle b = new CLogVariableBundle();
-                b.MacroVariableName = suggestedName;
+                b.VariableInfo = i;
                 b.DefinationEncoding = definationEncoding;
-                b.UserSuppliedTrimmed = userString.Trim();
                 return b;
             }
         }
 
         public interface ICLogFullyDecodedLineCallbackInterface
         {
-            void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder results);
+            void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, CLogOutputInfo outputInfo, StringBuilder results);
         }
 
         public interface ICLogPartiallyDecodedLineCallbackInterfaceX

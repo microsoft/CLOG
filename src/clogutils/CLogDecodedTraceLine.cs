@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -12,6 +12,7 @@ Abstract:
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
@@ -24,20 +25,23 @@ namespace clogutils
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
 
         public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
-            string mac, CLogFileProcessor.CLogVariableBundle[] args)
+            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args, string cleanedString)
         {
             SourceFile = sourceFile;
-            macroName = mac;
+            macro = mac;
             UniqueId = uniqueId;
             match = m;
             configFile = c;
             TraceString = userString;
             splitArgs = args;
             TraceStringNoPrefix = userStringNoPrefix;
+            CleanedString = cleanedString;
         }
 
         [JsonProperty]
         public string TraceString { get; private set; }
+
+        public string CleanedString { get; private set; }
 
         public string TraceStringNoPrefix { get; private set; }
 
@@ -49,27 +53,45 @@ namespace clogutils
         [JsonProperty]
         public CLogFileProcessor.CLogVariableBundle[] splitArgs { get; private set; }
 
+        private CLogFileProcessor.CLogVariableBundle[] _tempArgs;
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            List<CLogFileProcessor.CLogVariableBundle> tArgs = new List<CLogFileProcessor.CLogVariableBundle>();
+            foreach (var a in splitArgs)
+            {
+                if (!string.IsNullOrEmpty(a.DefinationEncoding))
+                    tArgs.Add(a);
+            }
+            _tempArgs = splitArgs;
+            splitArgs = tArgs.ToArray();
+        }
+
+        [OnSerialized]
+        internal void OnSerializedMethod(StreamingContext context)
+        {
+            splitArgs = _tempArgs;
+        }
+
+        //[JsonProperty]
+        public CLogTraceMacroDefination macro { get; private set; }
+
+
+        private string _macroName;
         [JsonProperty]
-        public string macroName { get; private set; }
-
-        [JsonIgnore]
-        private CLogTraceMacroDefination macroStore;
-
-        [JsonIgnore]
-        public CLogTraceMacroDefination macro
+        public string macroName
         {
             get
             {
-                if (macroStore is null)
-                {
-                    CLogTraceMacroDefination def = configFile.SourceCodeMacros.Where(x => x.MacroName == macroName).FirstOrDefault();
-                    if (def is null)
-                    {
-                        throw new InvalidDataException($"Macro ${macroName} not found in configuration file");
-                    }
-                    macroStore = def;
-                }
-                return macroStore;
+                if (null != macro && !string.IsNullOrEmpty(macro.MacroName))
+                    return macro.MacroName;
+
+                return _macroName;
+            }
+
+            set
+            {
+                _macroName = value;
             }
         }
 

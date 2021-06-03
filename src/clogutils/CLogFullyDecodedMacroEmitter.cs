@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -57,7 +57,7 @@ namespace clogutils
             get { return _sourceFile.ToString(); }
         }
 
-        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder r)
+        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, CLogOutputInfo outputInfo, StringBuilder r)
         {
             r = null;
 
@@ -67,27 +67,61 @@ namespace clogutils
             */
 
             string argsString = "";
-            int clogArgCountForMacroAlignment = 2; // decodedTraceLine.splitArgs.Length + 1;
+            int clogArgCountForMacroAlignment = 0; // decodedTraceLine.splitArgs.Length + 1;
+
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                switch (decodedTraceLine.configFile.FindType(arg, decodedTraceLine).EncodingType)
+                if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString)
+                {
+                    clogArgCountForMacroAlignment++;
+                    continue;
+                }
+
+                switch (arg.TypeNode.EncodingType)
                 {
                     case CLogEncodingType.ByteArray:
                         clogArgCountForMacroAlignment += 2;
 
                         // Verify the input argument contains CLOG_BYTEARRAY - this will aid in debugging
-                        if (!arg.UserSuppliedTrimmed.Contains("CLOG_BYTEARRAY"))
+                        if (!arg.VariableInfo.UserSpecifiedUnModified.Contains("CLOG_BYTEARRAY"))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains a ByteArray type that is not using the CLOG_BYTEARRAY macro");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_BYTEARRAY(length, pointer)");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegEx}");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegExX}");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Arg: ");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.UserSuppliedTrimmed);
-                            throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_BYTEARRAY", CLogHandledException.ExceptionType.ByteArrayMustUseMacro, decodedTraceLine.match);
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.VariableInfo.UserSuppliedTrimmed);
+                            throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_BYTEARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
                         }
+                        break;
+                    case CLogEncodingType.Int32Array:
+                    case CLogEncodingType.UInt32Array:
+                    case CLogEncodingType.Int64Array:
+                    case CLogEncodingType.UInt64Array:
+                    case CLogEncodingType.ANSI_StringArray:
+                    case CLogEncodingType.UNICODE_StringArray:
+                    case CLogEncodingType.PointerArray:
+                    case CLogEncodingType.GUIDArray:
+                    case CLogEncodingType.Int16Array:
+                    case CLogEncodingType.UInt16Array:
+                    case CLogEncodingType.Int8Array:
+                        clogArgCountForMacroAlignment += 2;
+
+                        // Verify the input argument contains CLOG_ARRAY - this will aid in debugging
+                        if (!arg.VariableInfo.UserSpecifiedUnModified.Contains("CLOG_ARRAY"))
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains an non-byte array type that is not using the CLOG_ARRAY macro");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_ARRAY(length, pointer)");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegExX}");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Arg: ");
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.VariableInfo.UserSuppliedTrimmed);
+                            throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_ARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
+                        }
+
                         break;
                     default:
                         clogArgCountForMacroAlignment++;
@@ -107,8 +141,12 @@ namespace clogutils
                 argsString += "uniqueId";
 
                 int idx = 1;
+
                 foreach (var arg in decodedTraceLine.splitArgs)
                 {
+                    if (arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier || arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString)
+                        continue;
+
                     CLogEncodingCLogTypeSearch v = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                     if (idx == decodedTraceLine.macro.EncodedArgNumber)
@@ -121,14 +159,28 @@ namespace clogutils
 
                     if (!v.Synthesized)
                     {
-                        implSignature += $", {v.CType} {arg.MacroVariableName}";
-                        argsString += $", {arg.MacroVariableName}";
+                        implSignature += $", {v.CType} {arg.VariableInfo.IndexBasedName}";
+                        argsString += $", {arg.VariableInfo.IndexBasedName}";
 
-                        if (v.EncodingType == CLogEncodingType.ByteArray)
+                        if (v.EncodingType == CLogEncodingType.ByteArray ||
+                            v.EncodingType == CLogEncodingType.Int32Array ||
+                            v.EncodingType == CLogEncodingType.UInt32Array ||
+                            v.EncodingType == CLogEncodingType.Int64Array ||
+                            v.EncodingType == CLogEncodingType.UInt64Array ||
+                            v.EncodingType == CLogEncodingType.ANSI_StringArray ||
+                            v.EncodingType == CLogEncodingType.UNICODE_StringArray ||
+                            v.EncodingType == CLogEncodingType.PointerArray ||
+                            v.EncodingType == CLogEncodingType.GUIDArray ||
+                            v.EncodingType == CLogEncodingType.Int16Array ||
+                            v.EncodingType == CLogEncodingType.UInt16Array ||
+                            v.EncodingType == CLogEncodingType.Int8Array)
                         {
-                            implSignature += $", int {arg.MacroVariableName}_len";
-                            argsString += $", {arg.MacroVariableName}_len";
+                            implSignature += $", int {arg.VariableInfo.IndexBasedName}_len";
+                            argsString += $", {arg.VariableInfo.IndexBasedName}_len";
                         }
+
+                        arg.MacroVariableName = $"{arg.VariableInfo.IndexBasedName}";
+                        arg.EventVariableName = $"{arg.VariableInfo.SuggestedTelemetryName}";
                     }
                 }
 
@@ -153,11 +205,14 @@ namespace clogutils
             _headerFile.AppendLine("/*----------------------------------------------------------");
             _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
             _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
-            _headerFile.AppendLine($"// {decodedTraceLine.match.MatchedRegEx}");
+            _headerFile.AppendLine($"// {decodedTraceLine.match.MatchedRegExX}");
 
             foreach (var arg in decodedTraceLine.splitArgs)
             {
-                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.MacroVariableName} = {arg.UserSuppliedTrimmed}");
+                if (arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier || arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString)
+                    continue;
+
+                _headerFile.AppendLine($"// {arg.MacroVariableName} = {arg.VariableInfo.SuggestedTelemetryName} = {arg.VariableInfo.UserSuppliedTrimmed} = {arg.VariableInfo.IndexBasedName}");
             }
 
             _headerFile.AppendLine("----------------------------------------------------------*/");
@@ -182,7 +237,7 @@ namespace clogutils
                         m_unusedModules.Remove(module);
                     }
 
-                    CLogTraceLineInformation existingTraceInfo;
+                    CLogTraceLineInformation_V2 existingTraceInfo;
 
                     if (!_sidecar.ModuleUniqueness.IsUnique(module, decodedTraceLine, out existingTraceInfo))
                     {
@@ -195,7 +250,7 @@ namespace clogutils
 
                             _sidecar.RemoveTraceLine(existingTraceInfo);
                             _knownHashes.Remove(decodedTraceLine.UniqueId);
-                            _sidecar.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
+                            _sidecar.TraceLineDiscovered(_inputSourceFile, outputInfo, decodedTraceLine, _sidecar, _headerFile,
                                 macroBody,
                                 _sourceFile);
                         }
@@ -208,6 +263,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Previous Declaration: ");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"File/Line: {CLogConsoleTrace.GetFileLine(existingTraceInfo.PreviousFileMatch.match)}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{existingTraceInfo.PreviousFileMatch.match}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Existing EncodingString:{existingTraceInfo.EncodingString}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
 
@@ -233,6 +289,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event:");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        ConfigFile:{decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        TraceID:{existingTraceInfo.TraceID}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        EncodingString:{existingTraceInfo.EncodingString}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
                             }
 
@@ -247,7 +304,7 @@ namespace clogutils
                         var c = decodedTraceLine.configFile.MacroConfigurations[decodedTraceLine.macro.MacroConfiguration[decodedTraceLine.configFile.ProfileName]];
                         if (!c.SkipProcessing)
                         {
-                            module.TraceLineDiscovered(_inputSourceFile, decodedTraceLine, _sidecar, _headerFile,
+                            module.TraceLineDiscovered(_inputSourceFile, outputInfo, decodedTraceLine, _sidecar, _headerFile,
                                 macroBody,
                                 _sourceFile);
                         }
@@ -275,7 +332,7 @@ namespace clogutils
             m_unusedModules.Add(m);
         }
 
-        public void FinishedProcessing()
+        public void FinishedProcessing(CLogOutputInfo outputInfo)
         {
             foreach (var module in _modules)
             {
@@ -284,7 +341,7 @@ namespace clogutils
                     continue;
                 }
 
-                module.FinishedProcessing(_headerFile, _sourceFile);
+                module.FinishedProcessing(outputInfo, _headerFile, _sourceFile);
             }
 
             _modules.Clear();

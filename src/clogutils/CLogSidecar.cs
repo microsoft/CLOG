@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -20,78 +20,152 @@ using static clogutils.CLogConsoleTrace;
 namespace clogutils
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class CLogSidecar : ICLogOutputModule
+    public class ClogSidecar_V1
     {
-        private static int _maxVersion = 1;
-        private string _sidecarFileName;
-
-        [JsonProperty] private Dictionary<string, Dictionary<string, Dictionary<string, string>>> ModuleTraceData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-
-        public CLogSidecar()
-        {
-            Version = _maxVersion;
-            EventBundlesV2 = new Dictionary<string, CLogDecodedTraceLine>();
-        }
-
-        private CLogSidecar(string sidecarFileName)
-        {
-            Version = _maxVersion;
-            EventBundlesV2 = new Dictionary<string, CLogDecodedTraceLine>();
-            _sidecarFileName = sidecarFileName;
-        }
-
-        [JsonProperty] public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
-
-        private Dictionary<string, CLogDecodedTraceLine> HotEventBundles { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
-
-
         [JsonProperty] public int Version { get; set; }
 
+        [JsonProperty]
+        public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
 
         [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
 
         [JsonProperty]
-        public CLogModuleUsageInformation ModuleUniqueness
+        public CLogModuleUsageInformation_V1 ModuleUniqueness
         {
             get;
             set;
-        } = new CLogModuleUsageInformation();
-
-        public void UpdateConfigFile(CLogConfigurationFile newConfigFile)
-        {
-            // Ideally, we'd use CLogConfigurationFile.AreWeDirty, but because of the tricks
-            // we do around serialization, we can't without a major refactor
-
-            if (newConfigFile == null || ConfigFile == null)
-            {
-                AreDirty = true;
-                ConfigFile = newConfigFile;
-                return;
-            }
-
-            // Serialize old config
-            bool old = ConfigFile.SerializeChainedConfigurations;
-            ConfigFile.SerializeChainedConfigurations = true;
-
-            string serializedOldConfig = JsonConvert.SerializeObject(ConfigFile);
-
-            ConfigFile.SerializeChainedConfigurations = old;
-
-            // Serialize new config
-            old = newConfigFile.SerializeChainedConfigurations;
-            newConfigFile.SerializeChainedConfigurations = true;
-
-            string serializedNewConfig = JsonConvert.SerializeObject(newConfigFile);
-
-            newConfigFile.SerializeChainedConfigurations = old;
-
-            if (serializedOldConfig != serializedNewConfig)
-            {
-                AreDirty = true;
-                ChangesList.Add("Configuration file or dependencies changed");
-            }
-            ConfigFile = newConfigFile;
         }
+
+        private ClogSidecar_V1()
+        {
+            Version = 1;
+            ModuleUniqueness = new CLogModuleUsageInformation_V1();
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Formatting = Formatting.Indented;
+            this.Version = 1;
+            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            return me;
+        }
+
+        public static ClogSidecar_V1 FromJson(string json)
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Context = new StreamingContext(StreamingContextStates.Other, json);
+
+            ClogSidecar_V1 ret = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
+            return ret;
+        }
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class ClogSidecar_V2
+    {
+        [JsonProperty] public int Version { get; set; }
+
+        [JsonProperty]
+        public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
+
+        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
+
+        [JsonProperty]
+        public CLogModuleUsageInformation_V2 ModuleUniqueness
+        {
+            get;
+            set;
+        }
+
+        public ClogSidecar_V2()
+        {
+            Version = 2;
+            ModuleUniqueness = new CLogModuleUsageInformation_V2();
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Formatting = Formatting.Indented;
+            this.Version = 2;
+            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            return me;
+        }
+
+        public static ClogSidecar_V2 FromJson(string json)
+        {
+            JsonSerializerSettings s = new JsonSerializerSettings();
+            s.Context = new StreamingContext(StreamingContextStates.Other, json);
+
+            ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
+
+            if (1 == ret.Version)
+            {
+                ClogSidecar_V1 v1 = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
+                ret = new ClogSidecar_V2();
+                ret.Version = 2;
+                ret.EventBundlesV2 = v1.EventBundlesV2;
+                ret.ConfigFile = v1.ConfigFile;
+                ret.ModuleUniqueness = CLogModuleUsageInformation_V2.ConvertFromV1(v1.ModuleUniqueness);
+            }
+            return ret;
+        }
+    }
+
+    public class CLogSidecar : ICLogOutputModule
+    {
+        private string _sidecarFileName;
+
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> ModuleTraceData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+
+        private ClogSidecar_V2 _sideCarFile;
+
+        private CLogModuleUsageInformation _myUsageModuleInfo;
+
+        private void SetSideCar(ClogSidecar_V2 file)
+        {
+            _sideCarFile = file;
+            _myUsageModuleInfo = new CLogModuleUsageInformation(file.ModuleUniqueness);
+        }
+
+        public CLogSidecar()
+        {
+            SetSideCar(new ClogSidecar_V2());
+        }
+
+        private CLogSidecar(ClogSidecar_V2 me)
+        {
+            SetSideCar(me);
+        }
+        private CLogSidecar(string sidecarFileName)
+        {
+            SetSideCar(new ClogSidecar_V2());
+            _sidecarFileName = sidecarFileName;
+        }
+        public void SetConfigFile(CLogConfigurationFile newConfig)
+        {
+            _sideCarFile.ConfigFile = newConfig;
+        }
+
+        public CLogModuleUsageInformation ModuleUniqueness
+        {
+            get { return _myUsageModuleInfo; }
+        }
+        public CLogConfigurationFile ConfigFile
+        {
+            get { return _sideCarFile.ConfigFile; }
+        }
+
+        public IEnumerable<KeyValuePair<string, CLogDecodedTraceLine>> EventBundlesV2
+        {
+            get
+            {
+                return _sideCarFile.EventBundlesV2;
+            }
+        }
+
+        private Dictionary<string, CLogDecodedTraceLine> HotEventBundles { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
 
         private List<string> ChangesList = new List<string>();
         public void PrintDirtyReasons()
@@ -101,39 +175,35 @@ namespace clogutils
                 CLogConsoleTrace.TraceLine(TraceType.Err, "Config Changed : " + s);
             }
         }
-
         public void InsertTraceLine(ICLogOutputModule module, CLogDecodedTraceLine traceLine)
         {
-            CLogTraceLineInformation output;
-            if (ModuleUniqueness.IsUnique(module, traceLine, out output) && null != output)
+            CLogTraceLineInformation_V2 output;
+            if (_myUsageModuleInfo.IsUnique(module, traceLine, out output) && null != output)
                 return;
 
             AreDirty = true;
             ChangesList.Add("Inserting : " + traceLine.UniqueId);
-            ModuleUniqueness.Insert(module, traceLine);
+            _myUsageModuleInfo.Insert(module, traceLine);
         }
-
-        public void RemoveTraceLine(CLogTraceLineInformation traceLine)
+        public void RemoveTraceLine(CLogTraceLineInformation_V2 traceLine)
         {
             AreDirty = true;
             ChangesList.Add("Removed : " + traceLine.TraceID);
-            ModuleUniqueness.Remove(traceLine);
+            _myUsageModuleInfo.Remove(traceLine);
 
-            EventBundlesV2.Remove(traceLine.TraceID);
+            _sideCarFile.EventBundlesV2.Remove(traceLine.TraceID);
         }
 
         public string ModuleName
         {
             get { return "SIDECAR_EMITTER"; }
         }
-
         public bool ManditoryModule
         {
             get { return true; }
         }
 
-
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine traceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             int hashUInt;
             string hash;
@@ -157,7 +227,7 @@ namespace clogutils
             File.WriteAllText(fileName, s);
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
             Save(_sidecarFileName);
         }
@@ -165,7 +235,7 @@ namespace clogutils
         public CLogEncodingCLogTypeSearch FindTypeX(CLogFileProcessor.CLogVariableBundle bundle, CLogLineMatch traceLineMatch)
         {
             int idx = 0;
-            return ConfigFile.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
+            return _sideCarFile.ConfigFile.FindTypeAndAdvance(bundle.DefinationEncoding, traceLineMatch, ref idx);
         }
 
         public void SetTracelineMetadata(CLogDecodedTraceLine traceline, string module, Dictionary<string, string> values)
@@ -192,7 +262,6 @@ namespace clogutils
 
             return ModuleTraceData[module][traceline.UniqueId];
         }
-
         private void MergeHot()
         {
             //
@@ -201,7 +270,7 @@ namespace clogutils
             foreach (var hot in HotEventBundles)
             {
                 CLogDecodedTraceLine old;
-                if (EventBundlesV2.TryGetValue(hot.Key, out old))
+                if (_sideCarFile.EventBundlesV2.TryGetValue(hot.Key, out old))
                 {
                     foreach (var x in hot.Value.ModuleProperites)
                     {
@@ -230,7 +299,7 @@ namespace clogutils
                 }
                 else
                 {
-                    EventBundlesV2[hot.Key] = hot.Value;
+                    _sideCarFile.EventBundlesV2[hot.Key] = hot.Value;
                     ChangesList.Add("Added New Event: " + hot.Key);
                     AreDirty = true;
                 }
@@ -248,34 +317,29 @@ namespace clogutils
         {
             string name = uid.Split(':')[1];
 
-            if (!EventBundlesV2.ContainsKey(name))
+            if (!_sideCarFile.EventBundlesV2.ContainsKey(name))
             {
                 return null;
             }
 
-            return EventBundlesV2[name];
+            return _sideCarFile.EventBundlesV2[name];
         }
 
         public string ToJson()
         {
-            bool old = ConfigFile.SerializeChainedConfigurations;
-            ConfigFile.SerializeChainedConfigurations = true;
+            bool old = _sideCarFile.ConfigFile.SerializeChainedConfigurations;
+            _sideCarFile.ConfigFile.SerializeChainedConfigurations = true;
 
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
-            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            string me = _sideCarFile.ToJson();
 
-            ConfigFile.SerializeChainedConfigurations = old;
+            _sideCarFile.ConfigFile.SerializeChainedConfigurations = old;
             return me;
         }
 
         public static CLogSidecar FromJson(string json)
         {
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Context = new StreamingContext(StreamingContextStates.Other, json);
-
-            CLogSidecar ret = JsonConvert.DeserializeObject<CLogSidecar>(json, s);
-
+            ClogSidecar_V2 me = ClogSidecar_V2.FromJson(json);
+            CLogSidecar ret = new CLogSidecar(me);
             return ret;
         }
     }

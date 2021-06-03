@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -34,7 +34,6 @@ namespace clog2text_windows
                 {
                     string sidecarJson = File.ReadAllText(options.SideCarFile);
                     CLogSidecar sidecar = CLogSidecar.FromJson(sidecarJson);
-
 
                     TextReader file = Console.In;
 

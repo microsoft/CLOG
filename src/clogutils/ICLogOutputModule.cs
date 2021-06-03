@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -13,6 +13,19 @@ using System.Text;
 
 namespace clogutils
 {
+    public class CLogOutputInfo
+    {
+        public string OutputFileName { get; set; }
+        public string OutputDirectory { get; set; }
+        public string InputFileName { get; set; }
+
+    }
+
+    public interface ICLogBatchingModule
+    {
+        void FinishedBatch(CLogOutputInfo oi);
+    }
+
     public interface ICLogOutputModule
     {
         string ModuleName { get; }
@@ -21,9 +34,9 @@ namespace clogutils
 
         void InitHeader(StringBuilder header);
 
-        void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine traceLine, CLogSidecar sidecar,
+        void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine traceLine, CLogSidecar sidecar,
             StringBuilder macroPrefix, StringBuilder inline, StringBuilder function);
 
-        void FinishedProcessing(StringBuilder header, StringBuilder sourceFile);
+        void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile);
     }
 }

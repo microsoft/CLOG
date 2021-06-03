@@ -8,7 +8,7 @@ Abstract:
     Main CLOG header file - this describes the primary macros that result in calling your desired trace libraries
 
 Version:
-    0.2.0
+    0.3.0
 
 --*/
 
@@ -18,8 +18,29 @@ Version:
 #define LOG_ADDR_LEN(x) sizeof(x)
 #endif
 
+// Legacy, used only for byte arrays
+#ifndef CLOG_BYTEARRAY_HELPER
 #define CLOG_BYTEARRAY_HELPER(length, pointer) pointer, length
+#endif
+#ifndef CLOG_BYTEARRAY
 #define CLOG_BYTEARRAY(length, pointer) CLOG_BYTEARRAY_HELPER(length, pointer)
+#endif
+
+// Used for other array types
+#ifndef CLOG_ARRAY_HELPER
+#define CLOG_ARRAY_HELPER(length, pointer) pointer, length
+#endif
+#ifndef CLOG_ARRAY
+#define CLOG_ARRAY(length, pointer) CLOG_ARRAY_HELPER(length, pointer)
+#endif
+
+// Used for declaring the next N fields are structs
+#ifndef CLOG_STRUCT_HELPER
+#define CLOG_STRUCT_HELPER(numFields) numFields
+#endif
+#ifndef CLOG_STRUCT
+#define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
+#endif
 
 typedef const void * CLOG_PTR;
 typedef const unsigned char CLOG_UINT8;
@@ -39,10 +60,25 @@ extern "C" {
 #endif
 
 #define _clog_EXPAND(x) x
-#define _clog_SELECT_ARGN_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, N, ...) N
+#define _clog_SELECT_ARGN_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, N, ...) N
 #define _clog_ARGN_SELECTOR(...) \
     _clog_EXPAND(_clog_SELECT_ARGN_MACRO( \
         __VA_ARGS__, \
+        _clog_41_ARGS_TRACE,\
+        _clog_40_ARGS_TRACE,\
+        _clog_39_ARGS_TRACE,\
+        _clog_38_ARGS_TRACE,\
+        _clog_37_ARGS_TRACE,\
+        _clog_36_ARGS_TRACE,\
+        _clog_35_ARGS_TRACE,\
+        _clog_34_ARGS_TRACE,\
+        _clog_33_ARGS_TRACE,\
+        _clog_32_ARGS_TRACE,\
+        _clog_31_ARGS_TRACE,\
+        _clog_30_ARGS_TRACE,\
+        _clog_29_ARGS_TRACE,\
+        _clog_28_ARGS_TRACE,\
+        _clog_27_ARGS_TRACE,\
         _clog_26_ARGS_TRACE,\
         _clog_25_ARGS_TRACE,\
         _clog_24_ARGS_TRACE,\

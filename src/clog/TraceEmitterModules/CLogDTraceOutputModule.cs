@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -46,11 +46,11 @@ namespace clog.TraceEmitterModules
             header.AppendLine($"// DTrace {DateTime.Now}------");
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             //
             // Generate a function name that is unique; this is where you'll attach a DTrace probe.
@@ -89,7 +89,7 @@ namespace clog.TraceEmitterModules
                     //   length with the variable name <suggestedName>_len
                     if (CLogEncodingType.ByteArray == v.EncodingType)
                     {
-                        argsString += $"{seperatorB} unsigned int {arg.MacroVariableName}_len{seperatorA}";
+                        argsString += $"{seperatorB} unsigned int {arg.VariableInfo.SuggestedTelemetryName}_len{seperatorA}";
                         macroString += $"{seperatorB} {arg.MacroVariableName}_len{seperatorA}";
                     }
 

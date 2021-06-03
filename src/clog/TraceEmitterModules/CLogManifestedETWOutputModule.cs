@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -26,6 +26,8 @@ namespace clog.TraceEmitterModules
         private readonly Dictionary<Guid, ManifestInformation> _providerCache = new Dictionary<Guid, ManifestInformation>();
 
         public XmlDocument doc = new XmlDocument();
+        private XmlElement _stringTable;
+
         public string xmlFileName;
         private static string _ModuleName = "MANIFESTED_ETW";
         private bool _dirty = false;
@@ -46,12 +48,17 @@ namespace clog.TraceEmitterModules
             get { return false; }
         }
 
-        public void FinishedProcessing(StringBuilder header, StringBuilder sourceFile)
+        public void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile)
         {
         }
 
         public void InitHeader(StringBuilder header)
         {
+        }
+
+        private string MapCLOGStringToManifestString(CLogDecodedTraceLine decodedTraceLine)
+        {
+            return decodedTraceLine.CleanedString;
         }
 
         private void SetAttribute(XmlElement e, string attribute, string newValue)
@@ -66,7 +73,7 @@ namespace clog.TraceEmitterModules
             e.SetAttribute(attribute, newValue);
         }
 
-        public void TraceLineDiscovered(string sourceFile, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
+        public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
             string hash = decodedTraceLine.UniqueId;
             CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(_ModuleName);
@@ -168,6 +175,24 @@ namespace clog.TraceEmitterModules
                 manifest.events.AppendChild(newEvent);
                 _dirty = true;
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"Adding event {eventNamePrefix + hash} to ETW manifest {xmlFileName}");
+
+
+                //
+                // Set the string 
+                //
+                if (moduleSettings.CustomSettings.ContainsKey("EmitString") && moduleSettings.CustomSettings["EmitString"].Equals("1"))
+                {
+                    string stringName = "CLOG." + hash;
+                    string manifestString = MapCLOGStringToManifestString(decodedTraceLine);
+
+                    var stringEntry = doc.CreateElement("string", manifest.events.NamespaceURI);
+                    _stringTable.AppendChild(stringEntry);
+                    _dirty = true;
+                    SetAttribute(stringEntry, "id", stringName);
+                    SetAttribute(stringEntry, "value", manifestString);
+
+                    SetAttribute(newEvent, "message", "$(string." + stringName + ")");
+                }
             }
 
             int hashUInt;
@@ -215,6 +240,8 @@ namespace clog.TraceEmitterModules
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
 
+
+
             //
             // Construct the function signature
             //
@@ -224,6 +251,10 @@ namespace clog.TraceEmitterModules
             foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
+
+                if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
                 switch (node.EncodingType)
@@ -284,6 +315,32 @@ namespace clog.TraceEmitterModules
 
             var instrumentation = assembly["instrumentation"];
             var rootEvents = instrumentation["events"];
+
+            var stringEvents = assembly["localization"];
+            foreach (var culture in stringEvents.ChildNodes)
+            {
+                if (!(culture is XmlElement))
+                {
+                    continue;
+                }
+
+                XmlElement pe = (XmlElement)culture;
+                if (pe.Name == "resources")
+                {
+                    if (!pe.HasAttribute("culture"))
+                    {
+                        continue;
+                    }
+
+                    string attr = pe.GetAttribute("culture");
+
+                    if (!attr.Equals("en-US"))
+                        continue;
+
+                    XmlElement stringTable = pe["stringTable"];
+                    _stringTable = stringTable;
+                }
+            }
 
             foreach (var p in rootEvents.ChildNodes)
             {
@@ -381,10 +438,14 @@ namespace clog.TraceEmitterModules
             foreach (var a2 in traceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a2;
+
+                if (!arg.TypeNode.IsEncodableArg)
+                    continue;
+
                 CLogEncodingCLogTypeSearch node = traceLine.configFile.FindType(arg, traceLine);
                 TemplateNode templateNode = new TemplateNode();
                 templateNode.ArgBundle = a2;
-                templateNode.Name = a2.MacroVariableName;
+                templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
 
                 switch (node.EncodingType)
                 {
@@ -458,8 +519,8 @@ namespace clog.TraceEmitterModules
 
                             templateNode = new TemplateNode();
                             templateNode.ArgBundle = a2;
-                            templateNode.Name = a2.MacroVariableName;
-                            templateNode.LengthOfSelf = arg.MacroVariableName + "_len";
+                            templateNode.Name = a2.VariableInfo.SuggestedTelemetryName;
+                            templateNode.LengthOfSelf = arg.VariableInfo.SuggestedTelemetryName + "_len";
                             templateNode.Type = "win:Binary";
                             templateNode.Hash = "binary_";
                         }
@@ -603,7 +664,7 @@ namespace clog.TraceEmitterModules
 
                 TemplateNode templateReference = listofArgsAsSpecifiedBySourceFile[argIdx];
 
-                argLookup[templateReference.ArgBundle.MacroVariableName] = name;
+                argLookup[templateReference.ArgBundle.VariableInfo.SuggestedTelemetryName] = name;
 
                 if (templateReference.Type != inType)
                 {
@@ -629,7 +690,7 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Source Line:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, CLogConsoleTrace.GetFileLine(traceLine.match));
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, traceLine.match.MatchedRegEx.ToString());
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, traceLine.match.MatchedRegExX.ToString());
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");

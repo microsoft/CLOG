@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -33,6 +33,17 @@ namespace clogutils
 
         [JsonProperty]
         public bool Synthesized { get; set; }
+
+
+        public bool IsEncodableArg
+        {
+            get
+            {
+                return !Synthesized &&
+                        (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
+                        EncodingType != CLogEncodingType.UserEncodingString);
+            }
+        }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public HashSet<string> UsedBySourceFile { get; set; } = new HashSet<string>();

@@ -1,11 +1,11 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
 
 Abstract:
 
-    In some cases the human display of a CLOG event will require a type with custom formatting - 
+    In some cases the human display of a CLOG event will require a type with custom formatting -
     for example, perhaps a BYTEARRAY needs to be printed in a special way
 
     This class allows embedded C# to be include within a sidecar, and compiled on demand to do this formating
@@ -49,7 +49,7 @@ namespace clog2text_lttng
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
 
-        internal void PrepareAssemblyCompileIfNecessary()
+        public void PrepareAssemblyCompileIfNecessary()
         {
             if (null != _codeAssembly)
                 return;
@@ -60,10 +60,10 @@ namespace clog2text_lttng
             var refPaths = new[] { typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll") };
             MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
 
-            Compilation compilation = CSharpCompilation.Create(
+            CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 new[] { syntaxTree },
-                null,
+                references,
                 new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
 
             compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
@@ -96,15 +96,6 @@ namespace clog2text_lttng
         public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
             //
-            // Skip custom type decode if there is no decoder loaded
-            //
-            if (CustomTypeDecoder == null)
-            {
-                decodedValue = "";
-                return true;
-            }
-
-            //
             // Compiling also caches the assembly
             //
             PrepareAssemblyCompileIfNecessary();
@@ -126,6 +117,17 @@ namespace clog2text_lttng
                     break;
 
                 case CLogEncodingType.ByteArray:
+                case CLogEncodingType.UInt64Array:
+                case CLogEncodingType.Int32Array:
+                case CLogEncodingType.UInt32Array:
+                case CLogEncodingType.Int64Array:
+                case CLogEncodingType.ANSI_StringArray:
+                case CLogEncodingType.UNICODE_StringArray:
+                case CLogEncodingType.PointerArray:
+                case CLogEncodingType.GUIDArray:
+                case CLogEncodingType.Int16Array:
+                case CLogEncodingType.UInt16Array:
+                case CLogEncodingType.Int8Array:
                     args[0] = value.AsBinary;
                     break;
 

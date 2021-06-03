@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,18 +13,20 @@ namespace syslog2clog
     public class SysLogToClog : ICLogFullyDecodedLineCallbackInterface
     {
         private bool skip;
-        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, StringBuilder results)
+        private HashSet<string> takenIds = new HashSet<string>();
+
+        public void TraceLineDiscovered(CLogDecodedTraceLine decodedTraceLine, CLogOutputInfo outputInfo, StringBuilder results)
         {
             Dictionary<int, string> map = new Dictionary<int, string>();
             int idx = 1;
 
             if (skip)
             {
-                results.Append(decodedTraceLine.match.MatchedRegEx.ToString());
+                results.Append(decodedTraceLine.match.MatchedRegExX.ToString());
                 return;
             }
 
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, decodedTraceLine.match.MatchedRegEx.ToString());
+            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, decodedTraceLine.match.MatchedRegExX.ToString());
             int c = -1;
             try
             {
@@ -39,13 +41,25 @@ namespace syslog2clog
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"{idx}. <skip the reset in this file and save");
 
-                    string choice = Console.ReadLine();
-                    c = Convert.ToInt32(choice);
+
+                    string choice = null;
+                    while (String.IsNullOrEmpty(choice))
+                    {
+                        try
+                        {
+                            choice = Console.ReadLine();
+                            c = Convert.ToInt32(choice);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("try again please");
+                        }
+                    }
 
                     if (c == idx)
                     {
                         skip = true;
-                        results.Append(decodedTraceLine.match.MatchedRegEx.ToString());
+                        results.Append(decodedTraceLine.match.MatchedRegExX.ToString());
                         return;
                     }
 
@@ -61,13 +75,21 @@ namespace syslog2clog
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "UNIQUE ID");
             string id = Console.ReadLine().Trim().ToUpper();
 
+            while (takenIds.Contains(id))
+            {
+                Console.WriteLine("ID is taken please use a unique ID");
+                id = Console.ReadLine().Trim().ToUpper();
+            }
+            takenIds.Add(id);
+
             results.Append($"{map[c]}(");
             results.Append("" + id);
             results.Append($", \"{decodedTraceLine.TraceString}\"");
 
-            foreach (var arg in decodedTraceLine.splitArgs)
+            for (int i = 2; i < decodedTraceLine.splitArgs.Length; ++i)
             {
-                results.Append($", {arg.UserSuppliedTrimmed}");
+                var arg = decodedTraceLine.splitArgs[i];
+                results.Append($", {arg.VariableInfo.UserSuppliedTrimmed}");
             }
             results.Append(");");
         }
@@ -112,7 +134,7 @@ namespace syslog2clog
                             if (null == sidecar)
                                 sidecar = new CLogSidecar();
                         }
-                        sidecar.ConfigFile = configFile;
+                        sidecar.SetConfigFile(configFile);
 
 
                         string outputCFile = Path.Combine(Path.GetDirectoryName(options.OutputFile),
@@ -139,7 +161,8 @@ namespace syslog2clog
                         // fullyDecodedMacroEmitter.AddClogModule(converter);
 
                         string content = File.ReadAllText(options.InputFile);
-                        string output = processor.ConvertFile(configFile, converter, content, options.InputFile, true);
+                        // CLogOutputInfo outputInfo = null;
+                        string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
 
                         // fullyDecodedMacroEmitter.FinishedProcessing();
 

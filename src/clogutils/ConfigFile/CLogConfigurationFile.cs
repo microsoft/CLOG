@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -12,6 +12,7 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -85,6 +86,14 @@ namespace clogutils.ConfigFile
             set;
         }
 
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(20)]
+        public int MaximumVariableLength
+        {
+            get;
+            set;
+        }
+
         [JsonProperty]
         public CLogTypeEncoder TypeEncoders
         {
@@ -123,6 +132,18 @@ namespace clogutils.ConfigFile
             get;
             set;
         } = false;
+
+        [JsonProperty]
+        public bool EmitCFiles
+        {
+            get;
+            set;
+        } = true;
+
+        public bool ShouldSerializeEmitCFiles()
+        {
+            return EmitCFiles == false;
+        }
 
 
         private bool _SerializeChainConfiguration = false;
@@ -254,7 +275,7 @@ namespace clogutils.ConfigFile
             foreach (var config in ChainedConfigurations)
             {
                 tempIndex = index;
-                if (null != (ret = config.TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+                if (null != (ret = config.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
                 {
                     InUseTypeEncoders.AddType(ret);
                     index = tempIndex;

@@ -1,4 +1,4 @@
-﻿/*++
+/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -29,7 +29,14 @@ namespace clogutils.MacroDefinations
 
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> CustomSettings { get; set; }
 
+        [JsonProperty] public bool ClassFunctionEncoding { get; set; }
+
         public string ConfigFileWithMacroDefination { get; set; }
+
+        public bool ShouldSerializeClassFunctionEncoding()
+        {
+            return (true == ClassFunctionEncoding);
+        }
 
         [DefaultValue(CLogUniqueIDEncoder.Basic)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
