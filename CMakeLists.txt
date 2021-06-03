@@ -79,5 +79,10 @@ endfunction()
 
 add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
-add_subdirectory(src/clog2text/clog2text_lttng)
-add_subdirectory(src/clog2text/clog2text_windows)
+
+if (WIN32)
+    add_subdirectory(src/clog2text/clog2text_windows)
+elseif (APPLE)
+elseif (UNIX)
+    add_subdirectory(src/clog2text/clog2text_lttng)
+endif()
