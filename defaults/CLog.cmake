@@ -36,8 +36,6 @@ function(CLOG_GENERATE_TARGET)
             set(ARG_CLOG_DYNAMIC_TRACEPOINT "--dynamicTracepointProvider")
         endif()
 
-        message(STATUS ${CLOG_EXE})
-
         add_custom_command(
             OUTPUT ${ARG_CLOG_FILE} ${ARG_CLOG_C_FILE}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}

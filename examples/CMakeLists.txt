@@ -6,8 +6,6 @@ add_subdirectory(.. buildclog)
 LIST(APPEND CMAKE_PROGRAM_PATH  "${PROJECT_BINARY_DIR}/buildclog/artifacts")
 set(CLOG_EXE  "${PROJECT_BINARY_DIR}/buildclog/artifacts/clog")
 
-message(STATUS ${CLOG_EXE})
-
 set(CMAKE_CLOG_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bld/clog)
 set(CMAKE_CLOG_SIDECAR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 set(CLOG_INCLUDE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../defaults)
