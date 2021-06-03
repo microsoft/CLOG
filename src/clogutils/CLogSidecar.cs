@@ -62,7 +62,7 @@ namespace clogutils
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class ClogSidecar_V2 
+    public class ClogSidecar_V2
     {
         [JsonProperty] public int Version { get; set; }
 
@@ -100,7 +100,7 @@ namespace clogutils
 
             ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
 
-            if(1 == ret.Version)
+            if (1 == ret.Version)
             {
                 ClogSidecar_V1 v1 = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
                 ret = new ClogSidecar_V2();

@@ -43,7 +43,7 @@ namespace clogutils
             string inspectToken;
 
 
-            if(!inspect.ClassFunctionEncoding)
+            if (!inspect.ClassFunctionEncoding)
                 inspectToken = inspect.MacroName + "\\s*" + @"\((?<args>.*?)\);";
             else
                 inspectToken = inspect.MacroName + "\\.(?<methodname>[A-Za-z0-9_-]*)" + @"\((?<args>.*?)\);";
@@ -65,7 +65,7 @@ namespace clogutils
 
                     splitArgs = new List<string>(SplitWithEscapedQuotes(args, ','));
 
-                    if(inspect.EncodedArgNumber >= splitArgs.Count)
+                    if (inspect.EncodedArgNumber >= splitArgs.Count)
                     {
                         throw new CLogHandledException("EncodedArgNumberTooLarge", CLogHandledException.ExceptionType.EncodedArgNumberInvalid, null);
                     }
@@ -217,7 +217,7 @@ namespace clogutils
                         while (',' != argString[i])
                         {
                             // If we find a closing brace or a space before finding the comma, it's a parsing error
-                            if('}' == argString[i] || ' ' == argString[i])
+                            if ('}' == argString[i] || ' ' == argString[i])
                             {
                                 throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
                             }
@@ -361,7 +361,7 @@ namespace clogutils
                         var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
 
                         // If a preferred name was found in the format string, use that
-                        if(!String.IsNullOrEmpty(item.PreferredName))
+                        if (!String.IsNullOrEmpty(item.PreferredName))
                         {
                             // Check to see if their preferred name is valid
                             bool hasBadChars = false;
@@ -373,7 +373,7 @@ namespace clogutils
                                 }
                             }
 
-                            if(item.PreferredName.Length > configFile.MaximumVariableLength || hasBadChars)
+                            if (item.PreferredName.Length > configFile.MaximumVariableLength || hasBadChars)
                             {
                                 Console.WriteLine($"WARNING: {item.PreferredName} contains invalid characters (must be <= {configFile.MaximumVariableLength} characters and containing only alphanumeric plus underscore, using {info.SuggestedTelemetryName} instead");
                             }
@@ -552,12 +552,12 @@ namespace clogutils
                 //    only serialize the EventVariableName if it's set and if its
                 //    different from the MacroVariableName
                 //
-                if(null == MacroVariableName)
+                if (null == MacroVariableName)
                     return true;
                 if (null == EventVariableName)
                     return false;
 
-                return !MacroVariableName.Equals(EventVariableName);;
+                return !MacroVariableName.Equals(EventVariableName); ;
             }
 
             public CLogEncodingCLogTypeSearch TypeNode { get; set; }

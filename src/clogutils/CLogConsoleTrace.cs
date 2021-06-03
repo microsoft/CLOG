@@ -98,7 +98,7 @@ namespace clogutils
                     {
                         if (!String.IsNullOrEmpty(eventInfo.CPUId))
                         {
-                            toPrint.Append("["+eventInfo.CPUId+"]");
+                            toPrint.Append("[" + eventInfo.CPUId + "]");
                         }
 
                         toPrint.Append("[");
@@ -149,10 +149,11 @@ namespace clogutils
                     {
                         var arg = bundle.splitArgs[argIndex];
 
-                        while(null == arg.DefinationEncoding) {
+                        while (null == arg.DefinationEncoding)
+                        {
                             ++argIndex;
 
-                            if(argIndex > bundle.splitArgs.Length)
+                            if (argIndex > bundle.splitArgs.Length)
                                 throw new Exception("Unable to locate variable");
 
                             arg = bundle.splitArgs[argIndex];
@@ -168,10 +169,10 @@ namespace clogutils
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
                         IClogEventArg value = null;
 
-                        if (!valueBag.TryGetValue(arg.MacroVariableName, out  value))
+                        if (!valueBag.TryGetValue(arg.MacroVariableName, out value))
                             value = null;
 
-                        if(value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
+                        if (value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
                         {
                             toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
                         }

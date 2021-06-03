@@ -240,7 +240,7 @@ namespace clog.TraceEmitterModules
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"Manifested ETW Keywords not specified;  if you desire a Keyword, add 'Keywords' to CustomSettings in {decodedTraceLine.configFile.FilePath}");
 
 
- 
+
 
             //
             // Construct the function signature
@@ -317,7 +317,7 @@ namespace clog.TraceEmitterModules
             var rootEvents = instrumentation["events"];
 
             var stringEvents = assembly["localization"];
-            foreach(var culture in stringEvents.ChildNodes)
+            foreach (var culture in stringEvents.ChildNodes)
             {
                 if (!(culture is XmlElement))
                 {
@@ -325,9 +325,9 @@ namespace clog.TraceEmitterModules
                 }
 
                 XmlElement pe = (XmlElement)culture;
-                if(pe.Name == "resources")
+                if (pe.Name == "resources")
                 {
-                    if(!pe.HasAttribute("culture"))
+                    if (!pe.HasAttribute("culture"))
                     {
                         continue;
                     }
@@ -672,7 +672,7 @@ namespace clog.TraceEmitterModules
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch - overwriting due to developer mode");
                         _dirty = true;
-                        return DiscoverOrCreateTemplate(traceLine, sidecar, providerId, null, eventId);                        
+                        return DiscoverOrCreateTemplate(traceLine, sidecar, providerId, null, eventId);
                     }
 
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Template Argument Type Mismatch: ");
