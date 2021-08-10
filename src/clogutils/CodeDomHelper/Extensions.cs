@@ -12,9 +12,9 @@ namespace Roslyn.CodeDom
         compilation.WithReferenceAssemblies(targetFramework.ToReferenceAssemblyKind());
 
         public static ReferenceAssemblyKind ToReferenceAssemblyKind(this TargetFramework targetFramework) => targetFramework switch
-    {
-        TargetFramework.NetStandard20 => ReferenceAssemblyKind.NetStandard20,
-                                      _ => throw new Exception($"Invalid target framework {targetFramework}")
+        {
+            TargetFramework.NetStandard20 => ReferenceAssemblyKind.NetStandard20,
+            _ => throw new Exception($"Invalid target framework {targetFramework}")
         };
 
     }

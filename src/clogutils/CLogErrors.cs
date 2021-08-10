@@ -15,7 +15,7 @@ namespace clogutils
     {
         public static void PrintMatchDiagnostic(CLogLineMatch traceLineMatch)
         {
-            if(null == traceLineMatch)
+            if (null == traceLineMatch)
             {
                 return;
             }

@@ -20,7 +20,7 @@ namespace syslog2clog
             Dictionary<int, string> map = new Dictionary<int, string>();
             int idx = 1;
 
-            if(skip)
+            if (skip)
             {
                 results.Append(decodedTraceLine.match.MatchedRegExX.ToString());
                 return;
@@ -31,9 +31,9 @@ namespace syslog2clog
 
             try
             {
-                for(; ;)
+                for (; ; )
                 {
-                    foreach(var m in decodedTraceLine.configFile.AllKnownMacros())
+                    foreach (var m in decodedTraceLine.configFile.AllKnownMacros())
                     {
                         map[idx] = m.MacroName;
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"{idx}. {m.MacroName}");
@@ -45,20 +45,20 @@ namespace syslog2clog
 
                     string choice = null;
 
-                    while(String.IsNullOrEmpty(choice))
+                    while (String.IsNullOrEmpty(choice))
                     {
                         try
                         {
                             choice = Console.ReadLine();
                             c = Convert.ToInt32(choice);
                         }
-                        catch(Exception)
+                        catch (Exception)
                         {
                             Console.WriteLine("try again please");
                         }
                     }
 
-                    if(c == idx)
+                    if (c == idx)
                     {
                         skip = true;
                         results.Append(decodedTraceLine.match.MatchedRegExX.ToString());
@@ -68,7 +68,7 @@ namespace syslog2clog
                     break;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "ERROR : invalid input");
             }
@@ -77,7 +77,7 @@ namespace syslog2clog
             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "UNIQUE ID");
             string id = Console.ReadLine().Trim().ToUpper();
 
-            while(takenIds.Contains(id))
+            while (takenIds.Contains(id))
             {
                 Console.WriteLine("ID is taken please use a unique ID");
                 id = Console.ReadLine().Trim().ToUpper();
@@ -89,7 +89,7 @@ namespace syslog2clog
             results.Append("" + id);
             results.Append($", \"{decodedTraceLine.TraceString}\"");
 
-            for(int i = 2; i < decodedTraceLine.splitArgs.Length; ++i)
+            for (int i = 2; i < decodedTraceLine.splitArgs.Length; ++i)
             {
                 var arg = decodedTraceLine.splitArgs[i];
                 results.Append($", {arg.VariableInfo.UserSuppliedTrimmed}");
@@ -114,7 +114,7 @@ namespace syslog2clog
                     // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
                     //    this secondary check looks for those and errors out if present
                     //
-                    if(!options.IsValid())
+                    if (!options.IsValid())
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
                         return -1;
@@ -125,12 +125,12 @@ namespace syslog2clog
 
                     CLogSidecar sidecar;
 
-                    if(!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
+                    if (!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
                     }
 
-                    if(!File.Exists(options.SidecarFile))
+                    if (!File.Exists(options.SidecarFile))
                     {
                         sidecar = new CLogSidecar();
                     }
@@ -139,7 +139,7 @@ namespace syslog2clog
                         string json = File.ReadAllText(options.SidecarFile);
                         sidecar = CLogSidecar.FromJson(json);
 
-                        if(null == sidecar)
+                        if (null == sidecar)
                         {
                             sidecar = new CLogSidecar();
                         }
@@ -177,7 +177,7 @@ namespace syslog2clog
 
                     // fullyDecodedMacroEmitter.FinishedProcessing();
 
-                    if(!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
+                    if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));
                     }
@@ -185,7 +185,7 @@ namespace syslog2clog
 
                     File.WriteAllText(options.InputFile, output);
                 }
-                catch(CLogHandledException e)
+                catch (CLogHandledException e)
                 {
                     e.PrintDiagnostics();
                     return -2;

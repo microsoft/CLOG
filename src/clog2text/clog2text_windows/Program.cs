@@ -37,7 +37,7 @@ namespace clog2text_windows
 
                 TextReader file = Console.In;
 
-                if(!File.Exists(options.ETLFile))
+                if (!File.Exists(options.ETLFile))
                 {
                     TraceLine(TraceType.Err, $"ETL File {options.ETLFile} doesnt exist");
                     return -1;
@@ -45,7 +45,7 @@ namespace clog2text_windows
 
                 StreamWriter outputfile = null;
 
-                if(!String.IsNullOrEmpty(options.OutputFile))
+                if (!String.IsNullOrEmpty(options.OutputFile))
                 {
                     outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
                 }
@@ -54,19 +54,19 @@ namespace clog2text_windows
                 {
                     TraceProcessorSettings traceSettings = new TraceProcessorSettings { AllowLostEvents = true, AllowTimeInversion = true };
 
-                    using(ITraceProcessor etwfile = TraceProcessor.Create(options.ETLFile, traceSettings))
+                    using (ITraceProcessor etwfile = TraceProcessor.Create(options.ETLFile, traceSettings))
                     {
                         HashSet<Guid> ids = new HashSet<Guid>();
 
-                        foreach(var m in sidecar.EventBundlesV2)
+                        foreach (var m in sidecar.EventBundlesV2)
                         {
-                            foreach(var prop in m.Value.ModuleProperites)
+                            foreach (var prop in m.Value.ModuleProperites)
                             {
-                                if(prop.Key.Equals("MANIFESTED_ETW"))
+                                if (prop.Key.Equals("MANIFESTED_ETW"))
                                 {
                                     ids.Add(new Guid(prop.Value["ETW_Provider"]));
                                 }
-                                else if(prop.Key.Equals("TRACELOGGING"))
+                                else if (prop.Key.Equals("TRACELOGGING"))
                                 {
                                     ids.Add(new Guid(prop.Value["ETW_Provider"]));
                                 }
@@ -76,7 +76,7 @@ namespace clog2text_windows
                         var events = etwfile.UseGenericEvents(ids.ToArray());
                         etwfile.Process();
 
-                        foreach(var e in events.Result.Events)
+                        foreach (var e in events.Result.Events)
                         {
                             string line = "";
 
@@ -85,14 +85,14 @@ namespace clog2text_windows
                                 Dictionary<string, IClogEventArg> fixedUpArgs = new Dictionary<string, IClogEventArg>();
                                 string errorString = "ERROR";
 
-                                if(null == e.Fields)
+                                if (null == e.Fields)
                                 {
                                     continue;
                                 }
 
                                 Dictionary<string, IClogEventArg> args = new Dictionary<string, IClogEventArg>();
 
-                                foreach(var f in e.Fields)
+                                foreach (var f in e.Fields)
                                 {
                                     args[f.Name] = new ManifestedETWEvent(f);
                                 }
@@ -100,27 +100,27 @@ namespace clog2text_windows
                                 CLogDecodedTraceLine bundle = null;
                                 int eidAsInt = -1;
 
-                                foreach(var b in sidecar.EventBundlesV2)
+                                foreach (var b in sidecar.EventBundlesV2)
                                 {
                                     Dictionary<string, string> keys;
 
-                                    if(!e.IsTraceLogging)
+                                    if (!e.IsTraceLogging)
                                     {
-                                        if(!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
+                                        if (!b.Value.ModuleProperites.TryGetValue("MANIFESTED_ETW", out keys))
                                         {
                                             continue;
                                         }
 
                                         string eid;
 
-                                        if(!keys.TryGetValue("EventID", out eid))
+                                        if (!keys.TryGetValue("EventID", out eid))
                                         {
                                             continue;
                                         }
 
                                         eidAsInt = Convert.ToInt32(eid);
 
-                                        if(eidAsInt == e.Id)
+                                        if (eidAsInt == e.Id)
                                         {
                                             bundle = b.Value;
                                             errorString = "ERROR:" + eidAsInt;
@@ -129,7 +129,7 @@ namespace clog2text_windows
                                     }
                                     else
                                     {
-                                        if(e.ActivityName.Equals(b.Key))
+                                        if (e.ActivityName.Equals(b.Key))
                                         {
                                             bundle = b.Value;
                                             errorString = "ERROR:" + b.Key;
@@ -138,18 +138,18 @@ namespace clog2text_windows
                                     }
                                 }
 
-                                if(null == bundle)
+                                if (null == bundle)
                                 {
                                     continue;
                                 }
 
                                 Dictionary<string, string> argMap;
 
-                                if(e.IsTraceLogging)
+                                if (e.IsTraceLogging)
                                 {
                                     argMap = new Dictionary<string, string>();
 
-                                    foreach(var arg in args)
+                                    foreach (var arg in args)
                                     {
                                         argMap[arg.Key] = arg.Key;
                                     }
@@ -161,7 +161,7 @@ namespace clog2text_windows
 
                                 var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out string clean);
 
-                                if(0 == types.Length)
+                                if (0 == types.Length)
                                 {
                                     errorString = bundle.TraceString;
                                     goto toPrint;
@@ -169,29 +169,29 @@ namespace clog2text_windows
 
                                 int argIndex = 0;
 
-                                foreach(var type in types)
+                                foreach (var type in types)
                                 {
                                     var arg = bundle.splitArgs[argIndex];
                                     CLogEncodingCLogTypeSearch node = sidecar.ConfigFile.FindType(arg);
 
-                                    switch(node.EncodingType)
+                                    switch (node.EncodingType)
                                     {
-                                    case CLogEncodingType.Synthesized:
-                                        continue;
+                                        case CLogEncodingType.Synthesized:
+                                            continue;
 
-                                    case CLogEncodingType.Skip:
-                                        continue;
+                                        case CLogEncodingType.Skip:
+                                            continue;
                                     }
 
                                     string lookupArgName = argMap[arg.MacroVariableName];
 
-                                    if(!args.ContainsKey(lookupArgName))
+                                    if (!args.ContainsKey(lookupArgName))
                                     {
                                         Console.WriteLine($"Argmap missing {lookupArgName}");
                                         throw new Exception("InvalidType : " + node.DefinationEncoding);
                                     }
 
-                                    if(0 != node.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
+                                    if (0 != node.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
                                     {
                                         Console.WriteLine("Invalid Types in Traceline");
                                         throw new Exception("InvalidType : " + node.DefinationEncoding);
@@ -201,7 +201,7 @@ namespace clog2text_windows
                                     ++argIndex;
                                 }
 
-                                toPrint:
+                            toPrint:
 
                                 EventInformation ei = new EventInformation();
                                 ei.Timestamp = e.Timestamp.DateTimeOffset;
@@ -209,25 +209,25 @@ namespace clog2text_windows
                                 ei.ThreadId = e.ThreadId.ToString("x");
                                 DecodeAndTraceToConsole(outputfile, bundle, errorString, sidecar.ConfigFile, fixedUpArgs, ei, options.ShowTimestamps, options.ShowCPUInfo);
                             }
-                            catch(Exception)
+                            catch (Exception)
                             {
                                 Console.WriteLine($"Invalid TraceLine : {line}");
                             }
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     CLogConsoleTrace.TraceLine(TraceType.Err, "ERROR : " + e);
 
-                    if(null != outputfile)
+                    if (null != outputfile)
                     {
                         outputfile.WriteLine("ERROR : " + e);
                     }
                 }
                 finally
                 {
-                    if(null != outputfile)
+                    if (null != outputfile)
                     {
                         outputfile.Flush();
                         outputfile.Close();
@@ -255,16 +255,16 @@ namespace clog2text_windows
             {
                 get
                 {
-                    switch(_event.Type)
+                    switch (_event.Type)
                     {
-                    case GenericEventFieldType.ByteList:
-                        return _event.AsByteList.ToArray();
+                        case GenericEventFieldType.ByteList:
+                            return _event.AsByteList.ToArray();
 
-                    case GenericEventFieldType.Binary:
-                        return _event.AsBinary.ToArray();
+                        case GenericEventFieldType.Binary:
+                            return _event.AsBinary.ToArray();
 
-                    default:
-                        throw new InvalidDataException("Invalid ETW Encoding : " + _event.Type);
+                        default:
+                            throw new InvalidDataException("Invalid ETW Encoding : " + _event.Type);
                     }
                 }
             }
@@ -273,16 +273,16 @@ namespace clog2text_windows
             {
                 get
                 {
-                    switch(_event.Type)
+                    switch (_event.Type)
                     {
-                    case GenericEventFieldType.UInt64:
-                        return _event.AsUInt64;
+                        case GenericEventFieldType.UInt64:
+                            return _event.AsUInt64;
 
-                    case GenericEventFieldType.Address:
-                        return (ulong)_event.AsAddress.Value;
+                        case GenericEventFieldType.Address:
+                            return (ulong)_event.AsAddress.Value;
 
-                    default:
-                        throw new InvalidDataException("InvalidTypeForPointer:" + _event.Type);
+                        default:
+                            throw new InvalidDataException("InvalidTypeForPointer:" + _event.Type);
                     }
                 }
             }

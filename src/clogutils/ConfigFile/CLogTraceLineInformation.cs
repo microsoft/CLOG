@@ -17,13 +17,15 @@ namespace clogutils.ConfigFile
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceLineInformation
     {
-        [JsonProperty] public Guid UniquenessHash
+        [JsonProperty]
+        public Guid UniquenessHash
         {
             get;
             set;
         }
 
-        [JsonProperty] public string TraceID
+        [JsonProperty]
+        public string TraceID
         {
             get;
             set;
@@ -52,13 +54,15 @@ namespace clogutils.ConfigFile
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceLineInformation_V2
     {
-        [JsonProperty] public Guid UniquenessHash
+        [JsonProperty]
+        public Guid UniquenessHash
         {
             get;
             set;
         }
 
-        [JsonProperty] public string TraceID
+        [JsonProperty]
+        public string TraceID
         {
             get;
             set;

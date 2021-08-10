@@ -83,9 +83,9 @@ namespace clogutils
         {
             List<CLogFileProcessor.CLogVariableBundle> tArgs = new List<CLogFileProcessor.CLogVariableBundle>();
 
-            foreach(var a in splitArgs)
+            foreach (var a in splitArgs)
             {
-                if(!string.IsNullOrEmpty(a.DefinationEncoding))
+                if (!string.IsNullOrEmpty(a.DefinationEncoding))
                 {
                     tArgs.Add(a);
                 }
@@ -115,7 +115,7 @@ namespace clogutils
         {
             get
             {
-                if(null != macro && !string.IsNullOrEmpty(macro.MacroName))
+                if (null != macro && !string.IsNullOrEmpty(macro.MacroName))
                 {
                     return macro.MacroName;
                 }
@@ -138,9 +138,9 @@ namespace clogutils
         {
             string ret;
 
-            if(null != macro.CustomSettings && macro.CustomSettings.ContainsKey(moduleName))
+            if (null != macro.CustomSettings && macro.CustomSettings.ContainsKey(moduleName))
             {
-                if(macro.CustomSettings[moduleName].TryGetValue(key, out ret))
+                if (macro.CustomSettings[moduleName].TryGetValue(key, out ret))
                 {
                     return ret;
                 }
@@ -148,7 +148,7 @@ namespace clogutils
 
             CLogExportModuleDefination moduleSettings = GetMacroConfigurationProfile().FindExportModule(moduleName);
 
-            if(null == moduleSettings || !moduleSettings.CustomSettings.ContainsKey("Priority"))
+            if (null == moduleSettings || !moduleSettings.CustomSettings.ContainsKey("Priority"))
             {
                 throw new CLogEnterReadOnlyModeException("Priority", CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
             }
@@ -174,12 +174,12 @@ namespace clogutils
             string oldValue = GetConfigFileProperty(module, key);
 
             // If we already have this value, dont set it (we dont want to dirty the config file)
-            if(value.Equals(oldValue))
+            if (value.Equals(oldValue))
             {
                 return;
             }
 
-            if(!ModuleProperites.ContainsKey(module))
+            if (!ModuleProperites.ContainsKey(module))
             {
                 ModuleProperites[module] = new Dictionary<string, string>();
             }
@@ -189,12 +189,12 @@ namespace clogutils
 
         public string GetConfigFileProperty(string module, string key)
         {
-            if(!ModuleProperites.ContainsKey(module))
+            if (!ModuleProperites.ContainsKey(module))
             {
                 return null;
             }
 
-            if(!ModuleProperites[module].ContainsKey(key))
+            if (!ModuleProperites[module].ContainsKey(key))
             {
                 return null;
             }

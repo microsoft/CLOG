@@ -40,12 +40,12 @@ namespace clogutils
 
         private static void Flatten(CLogTypeSearchNode node, List<CLogEncodingCLogTypeSearch> ret)
         {
-            if(null != node.UserNode)
+            if (null != node.UserNode)
             {
                 ret.Add(node.UserNode);
             }
 
-            foreach(var n in node.Nodes)
+            foreach (var n in node.Nodes)
             {
                 Flatten(n.Value, ret);
             }

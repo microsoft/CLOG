@@ -54,7 +54,7 @@ namespace clogutils
 
         public CLogLineMatch(string sourcefile, Match m, string uniqueId, string encodingString, string allArgs, string[] args)
         {
-            if(string.IsNullOrEmpty(sourcefile))
+            if (string.IsNullOrEmpty(sourcefile))
             {
                 throw new ArgumentException();
             }

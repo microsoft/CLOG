@@ -113,7 +113,7 @@ namespace clogutils
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if(null == UsedBySourceFile)
+            if (null == UsedBySourceFile)
             {
                 UsedBySourceFile = new HashSet<string>();
             }

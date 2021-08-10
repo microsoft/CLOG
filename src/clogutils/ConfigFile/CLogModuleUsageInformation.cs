@@ -19,7 +19,8 @@ namespace clogutils.ConfigFile
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogModuleUsageInformation_V1
     {
-        [JsonProperty] public List<CLogTraceLineInformation> TraceInformation
+        [JsonProperty]
+        public List<CLogTraceLineInformation> TraceInformation
         {
             get;
             set;
@@ -29,7 +30,8 @@ namespace clogutils.ConfigFile
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogModuleUsageInformation_V2
     {
-        [JsonProperty] public List<CLogTraceLineInformation_V2> TraceInformation
+        [JsonProperty]
+        public List<CLogTraceLineInformation_V2> TraceInformation
         {
             get;
             set;
@@ -39,7 +41,7 @@ namespace clogutils.ConfigFile
         {
             CLogModuleUsageInformation_V2 ret = new CLogModuleUsageInformation_V2();
 
-            foreach(var trace in v1.TraceInformation)
+            foreach (var trace in v1.TraceInformation)
             {
                 ret.TraceInformation.Add(CLogTraceLineInformation_V2.ConvertFromV1(trace));
             }
@@ -66,7 +68,7 @@ namespace clogutils.ConfigFile
             existingTraceInformation = _me.TraceInformation
                                        .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
-            if(null == existingTraceInformation)
+            if (null == existingTraceInformation)
             {
                 return true;
             }
@@ -74,7 +76,7 @@ namespace clogutils.ConfigFile
             string asString;
             Guid hash = GenerateUniquenessHash(module, traceLine, out asString);
 
-            if(hash != existingTraceInformation.UniquenessHash)
+            if (hash != existingTraceInformation.UniquenessHash)
             {
                 return false;
             }
@@ -88,9 +90,9 @@ namespace clogutils.ConfigFile
                           decodedTraceLine.TraceString + "|";
 
 
-            foreach(var arg in decodedTraceLine.splitArgs)
+            foreach (var arg in decodedTraceLine.splitArgs)
             {
-                if(arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
+                if (arg.TypeNode.EncodingType == CLogEncodingType.UserEncodingString || arg.TypeNode.EncodingType == CLogEncodingType.UniqueAndDurableIdentifier)
                 {
                     continue;
                 }
@@ -109,7 +111,7 @@ namespace clogutils.ConfigFile
             CLogTraceLineInformation_V2 info = _me.TraceInformation
                                                .Where(x => x.TraceID.Equals(traceLine.UniqueId)).FirstOrDefault();
 
-            if(null == info)
+            if (null == info)
             {
                 info = new CLogTraceLineInformation_V2();
                 info.Unsaved = true;
@@ -121,7 +123,7 @@ namespace clogutils.ConfigFile
                 _me.TraceInformation.Add(info);
             }
 
-            if(info.UniquenessHash != hash)
+            if (info.UniquenessHash != hash)
             {
                 throw new CLogEnterReadOnlyModeException("DuplicateID", CLogHandledException.ExceptionType.DuplicateId, traceLine.match);
             }

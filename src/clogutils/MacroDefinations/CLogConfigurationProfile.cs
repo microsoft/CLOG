@@ -21,7 +21,8 @@ namespace clogutils.MacroDefinations
         [JsonProperty]
         public List<CLogExportModuleDefination> Modules = new List<CLogExportModuleDefination>();
 
-        [JsonProperty] public bool SkipProcessing
+        [JsonProperty]
+        public bool SkipProcessing
         {
             get;
             set;
@@ -41,7 +42,7 @@ namespace clogutils.MacroDefinations
             {
                 List<string> ret = new List<string>();
 
-                foreach(var mod in Modules)
+                foreach (var mod in Modules)
                 {
                     ret.Add(mod.ExportModule);
                 }

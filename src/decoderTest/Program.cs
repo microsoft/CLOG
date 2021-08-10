@@ -15,7 +15,7 @@ namespace decoderTest
     {
         private static void VerifyConversion(string expected, string actual)
         {
-            if(!expected.Equals(actual))
+            if (!expected.Equals(actual))
             {
                 Console.WriteLine($"Conversion failed : {expected} != {actual}");
             }

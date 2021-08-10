@@ -22,7 +22,8 @@ namespace clogutils
     [JsonObject(MemberSerialization.OptIn)]
     public class ClogSidecar_V1
     {
-        [JsonProperty] public int Version
+        [JsonProperty]
+        public int Version
         {
             get;
             set;
@@ -35,7 +36,8 @@ namespace clogutils
             set;
         } = new Dictionary<string, CLogDecodedTraceLine>();
 
-        [JsonProperty] public CLogConfigurationFile ConfigFile
+        [JsonProperty]
+        public CLogConfigurationFile ConfigFile
         {
             get;
             set;
@@ -76,7 +78,8 @@ namespace clogutils
     [JsonObject(MemberSerialization.OptIn)]
     public class ClogSidecar_V2
     {
-        [JsonProperty] public int Version
+        [JsonProperty]
+        public int Version
         {
             get;
             set;
@@ -89,7 +92,8 @@ namespace clogutils
             set;
         } = new Dictionary<string, CLogDecodedTraceLine>();
 
-        [JsonProperty] public CLogConfigurationFile ConfigFile
+        [JsonProperty]
+        public CLogConfigurationFile ConfigFile
         {
             get;
             set;
@@ -124,7 +128,7 @@ namespace clogutils
 
             ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
 
-            if(1 == ret.Version)
+            if (1 == ret.Version)
             {
                 ClogSidecar_V1 v1 = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
                 ret = new ClogSidecar_V2();
@@ -205,7 +209,7 @@ namespace clogutils
         private List<string> ChangesList = new List<string>();
         public void PrintDirtyReasons()
         {
-            foreach(string s in ChangesList)
+            foreach (string s in ChangesList)
             {
                 CLogConsoleTrace.TraceLine(TraceType.Err, "Config Changed : " + s);
             }
@@ -214,7 +218,7 @@ namespace clogutils
         {
             CLogTraceLineInformation_V2 output;
 
-            if(_myUsageModuleInfo.IsUnique(module, traceLine, out output) && null != output)
+            if (_myUsageModuleInfo.IsUnique(module, traceLine, out output) && null != output)
             {
                 return;
             }
@@ -262,7 +266,7 @@ namespace clogutils
 
         public void Save(string fileName)
         {
-            if(string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 return;
             }
@@ -284,7 +288,7 @@ namespace clogutils
 
         public void SetTracelineMetadata(CLogDecodedTraceLine traceline, string module, Dictionary<string, string> values)
         {
-            if(!ModuleTraceData.ContainsKey(module))
+            if (!ModuleTraceData.ContainsKey(module))
             {
                 ModuleTraceData[module] = new Dictionary<string, Dictionary<string, string>>();
             }
@@ -294,12 +298,12 @@ namespace clogutils
 
         public Dictionary<string, string> GetTracelineMetadata(CLogDecodedTraceLine traceline, string module)
         {
-            if(!ModuleTraceData.ContainsKey(module))
+            if (!ModuleTraceData.ContainsKey(module))
             {
                 ModuleTraceData[module] = new Dictionary<string, Dictionary<string, string>>();
             }
 
-            if(!ModuleTraceData[module].ContainsKey(traceline.UniqueId))
+            if (!ModuleTraceData[module].ContainsKey(traceline.UniqueId))
             {
                 return null;
             }
@@ -311,29 +315,29 @@ namespace clogutils
             //
             // Merge in hot values
             //
-            foreach(var hot in HotEventBundles)
+            foreach (var hot in HotEventBundles)
             {
                 CLogDecodedTraceLine old;
 
-                if(_sideCarFile.EventBundlesV2.TryGetValue(hot.Key, out old))
+                if (_sideCarFile.EventBundlesV2.TryGetValue(hot.Key, out old))
                 {
-                    foreach(var x in hot.Value.ModuleProperites)
+                    foreach (var x in hot.Value.ModuleProperites)
                     {
-                        if(!old.ModuleProperites.ContainsKey(x.Key))
+                        if (!old.ModuleProperites.ContainsKey(x.Key))
                         {
                             old.ModuleProperites[x.Key] = x.Value;
                             AreDirty = true;
                         }
                         else
                         {
-                            foreach(var y in hot.Value.ModuleProperites[x.Key])
+                            foreach (var y in hot.Value.ModuleProperites[x.Key])
                             {
-                                if(!old.ModuleProperites[x.Key].ContainsKey(y.Key))
+                                if (!old.ModuleProperites[x.Key].ContainsKey(y.Key))
                                 {
                                     old.ModuleProperites[x.Key][y.Key] = y.Value;
                                     AreDirty = true;
                                 }
-                                else if(!old.ModuleProperites[x.Key][y.Key].Equals(y.Value))
+                                else if (!old.ModuleProperites[x.Key][y.Key].Equals(y.Value))
                                 {
                                     old.ModuleProperites[x.Key][y.Key] = y.Value;
                                     AreDirty = true;
@@ -370,7 +374,7 @@ namespace clogutils
         {
             string name = uid.Split(':')[1];
 
-            if(!_sideCarFile.EventBundlesV2.ContainsKey(name))
+            if (!_sideCarFile.EventBundlesV2.ContainsKey(name))
             {
                 return null;
             }

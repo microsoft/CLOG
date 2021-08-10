@@ -19,37 +19,43 @@ namespace clogutils.MacroDefinations
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceMacroDefination
     {
-        [JsonProperty] public string MacroName
+        [JsonProperty]
+        public string MacroName
         {
             get;
             set;
         }
 
-        [JsonProperty] public string EncodedPrefix
+        [JsonProperty]
+        public string EncodedPrefix
         {
             get;
             set;
         }
 
-        [JsonProperty] public virtual int EncodedArgNumber
+        [JsonProperty]
+        public virtual int EncodedArgNumber
         {
             get;
             set;
         }
 
-        [JsonProperty] public Dictionary<string, string> MacroConfiguration
+        [JsonProperty]
+        public Dictionary<string, string> MacroConfiguration
         {
             get;
             set;
         }
 
-        [JsonProperty] public Dictionary<string, Dictionary<string, string>> CustomSettings
+        [JsonProperty]
+        public Dictionary<string, Dictionary<string, string>> CustomSettings
         {
             get;
             set;
         }
 
-        [JsonProperty] public bool ClassFunctionEncoding
+        [JsonProperty]
+        public bool ClassFunctionEncoding
         {
             get;
             set;
@@ -83,48 +89,48 @@ namespace clogutils.MacroDefinations
         {
             id = null;
 
-            switch(UniqueIdEncoder)
+            switch (UniqueIdEncoder)
             {
-            case CLogUniqueIDEncoder.Basic:
-                idHash = Math.Abs(arg.GetHashCode());
-                id = arg;
-                break;
+                case CLogUniqueIDEncoder.Basic:
+                    idHash = Math.Abs(arg.GetHashCode());
+                    id = arg;
+                    break;
 
-            case CLogUniqueIDEncoder.StringAndNumerical:
-            {
-                int lastIdx = arg.LastIndexOf('_');
+                case CLogUniqueIDEncoder.StringAndNumerical:
+                    {
+                        int lastIdx = arg.LastIndexOf('_');
 
-                if(-1 == lastIdx)
-                    throw new CLogEnterReadOnlyModeException(
-                        "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
-                        CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
-                        m);
+                        if (-1 == lastIdx)
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                                CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
+                                m);
 
-                id = arg.Substring(0, lastIdx);
+                        id = arg.Substring(0, lastIdx);
 
-                if(string.IsNullOrEmpty(id))
-                {
-                    throw new CLogEnterReadOnlyModeException(
-                        "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
-                        CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
-                }
+                        if (string.IsNullOrEmpty(id))
+                        {
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID is not in the correct format, please follow the 'StringAndNumerical' format",
+                                CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
+                        }
 
-                try
-                {
-                    idHash = Convert.ToInt32(arg.Substring(lastIdx + 1));
-                }
-                catch(FormatException)
-                {
-                    throw new CLogEnterReadOnlyModeException(
-                        "Unique ID was located but is not in the correct format, please follow the 'StringAndNumerical' format",
-                        CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
-                        m);
-                }
-            }
-            break;
+                        try
+                        {
+                            idHash = Convert.ToInt32(arg.Substring(lastIdx + 1));
+                        }
+                        catch (FormatException)
+                        {
+                            throw new CLogEnterReadOnlyModeException(
+                                "Unique ID was located but is not in the correct format, please follow the 'StringAndNumerical' format",
+                                CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding,
+                                m);
+                        }
+                    }
+                    break;
 
-            default:
-                throw new CLogEnterReadOnlyModeException("Invalid ID Encoder", CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
+                default:
+                    throw new CLogEnterReadOnlyModeException("Invalid ID Encoder", CLogHandledException.ExceptionType.IncorrectStringAndNumericalEncoding, m);
             }
         }
 

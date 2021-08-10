@@ -158,7 +158,7 @@ namespace clogutils.ConfigFile
             {
                 _SerializeChainConfiguration = value;
 
-                if(value == true)
+                if (value == true)
                 {
                     CustomTypeClogCSharpFileContents = TypeEncoders.CustomCSharp;
                 }
@@ -167,7 +167,7 @@ namespace clogutils.ConfigFile
                     CustomTypeClogCSharpFileContents = null;
                 }
 
-                foreach(var c in ChainedConfigurations)
+                foreach (var c in ChainedConfigurations)
                 {
                     c.SerializeChainedConfigurations = value;
                 }
@@ -183,7 +183,7 @@ namespace clogutils.ConfigFile
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if(!String.IsNullOrEmpty(this.CustomTypeClogCSharpFileContents))
+            if (!String.IsNullOrEmpty(this.CustomTypeClogCSharpFileContents))
             {
                 this.TypeEncoders.InitCustomDecoder(this.CustomTypeClogCSharpFileContents);
             }
@@ -215,7 +215,7 @@ namespace clogutils.ConfigFile
         {
             bool dirty = AmIDirty;
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
                 dirty |= config.AreWeDirty();
             }
@@ -227,7 +227,7 @@ namespace clogutils.ConfigFile
         {
             bool dirty = MarkPhase;
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
                 dirty |= config.AreWeInMarkPhase();
             }
@@ -253,15 +253,15 @@ namespace clogutils.ConfigFile
 
         public bool DecodeUsingCustomDecoder(CLogEncodingCLogTypeSearch node, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
-            if(!TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
+            if (!TypeEncoders.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
             {
                 return false;
             }
 
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
-                if(!config.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
+                if (!config.DecodeUsingCustomDecoder(node, value, traceLine, out decodedValue))
                 {
                     return false;
                 }
@@ -276,18 +276,18 @@ namespace clogutils.ConfigFile
             int tempIndex = index;
             CLogEncodingCLogTypeSearch ret = null;
 
-            if(null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+            if (null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
             {
                 InUseTypeEncoders.AddType(ret);
                 index = tempIndex;
                 return ret;
             }
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
                 tempIndex = index;
 
-                if(null != (ret = config.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
+                if (null != (ret = config.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
                 {
                     InUseTypeEncoders.AddType(ret);
                     index = tempIndex;
@@ -302,11 +302,11 @@ namespace clogutils.ConfigFile
         {
             Dictionary<string, CLogTraceMacroDefination> ret = new Dictionary<string, CLogTraceMacroDefination>();
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
-                foreach(var def in config.AllKnownMacros())
+                foreach (var def in config.AllKnownMacros())
                 {
-                    if(ret.ContainsKey(def.MacroName))
+                    if (ret.ContainsKey(def.MacroName))
                     {
                         Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
                         throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
@@ -317,9 +317,9 @@ namespace clogutils.ConfigFile
                 }
             }
 
-            foreach(var def in SourceCodeMacros)
+            foreach (var def in SourceCodeMacros)
             {
-                if(ret.ContainsKey(def.MacroName))
+                if (ret.ContainsKey(def.MacroName))
                 {
                     Console.WriteLine($"Macro defined twice in chained config files {def.MacroName}");
                     throw new CLogEnterReadOnlyModeException("DuplicateMacro", CLogHandledException.ExceptionType.DuplicateMacro, null);
@@ -335,7 +335,7 @@ namespace clogutils.ConfigFile
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
         {
-            if(CustomTypeClogCSharpFileContents != null)
+            if (CustomTypeClogCSharpFileContents != null)
             {
                 CustomTypeClogCSharpFileContents = CustomTypeClogCSharpFileContents.Replace("\r\n", "\n");
             }
@@ -350,9 +350,9 @@ namespace clogutils.ConfigFile
             ret.FilePath = fileName;
             ret.ChainedConfigurations = new List<CLogConfigurationFile>();
 
-            if(!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
+            if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
-                if(ret.CustomTypeClogCSharpFile == EmbeddedDefaultName)
+                if (ret.CustomTypeClogCSharpFile == EmbeddedDefaultName)
                 {
                     ret.TypeEncoders.LoadDefaultCSharpFromEmbedded(ret);
                 }
@@ -369,9 +369,9 @@ namespace clogutils.ConfigFile
             //
             HashSet<string> macros = new HashSet<string>();
 
-            foreach(var m in ret.SourceCodeMacros)
+            foreach (var m in ret.SourceCodeMacros)
             {
-                if(macros.Contains(m.MacroName))
+                if (macros.Contains(m.MacroName))
                 {
                     Console.WriteLine(
                         $"Macro {m.MacroName} specified multiple times - each macro may only be specified once in the config file");
@@ -381,27 +381,27 @@ namespace clogutils.ConfigFile
                 macros.Add(m.MacroName);
             }
 
-            foreach(string downstream in ret.ChainedConfigFiles)
+            foreach (string downstream in ret.ChainedConfigFiles)
             {
-                if(downstream == EmbeddedDefaultName)
+                if (downstream == EmbeddedDefaultName)
                 {
                     Assembly clogUtilsAssembly = typeof(CLogConfigurationFile).Assembly;
                     string assemblyName = clogUtilsAssembly.GetName().Name;
 
-                    using(Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog_config"))
-                        using(StreamReader reader = new StreamReader(embeddedStream))
-                        {
-                            string contents = reader.ReadToEnd();
-                            var configFile = FromFileText(downstream, contents);
-                            ret.ChainedConfigurations.Add(configFile);
-                        }
+                    using (Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog_config"))
+                    using (StreamReader reader = new StreamReader(embeddedStream))
+                    {
+                        string contents = reader.ReadToEnd();
+                        var configFile = FromFileText(downstream, contents);
+                        ret.ChainedConfigurations.Add(configFile);
+                    }
                 }
                 else
                 {
                     string root = Path.GetDirectoryName(fileName);
                     string toOpen = Path.Combine(root, downstream);
 
-                    if(!File.Exists(toOpen))
+                    if (!File.Exists(toOpen))
                     {
                         Console.WriteLine($"Chained config file {toOpen} not found");
                         throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
@@ -421,7 +421,7 @@ namespace clogutils.ConfigFile
 
         public static CLogConfigurationFile FromFileText(string fileName, string fileContents)
         {
-            if(_loadedConfigFiles.Contains(fileName))
+            if (_loadedConfigFiles.Contains(fileName))
             {
                 Console.WriteLine($"Circular config file detected {fileName}");
                 throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
@@ -434,7 +434,7 @@ namespace clogutils.ConfigFile
 
         public static CLogConfigurationFile FromFile(string fileName)
         {
-            if(_loadedConfigFiles.Contains(fileName))
+            if (_loadedConfigFiles.Contains(fileName))
             {
                 Console.WriteLine($"Circular config file detected {fileName}");
                 throw new CLogEnterReadOnlyModeException("CircularConfigFilesNotAllowed", CLogHandledException.ExceptionType.CircularConfigFilesNotAllowed, null);
@@ -454,12 +454,12 @@ namespace clogutils.ConfigFile
         {
             ret.MarkPhase = markBit;
 
-            foreach(var t in ret.TypeEncoders.FlattendTypeEncoder)
+            foreach (var t in ret.TypeEncoders.FlattendTypeEncoder)
             {
                 t.MarkPhase = markBit;
             }
 
-            foreach(var config in ret.ChainedConfigurations)
+            foreach (var config in ret.ChainedConfigurations)
             {
                 RefreshTypeEncodersMarkBit(config, markBit);
             }
@@ -481,7 +481,7 @@ namespace clogutils.ConfigFile
 
             TypeEncoders.Lint();
 
-            foreach(var child in this.ChainedConfigurations)
+            foreach (var child in this.ChainedConfigurations)
             {
                 child.Lint();
             }
@@ -535,12 +535,12 @@ namespace clogutils.ConfigFile
 
         public void ForceDecoderCompile()
         {
-            if(TypeEncoders.CustomTypeDecoder != null)
+            if (TypeEncoders.CustomTypeDecoder != null)
             {
                 this.TypeEncoders.ForceDecoderCompile(TypeEncoders.CustomTypeDecoder);
             }
 
-            foreach(var config in ChainedConfigurations)
+            foreach (var config in ChainedConfigurations)
             {
                 config.ForceDecoderCompile();
             }
@@ -548,14 +548,14 @@ namespace clogutils.ConfigFile
 
         public void Save(bool persistChainedFiles)
         {
-            if(persistChainedFiles)
+            if (persistChainedFiles)
             {
                 this.CustomTypeClogCSharpFileContents = this.TypeEncoders.CustomCSharp;
             }
 
             File.WriteAllText(this.FilePath, ToJson(persistChainedFiles));
 
-            foreach(var child in this.ChainedConfigurations)
+            foreach (var child in this.ChainedConfigurations)
             {
                 child.Save(persistChainedFiles);
             }

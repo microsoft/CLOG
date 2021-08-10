@@ -31,19 +31,19 @@ namespace clogutils
         {
             ConsoleColor old = Console.ForegroundColor;
 
-            switch(type)
+            switch (type)
             {
-            case TraceType.Err:
-                Console.ForegroundColor = ConsoleColor.Red;
-                break;
+                case TraceType.Err:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
 
-            case TraceType.Wrn:
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                break;
+                case TraceType.Wrn:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
 
-            case TraceType.Tip:
-                Console.ForegroundColor = ConsoleColor.Blue;
-                break;
+                case TraceType.Tip:
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
             }
 
             Console.Write(msg);
@@ -57,15 +57,15 @@ namespace clogutils
 
         public static string GetFileLine(CLogLineMatch TraceLine)
         {
-            if(null != TraceLine && null != TraceLine.SourceFile)
+            if (null != TraceLine && null != TraceLine.SourceFile)
             {
                 int line = 1;
                 int lastLine = 1;
                 string file = System.IO.File.ReadAllText(TraceLine.SourceFile).Substring(0, TraceLine.MatchedRegExX.Index);
 
-                for(int i = 0; i < file.Length; ++i)
+                for (int i = 0; i < file.Length; ++i)
                 {
-                    if(file[i] == '\n')
+                    if (file[i] == '\n')
                     {
                         lastLine = i + 1;
                         ++line;
@@ -85,7 +85,7 @@ namespace clogutils
         {
             try
             {
-                if(null == bundle)
+                if (null == bundle)
                 {
                     Console.WriteLine($"Invalid TraceLine : {errorLine}");
                     return;
@@ -93,11 +93,11 @@ namespace clogutils
 
                 StringBuilder toPrint = new StringBuilder();
 
-                if(null != eventInfo)
+                if (null != eventInfo)
                 {
-                    if(showCPUInfo)
+                    if (showCPUInfo)
                     {
-                        if(!String.IsNullOrEmpty(eventInfo.CPUId))
+                        if (!String.IsNullOrEmpty(eventInfo.CPUId))
                         {
                             toPrint.Append("[" + eventInfo.CPUId + "]");
                         }
@@ -106,15 +106,15 @@ namespace clogutils
 
                         bool havePid = false;
 
-                        if(!String.IsNullOrEmpty(eventInfo.ProcessId))
+                        if (!String.IsNullOrEmpty(eventInfo.ProcessId))
                         {
                             toPrint.Append(eventInfo.ProcessId);
                             havePid = true;
                         }
 
-                        if(!String.IsNullOrEmpty(eventInfo.ThreadId))
+                        if (!String.IsNullOrEmpty(eventInfo.ThreadId))
                         {
-                            if(havePid)
+                            if (havePid)
                             {
                                 toPrint.Append(".");
                             }
@@ -125,7 +125,7 @@ namespace clogutils
                         toPrint.Append("]");
                     }
 
-                    if(showTimeStamp)
+                    if (showTimeStamp)
                     {
                         toPrint.Append("[" + eventInfo.Timestamp.ToString("hh:mm:ss.ffffff") + "]");
                     }
@@ -135,7 +135,7 @@ namespace clogutils
 
                 CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out clean);
 
-                if(0 == types.Length)
+                if (0 == types.Length)
                 {
                     toPrint.Append(bundle.TraceString);
                     goto toPrint;
@@ -144,19 +144,19 @@ namespace clogutils
                 CLogFileProcessor.CLogTypeContainer first = types[0];
 
 
-                if(valueBag.Count > 0)
+                if (valueBag.Count > 0)
                 {
                     int argIndex = 0;
 
-                    foreach(CLogFileProcessor.CLogTypeContainer type in types)
+                    foreach (CLogFileProcessor.CLogTypeContainer type in types)
                     {
                         var arg = bundle.splitArgs[argIndex];
 
-                        while(null == arg.DefinationEncoding)
+                        while (null == arg.DefinationEncoding)
                         {
                             ++argIndex;
 
-                            if(argIndex > bundle.splitArgs.Length)
+                            if (argIndex > bundle.splitArgs.Length)
                             {
                                 throw new Exception("Unable to locate variable");
                             }
@@ -165,7 +165,7 @@ namespace clogutils
                             continue;
                         }
 
-                        if(0 != arg.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
+                        if (0 != arg.DefinationEncoding.CompareTo(type.TypeNode.DefinationEncoding))
                         {
                             Console.WriteLine("Invalid Types in Traceline");
                             throw new Exception("InvalidType : " + arg.DefinationEncoding);
@@ -174,18 +174,18 @@ namespace clogutils
                         CLogEncodingCLogTypeSearch payload = type.TypeNode;
                         IClogEventArg value = null;
 
-                        if(!valueBag.TryGetValue(arg.MacroVariableName, out value))
+                        if (!valueBag.TryGetValue(arg.MacroVariableName, out value))
                         {
                             value = null;
                         }
 
-                        if(value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
+                        if (value == null && !valueBag.TryGetValue(arg.EventVariableName, out value))
                         {
                             toPrint.Append($"<SKIPPED:BUG:MISSINGARG:{arg.MacroVariableName}:{payload.EncodingType}>");
                         }
                         else
                         {
-                            if(string.IsNullOrEmpty(type.TypeNode.CustomDecoder))
+                            if (string.IsNullOrEmpty(type.TypeNode.CustomDecoder))
                             {
                                 toPrint.Append($"{type.LeadingString}{value.AsString}");
                             }
@@ -210,9 +210,9 @@ namespace clogutils
                     toPrint.Append(bundle.TraceString);
                 }
 
-                toPrint:
+            toPrint:
 
-                if(null == outputfile)
+                if (null == outputfile)
                 {
                     Console.WriteLine(toPrint);
                 }
@@ -221,7 +221,7 @@ namespace clogutils
                     outputfile.WriteLine(toPrint);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine($"Invalid TraceLine : {errorLine} " + e);
             }

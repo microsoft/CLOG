@@ -53,24 +53,24 @@ namespace clog.TraceEmitterModules
 
             inline.Append($"syslog({priority}, \"{decodedTraceLine.TraceString}\"");
 
-            foreach(var a in decodedTraceLine.splitArgs)
+            foreach (var a in decodedTraceLine.splitArgs)
             {
                 CLogFileProcessor.CLogVariableBundle arg = a;
 
-                if(!arg.TypeNode.IsEncodableArg)
+                if (!arg.TypeNode.IsEncodableArg)
                 {
                     continue;
                 }
 
                 CLogEncodingCLogTypeSearch node = decodedTraceLine.configFile.FindType(arg, decodedTraceLine);
 
-                switch(node.EncodingType)
+                switch (node.EncodingType)
                 {
-                case CLogEncodingType.Synthesized:
-                    continue;
+                    case CLogEncodingType.Synthesized:
+                        continue;
 
-                case CLogEncodingType.Skip:
-                    continue;
+                    case CLogEncodingType.Skip:
+                        continue;
                 }
 
                 inline.Append(", " + arg.MacroVariableName);

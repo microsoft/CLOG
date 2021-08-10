@@ -27,7 +27,7 @@ namespace clog
     {
         private static int PerformInstall(string outputDir)
         {
-            if(File.Exists(outputDir))
+            if (File.Exists(outputDir))
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Output file for install cannot be a file. It either must not exist, or be a directory");
                 return -11;
@@ -45,11 +45,11 @@ namespace clog
                 string contents = reader.ReadToEnd();
                 string fileName = Path.Combine(outputDir, name);
 
-                if(File.Exists(fileName))
+                if (File.Exists(fileName))
                 {
                     string existingContents = File.ReadAllText(fileName);
 
-                    if(existingContents == contents)
+                    if (existingContents == contents)
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Skipping file {name} as its up to date");
                         return;
@@ -81,13 +81,13 @@ namespace clog
                     // The CommandLineArguments library validates most input arguments for us,  there are few ones that are complicated
                     //    this secondary check looks for those and errors out if present
                     //
-                    if(!options.IsValid())
+                    if (!options.IsValid())
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Invalid args");
                         return -1;
                     }
 
-                    if(!string.IsNullOrWhiteSpace(options.InstallDependencies))
+                    if (!string.IsNullOrWhiteSpace(options.InstallDependencies))
                     {
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Internal error, this should have been handled at a previous step");
                         return -1;
@@ -96,13 +96,13 @@ namespace clog
                     CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
                     configFile.ProfileName = options.ConfigurationProfile;
 
-                    if(options.ReadOnly && !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_FORCE_WRITABLE")))
+                    if (options.ReadOnly && !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_FORCE_WRITABLE")))
                     {
                         options.ReadOnly = false;
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed via --readOnly not to emit changes however this was overridden with CLOG_FORCE_WRITABLE environment variable");
                     }
 
-                    if(options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
+                    if (options.OverwriteHashCollisions || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_OVERWRITE_COLLISIONS")))
                     {
                         options.OverwriteHashCollisions = true;
                         options.ReadOnly = false;
@@ -119,7 +119,7 @@ namespace clog
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
                     }
 
-                    if(options.Devmode || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
+                    if (options.Devmode || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLOG_DEVELOPMENT_MODE")))
                     {
                         options.ReadOnly = false;
                         options.OverwriteHashCollisions = true;
@@ -127,9 +127,9 @@ namespace clog
                         CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "WARNING: CLOG was instructed to enter a developer mode");
                     }
 
-                    if(options.LintConfig)
+                    if (options.LintConfig)
                     {
-                        if(!configFile.MarkPhase)
+                        if (!configFile.MarkPhase)
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Lint operation only works on config files placed into the 'MarkPhase'.  This can be a destricutive action, please read the docs for more information");
                             return -10;
@@ -141,7 +141,7 @@ namespace clog
                         return 0;
                     }
 
-                    if(options.UpgradeConfigFile)
+                    if (options.UpgradeConfigFile)
                     {
                         configFile.UpdateVersion();
                         configFile.Save(false);
@@ -151,12 +151,12 @@ namespace clog
 
                     CLogSidecar sidecar;
 
-                    if(!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
+                    if (!Directory.Exists(Path.GetDirectoryName(options.SidecarFile)))
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(options.SidecarFile));
                     }
 
-                    if(!File.Exists(options.SidecarFile))
+                    if (!File.Exists(options.SidecarFile))
                     {
                         sidecar = new CLogSidecar();
                     }
@@ -165,7 +165,7 @@ namespace clog
                         string json = File.ReadAllText(options.SidecarFile);
                         sidecar = CLogSidecar.FromJson(json);
 
-                        if(null == sidecar)
+                        if (null == sidecar)
                         {
                             sidecar = new CLogSidecar();
                         }
@@ -174,7 +174,7 @@ namespace clog
                     sidecar.SetConfigFile(configFile);
 
 
-                    if(options.RefreshCustomTypeProcessor)
+                    if (options.RefreshCustomTypeProcessor)
                     {
                         configFile.ForceDecoderCompile();
                         sidecar.Save(options.SidecarFile);
@@ -191,7 +191,7 @@ namespace clog
 
                     Console.WriteLine("Number of files : " + (new List<string>(options.InputFiles)).Count);
 
-                    foreach(string inputFile in options.InputFiles)
+                    foreach (string inputFile in options.InputFiles)
                     {
                         Console.WriteLine("Processing: " + inputFile);
 
@@ -203,12 +203,12 @@ namespace clog
                         configFile.OverwriteHashCollisions = options.OverwriteHashCollisions;
 
                         //Delete the output file; we want to encourage build breaks if something goes wrong
-                        if(File.Exists(outputFile))
+                        if (File.Exists(outputFile))
                         {
                             File.Delete(outputFile);
                         }
 
-                        if(File.Exists(outputCFile))
+                        if (File.Exists(outputCFile))
                         {
                             File.Delete(outputCFile);
                         }
@@ -239,7 +239,7 @@ namespace clog
                         CLogLTTNGOutputModule lttngOutput = new CLogLTTNGOutputModule(inputFile, outputFile, outputFile + ".lttng.h", options.DynamicTracepointProvider);
                         fullyDecodedMacroEmitter.AddClogModule(lttngOutput);
 
-                        if(!File.Exists(inputFile))
+                        if (!File.Exists(inputFile))
                         {
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Invalid Input File (file doesnt exist) : {inputFile}");
                             throw new CLogEnterReadOnlyModeException("InvalidInputFile", CLogHandledException.ExceptionType.InvalidInputFile, null);
@@ -260,7 +260,7 @@ namespace clog
 
                         clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
 
-                        foreach(var macro in processor.MacrosInUse)
+                        foreach (var macro in processor.MacrosInUse)
                         {
                             clogFile.AppendLine($"#ifndef _clog_MACRO_{macro.MacroName}");
                             clogFile.AppendLine($"#define _clog_MACRO_{macro.MacroName}  1");
@@ -290,22 +290,22 @@ namespace clog
                         //
                         // the goal of these orderings is to be safe in the event of failure/crash
                         //
-                        if(!Directory.Exists(Path.GetDirectoryName(outputFile)))
+                        if (!Directory.Exists(Path.GetDirectoryName(outputFile)))
                         {
                             Console.WriteLine("Creating Directory for Output : " + Path.GetDirectoryName(outputFile));
                             Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
                         }
 
-                        if(sidecar.AreDirty || configFile.AreWeDirty())
+                        if (sidecar.AreDirty || configFile.AreWeDirty())
                         {
-                            if(options.ReadOnly)
+                            if (options.ReadOnly)
                             {
-                                if(sidecar.AreDirty)
+                                if (sidecar.AreDirty)
                                 {
                                     Console.WriteLine("Sidecar is dirty");
                                 }
 
-                                if(configFile.AreWeDirty())
+                                if (configFile.AreWeDirty())
                                 {
                                     Console.WriteLine("ConfigFile is dirty");
                                 }
@@ -318,9 +318,9 @@ namespace clog
                             sidecar.Save(options.SidecarFile);
                         }
 
-                        if(configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
+                        if (configFile.AreWeDirty() || configFile.AreWeInMarkPhase())
                         {
-                            if(options.ReadOnly)
+                            if (options.ReadOnly)
                             {
                                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ConfigFile", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, null);
                             }
@@ -337,7 +337,7 @@ namespace clog
                     //
                     // Enumerate batching modules, allowing them to save
                     //
-                    foreach(var m in batchingModules)
+                    foreach (var m in batchingModules)
                     {
                         CLogOutputInfo outputInfo = new CLogOutputInfo();
                         outputInfo.OutputDirectory = options.OutputDirectory;
@@ -345,7 +345,7 @@ namespace clog
                     }
 
                 }
-                catch(CLogHandledException e)
+                catch (CLogHandledException e)
                 {
                     e.PrintDiagnostics();
                     return -2;
