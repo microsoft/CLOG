@@ -18,7 +18,7 @@ namespace clogutils
         public static bool AreReadOnly;
 
         public CLogTypeNotFoundException(string msg, string partialType, CLogLineMatch traceLine,
-            Exception e = null) : base(msg, ExceptionType.UndefinedType, traceLine, e)
+                                         Exception e = null) : base(msg, ExceptionType.UndefinedType, traceLine, e)
         {
             AreReadOnly = true;
             Exception = e;
@@ -26,6 +26,10 @@ namespace clogutils
             InfoString = "Missing Type : " + partialType;
         }
 
-        public string PartialType { get; set; }
+        public string PartialType
+        {
+            get;
+            set;
+        }
     }
 }

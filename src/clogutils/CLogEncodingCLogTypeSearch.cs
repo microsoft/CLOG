@@ -20,19 +20,39 @@ namespace clogutils
     public class CLogEncodingCLogTypeSearch
     {
         [JsonProperty]
-        public CLogEncodingType EncodingType { get; set; }
+        public CLogEncodingType EncodingType
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public string CType { get; set; }
+        public string CType
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public string DefinationEncoding { get; set; }
+        public string DefinationEncoding
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public string CustomDecoder { get; set; }
+        public string CustomDecoder
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public bool Synthesized { get; set; }
+        public bool Synthesized
+        {
+            get;
+            set;
+        }
 
 
         public bool IsEncodableArg
@@ -40,15 +60,23 @@ namespace clogutils
             get
             {
                 return !Synthesized &&
-                        (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
+                       (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
                         EncodingType != CLogEncodingType.UserEncodingString);
             }
         }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public HashSet<string> UsedBySourceFile { get; set; } = new HashSet<string>();
+        public HashSet<string> UsedBySourceFile
+        {
+            get;
+            set;
+        } = new HashSet<string>();
 
-        public bool MarkPhase { get; set; }
+        public bool MarkPhase
+        {
+            get;
+            set;
+        }
 
         public Guid Hash
         {
@@ -85,8 +113,10 @@ namespace clogutils
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if (null == UsedBySourceFile)
+            if(null == UsedBySourceFile)
+            {
                 UsedBySourceFile = new HashSet<string>();
+            }
         }
     }
 }

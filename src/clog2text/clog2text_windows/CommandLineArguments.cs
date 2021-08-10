@@ -16,10 +16,18 @@ namespace clog2text_windows
     public class CommandLineArguments
     {
         [Option('i', "input etl file", Required = false, HelpText = "Full path to ETL output")]
-        public string ETLFile { get; set; }
+        public string ETLFile
+        {
+            get;
+            set;
+        }
 
         [Option('s', "sidecar", Required = true, HelpText = "Full path to clog sidecar")]
-        public string SideCarFile { get; set; }
+        public string SideCarFile
+        {
+            get;
+            set;
+        }
 
         [Option('o', "outputFile", Required = false, HelpText = "Emit to a file instead of STDOUT")]
         public string OutputFile

@@ -8,9 +8,9 @@ Abstract:
     Defines how a CLOG event ID is encoded - presently we're using 'Basic' which just means that an event ID is the string
 
     for example:
-        Trace(MESSAGEID, "Hello world");   
+        Trace(MESSAGEID, "Hello world");
 
-        if you'd like to encode information within "MESSAGEID" this is how you'd do it - specifically StringAndNumerical (MESSAGE_12) could be worked 
+        if you'd like to encode information within "MESSAGEID" this is how you'd do it - specifically StringAndNumerical (MESSAGE_12) could be worked
         such that 12 is the numerical representation of MESSAGE.
 
 

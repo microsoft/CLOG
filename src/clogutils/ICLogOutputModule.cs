@@ -15,9 +15,21 @@ namespace clogutils
 {
     public class CLogOutputInfo
     {
-        public string OutputFileName { get; set; }
-        public string OutputDirectory { get; set; }
-        public string InputFileName { get; set; }
+        public string OutputFileName
+        {
+            get;
+            set;
+        }
+        public string OutputDirectory
+        {
+            get;
+            set;
+        }
+        public string InputFileName
+        {
+            get;
+            set;
+        }
 
     }
 
@@ -28,14 +40,20 @@ namespace clogutils
 
     public interface ICLogOutputModule
     {
-        string ModuleName { get; }
+        string ModuleName
+        {
+            get;
+        }
 
-        bool ManditoryModule { get; }
+        bool ManditoryModule
+        {
+            get;
+        }
 
         void InitHeader(StringBuilder header);
 
         void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine traceLine, CLogSidecar sidecar,
-            StringBuilder macroPrefix, StringBuilder inline, StringBuilder function);
+                                 StringBuilder macroPrefix, StringBuilder inline, StringBuilder function);
 
         void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile);
     }

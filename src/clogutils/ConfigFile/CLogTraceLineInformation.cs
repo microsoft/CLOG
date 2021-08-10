@@ -17,31 +17,71 @@ namespace clogutils.ConfigFile
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceLineInformation
     {
-        [JsonProperty] public Guid UniquenessHash { get; set; }
+        [JsonProperty] public Guid UniquenessHash
+        {
+            get;
+            set;
+        }
 
-        [JsonProperty] public string TraceID { get; set; }
+        [JsonProperty] public string TraceID
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public string EncodingString { get; set; }
+        public string EncodingString
+        {
+            get;
+            set;
+        }
 
-        public bool Unsaved { get; set; }
+        public bool Unsaved
+        {
+            get;
+            set;
+        }
 
-        public CLogDecodedTraceLine PreviousFileMatch { get; set; }
+        public CLogDecodedTraceLine PreviousFileMatch
+        {
+            get;
+            set;
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogTraceLineInformation_V2
     {
-        [JsonProperty] public Guid UniquenessHash { get; set; }
+        [JsonProperty] public Guid UniquenessHash
+        {
+            get;
+            set;
+        }
 
-        [JsonProperty] public string TraceID { get; set; }
+        [JsonProperty] public string TraceID
+        {
+            get;
+            set;
+        }
 
         [JsonProperty]
-        public string EncodingString { get; set; }
+        public string EncodingString
+        {
+            get;
+            set;
+        }
 
-        public bool Unsaved { get; set; }
+        public bool Unsaved
+        {
+            get;
+            set;
+        }
 
-        public CLogDecodedTraceLine PreviousFileMatch { get; set; }
+        public CLogDecodedTraceLine PreviousFileMatch
+        {
+            get;
+            set;
+        }
 
         public static CLogTraceLineInformation_V2 ConvertFromV1(CLogTraceLineInformation v1)
         {

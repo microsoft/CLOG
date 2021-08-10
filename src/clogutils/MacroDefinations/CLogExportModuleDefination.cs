@@ -21,6 +21,10 @@ namespace clogutils.MacroDefinations
         public string ExportModule;
 
         [JsonProperty]
-        public Dictionary<string, string> CustomSettings { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> CustomSettings
+        {
+            get;
+            set;
+        } = new Dictionary<string, string>();
     }
 }

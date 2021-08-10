@@ -6,19 +6,19 @@
 Abstract:
 
     Represents the node in the tree of type searches.
-    
-    For example if 
+
+    For example if
         %a
         %ab
         %aa
-        %abc 
+        %abc
 
         you'd get a tree like
 
 
            a
           / \
-         a   b 
+         a   b
               \
                c
 
@@ -32,14 +32,20 @@ namespace clogutils
     {
         public Dictionary<char, CLogTypeSearchNode> Nodes = new Dictionary<char, CLogTypeSearchNode>();
 
-        public CLogEncodingCLogTypeSearch UserNode { get; set; }
+        public CLogEncodingCLogTypeSearch UserNode
+        {
+            get;
+            set;
+        }
 
         private static void Flatten(CLogTypeSearchNode node, List<CLogEncodingCLogTypeSearch> ret)
         {
-            if (null != node.UserNode)
+            if(null != node.UserNode)
+            {
                 ret.Add(node.UserNode);
+            }
 
-            foreach (var n in node.Nodes)
+            foreach(var n in node.Nodes)
             {
                 Flatten(n.Value, ret);
             }

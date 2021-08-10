@@ -37,7 +37,11 @@ namespace clog2text_lttng
 
         private object _typesInterface;
 
-        public string CustomTypeDecoder { get; private set; }
+        public string CustomTypeDecoder
+        {
+            get;
+            private set;
+        }
 
         public void SetSourceCode(string sourceCode)
         {
@@ -51,8 +55,10 @@ namespace clog2text_lttng
 
         public void PrepareAssemblyCompileIfNecessary()
         {
-            if (null != _codeAssembly)
+            if(null != _codeAssembly)
+            {
                 return;
+            }
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(CustomTypeDecoder);
 
@@ -61,10 +67,10 @@ namespace clog2text_lttng
             MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
 
             CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName,
-                new[] { syntaxTree },
-                references,
-                new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
+                                                assemblyName,
+                                                new[] { syntaxTree },
+                                                references,
+                                                new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
 
             compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
 
@@ -72,9 +78,9 @@ namespace clog2text_lttng
 
             EmitResult result = compilation.Emit(_compiledCode);
 
-            if (!result.Success)
+            if(!result.Success)
             {
-                foreach (var d in result.Diagnostics)
+                foreach(var d in result.Diagnostics)
                 {
                     TraceLine(TraceType.Err, "Compiling customer trace renderer failed");
                     TraceLine(TraceType.Err, d.ToString());
@@ -102,41 +108,41 @@ namespace clog2text_lttng
 
             object[] args = new object[1];
 
-            switch (type.EncodingType)
+            switch(type.EncodingType)
             {
-                case CLogEncodingType.UInt32:
-                    args[0] = value.AsUInt32;
-                    break;
+            case CLogEncodingType.UInt32:
+                args[0] = value.AsUInt32;
+                break;
 
-                case CLogEncodingType.Int32:
-                    args[0] = value.AsInt32;
-                    break;
+            case CLogEncodingType.Int32:
+                args[0] = value.AsInt32;
+                break;
 
-                case CLogEncodingType.UInt8:
-                    args[0] = (byte)value.AsInt32;
-                    break;
+            case CLogEncodingType.UInt8:
+                args[0] = (byte)value.AsInt32;
+                break;
 
-                case CLogEncodingType.ByteArray:
-                case CLogEncodingType.UInt64Array:
-                case CLogEncodingType.Int32Array:
-                case CLogEncodingType.UInt32Array:
-                case CLogEncodingType.Int64Array:
-                case CLogEncodingType.ANSI_StringArray:
-                case CLogEncodingType.UNICODE_StringArray:
-                case CLogEncodingType.PointerArray:
-                case CLogEncodingType.GUIDArray:
-                case CLogEncodingType.Int16Array:
-                case CLogEncodingType.UInt16Array:
-                case CLogEncodingType.Int8Array:
-                    args[0] = value.AsBinary;
-                    break;
+            case CLogEncodingType.ByteArray:
+            case CLogEncodingType.UInt64Array:
+            case CLogEncodingType.Int32Array:
+            case CLogEncodingType.UInt32Array:
+            case CLogEncodingType.Int64Array:
+            case CLogEncodingType.ANSI_StringArray:
+            case CLogEncodingType.UNICODE_StringArray:
+            case CLogEncodingType.PointerArray:
+            case CLogEncodingType.GUIDArray:
+            case CLogEncodingType.Int16Array:
+            case CLogEncodingType.UInt16Array:
+            case CLogEncodingType.Int8Array:
+                args[0] = value.AsBinary;
+                break;
 
-                case CLogEncodingType.Pointer:
-                    args[0] = value.AsPointer;
-                    break;
+            case CLogEncodingType.Pointer:
+                args[0] = value.AsPointer;
+                break;
 
-                default:
-                    throw new NotImplementedException("UndefinedType:" + type);
+            default:
+                throw new NotImplementedException("UndefinedType:" + type);
             }
 
             string customDecoder = type.CustomDecoder;
@@ -148,10 +154,12 @@ namespace clog2text_lttng
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
             decodedValue = "ERROR:" + type.CustomDecoder;
 
-            if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
+            if(!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {
-                if (null == newType)
+                if(null == newType)
+                {
                     return true;
+                }
 
                 var meth = newType.GetMember(member).FirstOrDefault() as MethodInfo;
                 _compiledConverterFunctions[type.CustomDecoder] = meth;

@@ -16,22 +16,48 @@ namespace clogutils
 {
     public class CLogLineMatch
     {
-        public Match MatchedRegExX { get; private set; }
+        public Match MatchedRegExX
+        {
+            get;
+            private set;
+        }
 
-        public string SourceFile { get; private set; }
+        public string SourceFile
+        {
+            get;
+            private set;
+        }
 
-        public string UniqueID { get; private set; }
+        public string UniqueID
+        {
+            get;
+            private set;
+        }
 
-        public string EncodingString { get; private set; }
+        public string EncodingString
+        {
+            get;
+            private set;
+        }
 
-        public string AllArgs { get; private set; }
+        public string AllArgs
+        {
+            get;
+            private set;
+        }
 
-        public string[] Args { get; private set; }
+        public string[] Args
+        {
+            get;
+            private set;
+        }
 
         public CLogLineMatch(string sourcefile, Match m, string uniqueId, string encodingString, string allArgs, string[] args)
         {
-            if (string.IsNullOrEmpty(sourcefile))
+            if(string.IsNullOrEmpty(sourcefile))
+            {
                 throw new ArgumentException();
+            }
 
             SourceFile = sourcefile;
             MatchedRegExX = m;

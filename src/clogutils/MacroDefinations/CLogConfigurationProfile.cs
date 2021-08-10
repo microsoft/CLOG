@@ -21,11 +21,18 @@ namespace clogutils.MacroDefinations
         [JsonProperty]
         public List<CLogExportModuleDefination> Modules = new List<CLogExportModuleDefination>();
 
-        [JsonProperty] public bool SkipProcessing { get; set; } = false;
+        [JsonProperty] public bool SkipProcessing
+        {
+            get;
+            set;
+        } = false;
 
         public CLogExportModuleDefination FindExportModule(string moduleName)
         {
-            return Modules.Where(x => { return x.ExportModule.Equals(moduleName); }).FirstOrDefault();
+            return Modules.Where(x =>
+            {
+                return x.ExportModule.Equals(moduleName);
+            }).FirstOrDefault();
         }
 
         public List<string> ModuleNames
@@ -33,10 +40,12 @@ namespace clogutils.MacroDefinations
             get
             {
                 List<string> ret = new List<string>();
-                foreach (var mod in Modules)
+
+                foreach(var mod in Modules)
                 {
                     ret.Add(mod.ExportModule);
                 }
+
                 return ret;
             }
         }

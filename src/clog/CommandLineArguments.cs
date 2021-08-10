@@ -126,14 +126,14 @@ namespace clog
 
         public bool IsValid()
         {
-            if (!string.IsNullOrWhiteSpace(this.InstallDependencies))
+            if(!string.IsNullOrWhiteSpace(this.InstallDependencies))
             {
                 return true;
             }
 
-            if (!string.IsNullOrEmpty(this.OutputDirectory))
+            if(!string.IsNullOrEmpty(this.OutputDirectory))
             {
-                if (0 == this.InputFiles.Count())
+                if(0 == this.InputFiles.Count())
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "OutputDirectory specified, and InputFile is empty");
                     return false;
@@ -143,9 +143,9 @@ namespace clog
             //
             // If either input or output is empty, require that we're linting or upgrading
             //
-            if (0 == this.InputFiles.Count())
+            if(0 == this.InputFiles.Count())
             {
-                if (!LintConfig && !UpgradeConfigFile && !RefreshCustomTypeProcessor)
+                if(!LintConfig && !UpgradeConfigFile && !RefreshCustomTypeProcessor)
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "input file and output file are required if not linting or upgrading config file");
                     return false;
@@ -153,37 +153,37 @@ namespace clog
             }
             else
             {
-                if (0 == this.InputFiles.Count() || string.IsNullOrEmpty(this.OutputDirectory))
+                if(0 == this.InputFiles.Count() || string.IsNullOrEmpty(this.OutputDirectory))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "please specify both an input and and output file");
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(ScopePrefix))
+                if(string.IsNullOrEmpty(ScopePrefix))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "please specify scope prefix");
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(SidecarFile))
+                if(string.IsNullOrEmpty(SidecarFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "please specify sidecar file");
                     return false;
                 }
             }
 
-            if (LintConfig || UpgradeConfigFile)
+            if(LintConfig || UpgradeConfigFile)
             {
-                if (0 != this.InputFiles.Count() || !string.IsNullOrEmpty(this.OutputDirectory))
+                if(0 != this.InputFiles.Count() || !string.IsNullOrEmpty(this.OutputDirectory))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "do not specify input or output files if you're linting or upgrading the config file");
                     return false;
                 }
             }
 
-            if (RefreshCustomTypeProcessor)
+            if(RefreshCustomTypeProcessor)
             {
-                if (string.IsNullOrEmpty(this.SidecarFile) || string.IsNullOrEmpty(this.ConfigurationFile))
+                if(string.IsNullOrEmpty(this.SidecarFile) || string.IsNullOrEmpty(this.ConfigurationFile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
                     return false;
@@ -193,9 +193,9 @@ namespace clog
             //
             // Makesure ConfigurationProfile is specified for all but those who do not need it
             //
-            if (!RefreshCustomTypeProcessor)
+            if(!RefreshCustomTypeProcessor)
             {
-                if (string.IsNullOrEmpty(this.ConfigurationProfile))
+                if(string.IsNullOrEmpty(this.ConfigurationProfile))
                 {
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
                     return false;

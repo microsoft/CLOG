@@ -9,12 +9,12 @@ namespace Roslyn.CodeDom
     public static class Extensions
     {
         public static CSharpCompilation WithFrameworkReferences(this CSharpCompilation compilation, TargetFramework targetFramework) =>
-            compilation.WithReferenceAssemblies(targetFramework.ToReferenceAssemblyKind());
+        compilation.WithReferenceAssemblies(targetFramework.ToReferenceAssemblyKind());
 
         public static ReferenceAssemblyKind ToReferenceAssemblyKind(this TargetFramework targetFramework) => targetFramework switch
-        {
-            TargetFramework.NetStandard20 => ReferenceAssemblyKind.NetStandard20,
-            _ => throw new Exception($"Invalid target framework {targetFramework}")
+    {
+        TargetFramework.NetStandard20 => ReferenceAssemblyKind.NetStandard20,
+                                      _ => throw new Exception($"Invalid target framework {targetFramework}")
         };
 
     }
