@@ -133,7 +133,7 @@ namespace clogutils
             string implSignature = $" clogTraceImpl_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}(";
 
             string macroName = $"_clog_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}";
-            _headerFile.AppendLine($"#ifndef {macroName}");
+
 
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)
             {
@@ -199,9 +199,6 @@ namespace clogutils
 
             StringBuilder macroBody = new StringBuilder();
 
-            _headerFile.AppendLine("");
-            _headerFile.AppendLine("");
-            _headerFile.AppendLine("");
             _headerFile.AppendLine("/*----------------------------------------------------------");
             _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
             _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
@@ -216,6 +213,7 @@ namespace clogutils
             }
 
             _headerFile.AppendLine("----------------------------------------------------------*/");
+            _headerFile.AppendLine($"#ifndef {macroName}");
 
             //
             // BUGBUG: not fully implemented - the intent of 'implSignature' is to give a turn key
@@ -281,7 +279,7 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    typo in a trace string) - have two options to override/refresh the signature check");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "   Force/Clobber the event signature - indicating you desire breaking the uniqueness contract");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) frome this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) from this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    2. specify the --overwriteHashCollisions command line argument (good if you're making lots of changes that are all safe)");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"    3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
