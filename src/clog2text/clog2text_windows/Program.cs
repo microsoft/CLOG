@@ -155,7 +155,7 @@ namespace clog2text_windows
                                         argMap = sidecar.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
                                     }
 
-                                    var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out string clean);
+                                    var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out CLogFileProcessor.DecomposedString clean);
 
                                     if (0 == types.Length)
                                     {

@@ -128,9 +128,9 @@ namespace clogutils
                     }
                 }
 
-                string clean;
+                CLogFileProcessor.DecomposedString decompString;
 
-                CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out clean);
+                CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out decompString);
 
                 if (0 == types.Length)
                 {
