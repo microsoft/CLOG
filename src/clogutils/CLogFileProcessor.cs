@@ -11,7 +11,6 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -201,7 +200,7 @@ namespace clogutils
                     {
                         if (null != e.Type)
                         {
-                            switch(e.Type.EncodingType)
+                            switch (e.Type.EncodingType)
                             {
                                 case CLogEncodingType.ByteArray:
                                     ret += "p";
@@ -219,13 +218,15 @@ namespace clogutils
                     return ret;
                 }
             }
-            public string AsManifestedETWEncoding {
-                get {
+            public string AsManifestedETWEncoding
+            {
+                get
+                {
                     string ret = "";
                     int idx = 0;
-                    foreach(var e in encodings)
+                    foreach (var e in encodings)
                     {
-                        if(null != e.Type)
+                        if (null != e.Type)
                         {
                             //ret += e.Type.DefinationEncoding;
                             ret += idx;
@@ -436,7 +437,7 @@ namespace clogutils
                         bundle.TypeNode = type;
                         finalArgs.Add(bundle);
                     }
-                    else if(!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
+                    else if (!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
                     {
 
                     }

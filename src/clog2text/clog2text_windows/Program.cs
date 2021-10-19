@@ -237,11 +237,11 @@ namespace clog2text_windows
                         e.PrintDiagnostics();
                         return -2;
                     }
-        }, err =>
-                {
-                    Console.WriteLine("Bad Args : " + err);
-                    return -1;
-                });
+                }, err =>
+                        {
+                            Console.WriteLine("Bad Args : " + err);
+                            return -1;
+                        });
         }
 
         public class ManifestedETWEvent : IClogEventArg
