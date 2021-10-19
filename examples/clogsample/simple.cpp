@@ -13,7 +13,12 @@ Abstract:
 
 int main(int argc, char* argv[])
 {
-    printf("Hello world!\n");
+    for(int i=0; i<10000; ++i)
+    {
+        if(i % 100)
+            printf("%d\n", i);
+
+    //printf("Hello world!\n");
     TraceInfo(LAUNCHED, "Hello world - we just started here is an int=%d", 20);
 
     char *buffer = new char[10];
@@ -27,5 +32,6 @@ int main(int argc, char* argv[])
     TraceInfo(DATACHAR, "This is a char: %c", 'a');
     TraceInfo(DATAINT, "This is an int: %d", 1234);
     delete [] buffer;
+    }
     return 0;
 }
