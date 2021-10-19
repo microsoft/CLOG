@@ -1,10 +1,22 @@
 {
   "MacroConfigurations": {
-    "lttng_plus": {
+    "lttng": {
       "Modules": [
         {
           "ExportModule": "LTTNG",
           "CustomSettings": {}
+        }
+      ]
+    },
+    "etw": {
+      "Modules": [
+        {
+          "ExportModule": "MANIFESTED_ETW",
+          "CustomSettings": {
+            "ETWManifestFile": "clog_examples.man",
+            "ETW_Provider": "6b6c1d19-db92-4787-81fd-70ac01e3ea7f",
+            "Level": "win:Informational"
+          }
         }
       ]
     },
@@ -24,11 +36,11 @@
       "EncodedPrefix": null,
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
-        "linux": "lttng_plus",
+        "linux": "lttng",
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "empty"
+        "windows": "etw"
       }
     },
     {
@@ -36,11 +48,11 @@
       "EncodedPrefix": "[%p]",
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
-        "linux": "lttng_plus",
+        "linux": "lttng",
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "empty"
+        "windows": "etw"
       }
     }
   ],
