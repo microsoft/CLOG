@@ -50,6 +50,9 @@ namespace clog2text_lttng
 
         public void PrepareAssemblyCompileIfNecessary()
         {
+            if (null == CustomTypeDecoder)
+                return;
+
             if (null != _codeAssembly)
                 return;
 
@@ -94,10 +97,18 @@ namespace clog2text_lttng
 
         public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
+            decodedValue = "ERROR:" + type.CustomDecoder;
+
             //
             // Compiling also caches the assembly
             //
             PrepareAssemblyCompileIfNecessary();
+
+            //
+            // If we dont have a specified decoder, indicate that by returning false (we could not decode)
+            //
+            if (null == _codeAssembly)
+                return true;
 
             object[] args = new object[1];
 
@@ -145,7 +156,6 @@ namespace clog2text_lttng
 
             var newType = _codeAssembly.GetType(customDecoder);
             var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
-            decodedValue = "ERROR:" + type.CustomDecoder;
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {

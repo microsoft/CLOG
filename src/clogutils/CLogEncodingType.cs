@@ -69,8 +69,8 @@ namespace clogutils
                     return arg.AsInt8.ToString();
                 case CLogEncodingType.UInt8:
                     return arg.AsUInt8.ToString();
-                /*case CLogEncodingType.ByteArray:
-                    return arg..ToString();
+                case CLogEncodingType.ByteArray:
+                    return arg.ToString();/*
                 case CLogEncodingType.UserEncodingString:
                     return arg.AsInt32.ToString();
                 case CLogEncodingType.UniqueAndDurableIdentifier:
