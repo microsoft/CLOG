@@ -1,6 +1,9 @@
 rm -r -f ./log
 mkdir log
 mkdir log/lttng
+
+docker
+
 lttng create clogsample -o=log/lttng
 if(!$?)
 {
