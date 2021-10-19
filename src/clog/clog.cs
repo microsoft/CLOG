@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -25,45 +25,6 @@ namespace clog
 {
     internal class clog
     {
-        private static int PerformInstall(string outputDir)
-        {
-            if (File.Exists(outputDir))
-            {
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Output file for install cannot be a file. It either must not exist, or be a directory");
-                return -11;
-            }
-            Directory.CreateDirectory(outputDir);
-
-            Assembly utilsAssembly = typeof(CLogConsoleTrace).Assembly;
-            string baseName = utilsAssembly.GetName().Name;
-
-            void ExtractFile(string name)
-            {
-                using Stream embeddedStream = utilsAssembly.GetManifestResourceStream($"{baseName}.{name}");
-                using StreamReader reader = new StreamReader(embeddedStream);
-                string contents = reader.ReadToEnd();
-                string fileName = Path.Combine(outputDir, name);
-                if (File.Exists(fileName))
-                {
-                    string existingContents = File.ReadAllText(fileName);
-                    if (existingContents == contents)
-                    {
-                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Skipping file {name} as its up to date");
-                        return;
-                    }
-                }
-                File.WriteAllText(fileName, contents);
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"Installed file {name}");
-            }
-
-            ExtractFile("clog.h");
-            ExtractFile("CLog.cmake");
-
-            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "--installDirectory overrides all arguments. Dependencies successfully installed!");
-
-            return 0;
-        }
-
         private static int Main(string[] args)
         {
             ParserResult<CommandLineArguments> o = Parser.Default.ParseArguments<CommandLineArguments>(args);
@@ -71,6 +32,7 @@ namespace clog
             return o.MapResult(
                 options =>
                 {
+                    string currentFile = null;
                     try
                     {
                         //
@@ -83,11 +45,6 @@ namespace clog
                             return -1;
                         }
 
-                        if (!string.IsNullOrWhiteSpace(options.InstallDependencies))
-                        {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Internal error, this should have been handled at a previous step");
-                            return -1;
-                        }
 
                         CLogConfigurationFile configFile = CLogConfigurationFile.FromFile(options.ConfigurationFile);
                         configFile.ProfileName = options.ConfigurationProfile;
@@ -176,12 +133,12 @@ namespace clog
                         //
                         List<ICLogBatchingModule> batchingModules = new List<ICLogBatchingModule>();
 
-
                         Console.WriteLine("Number of files : " + (new List<string>(options.InputFiles)).Count);
 
                         foreach (string inputFile in options.InputFiles)
                         {
                             Console.WriteLine("Processing: " + inputFile);
+                            currentFile = inputFile;
 
                             string outputFile = options.GetOutputFileName(inputFile);
                             string outputCFile = Path.Combine(Path.GetDirectoryName(outputFile), options.ScopePrefix + "_" + Path.GetFileName(outputFile)) + ".c";
@@ -220,7 +177,7 @@ namespace clog
 
                             CLogSTDOUT stdout = new CLogSTDOUT();
                             fullyDecodedMacroEmitter.AddClogModule(stdout);
-
+                            
                             CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                             fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
@@ -241,10 +198,21 @@ namespace clog
                             string content = File.ReadAllText(inputFile);
                             string output = processor.ConvertFile(configFile, outputInfo, fullyDecodedMacroEmitter, content, inputFile, false);
 
+                            // TODO: BUGBUG - Java won't ever do this
+                            //if (!content.Contains(Path.GetFileName(outputFile)))
+                            //{
+                            //    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"You must #include the clog output file {Path.GetFileName(outputFile)}");
+                            //    throw new CLogEnterReadOnlyModeException("MustIncludeCLogHeader", CLogHandledException.ExceptionType.SourceMustIncludeCLOGHeader, null);
+                            //}
+
                             fullyDecodedMacroEmitter.FinishedProcessing(outputInfo);
 
                             StringBuilder clogFile = new StringBuilder();
+
+                            clogFile.AppendLine($"#ifndef CLOG_DO_NOT_INCLUDE_HEADER");
                             clogFile.AppendLine("#include <clog.h>");
+                            clogFile.AppendLine($"#endif");
+
 
                             clogFile.Append(fullyDecodedMacroEmitter.HeaderInit);
 
@@ -314,6 +282,7 @@ namespace clog
                             File.WriteAllText(outputFile, clogFile.ToString());
                             File.WriteAllText(outputCFile, fullyDecodedMacroEmitter.SourceFile);
                         }
+                        currentFile = null;
 
                         //
                         // Enumerate batching modules, allowing them to save
@@ -328,6 +297,8 @@ namespace clog
                     }
                     catch (CLogHandledException e)
                     {
+                        if(null != currentFile)
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failure in file : {currentFile}");
                         e.PrintDiagnostics();
                         return -2;
                     }

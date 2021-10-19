@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -58,8 +58,7 @@ namespace clog.TraceEmitterModules
         bool emittedHeader = false;
         public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)
         {
-            string clean;
-
+            CLogFileProcessor.DecomposedString clean;
             CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(decodedTraceLine.configFile, null, decodedTraceLine.TraceString, null, out clean);
             CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
 

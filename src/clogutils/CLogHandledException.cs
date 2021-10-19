@@ -46,7 +46,9 @@ namespace clogutils
             InvalidInputFile = 27,
             UndefinedTypeToLanguageMapping = 28,
             InvalidNameFormatInTypeSpcifier = 29,
-            EncodedArgNumberInvalid = 30
+            EncodedArgNumberInvalid = 30,
+            SidecarFileVersionMismatch = 31,
+            SidecarCorrupted = 32
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -96,7 +98,7 @@ namespace clogutils
                 case ExceptionType.ETWTypeMismatch:
                     return "CLOG defined types mismatch with existing ETW manifest - you must fix the ETW manifest manually to align the types";
                 case ExceptionType.InvalidUniqueId:
-                    return "CLOG Unique IDs must be alphanumeric";
+                    return "CLOG Unique IDs must be alphanumeric and 47 or fewer characters";
                 case ExceptionType.WontWriteInReadOnlyMode:
                     return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_DEVELOPMENT_MODE such that manifests and sidecars will be automatically updated";
                 case ExceptionType.RequiredConfigParameterUnspecified:
@@ -105,6 +107,10 @@ namespace clogutils
                     return "Invalid input file";
                 case ExceptionType.UndefinedTypeToLanguageMapping:
                     return "Must specify conversion from CLOG Type to Language Type in config file";
+                case ExceptionType.SidecarFileVersionMismatch:
+                    return "Invalid sidecar file version and unable to update - consider updating clog or correcting the version number";
+                case ExceptionType.SidecarCorrupted:
+                    return "Sidecar cannot be opened;  it seems to be corrupted - consider deleting and rebuilding, or locating the source of the corruption";
             }
 
             return "Uknown Error";
@@ -132,6 +138,8 @@ namespace clogutils
             {
                 string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{Exception}");
+
             }
             catch (Exception)
             {

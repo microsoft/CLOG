@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -19,12 +19,6 @@ namespace clog
 {
     public class CommandLineArguments
     {
-        [Option("installDependencies", SetName = "install", Required = false, HelpText = "Install dependencies such as clog.h can CLog.cmake to the folder specified")]
-        public string InstallDependencies
-        {
-            get;
-            set;
-        }
 
         [Option("inputFiles", SetName = "build", Required = false, HelpText = "Full path to one (or more) source file for CLOG to generate logging stubs")]
         public IEnumerable<string> InputFiles
@@ -116,7 +110,6 @@ namespace clog
             get;
             set;
         }
-
         public string GetOutputFileName(string inputFile)
         {
             string ret = Path.Combine(this.OutputDirectory, Path.GetFileName(inputFile));
@@ -126,11 +119,6 @@ namespace clog
 
         public bool IsValid()
         {
-            if (!string.IsNullOrWhiteSpace(this.InstallDependencies))
-            {
-                return true;
-            }
-
             if (!string.IsNullOrEmpty(this.OutputDirectory))
             {
                 if (0 == this.InputFiles.Count())
