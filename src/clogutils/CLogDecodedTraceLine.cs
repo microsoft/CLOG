@@ -10,8 +10,6 @@ Abstract:
 --*/
 
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;

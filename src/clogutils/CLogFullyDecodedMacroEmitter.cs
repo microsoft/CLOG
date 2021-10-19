@@ -13,9 +13,7 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using clogutils;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 
@@ -95,33 +93,33 @@ namespace clogutils
                             throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_BYTEARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
                         }
                         break;
-                   /* case CLogEncodingType.Int32Array:
-                    case CLogEncodingType.UInt32Array:
-                    case CLogEncodingType.Int64Array:
-                    case CLogEncodingType.UInt64Array:
-                    case CLogEncodingType.ANSI_StringArray:
-                    case CLogEncodingType.UNICODE_StringArray:
-                    case CLogEncodingType.PointerArray:
-                    case CLogEncodingType.GUIDArray:
-                    case CLogEncodingType.Int16Array:
-                    case CLogEncodingType.UInt16Array:
-                    case CLogEncodingType.Int8Array:
-                        clogArgCountForMacroAlignment += 2;
+                    /* case CLogEncodingType.Int32Array:
+                     case CLogEncodingType.UInt32Array:
+                     case CLogEncodingType.Int64Array:
+                     case CLogEncodingType.UInt64Array:
+                     case CLogEncodingType.ANSI_StringArray:
+                     case CLogEncodingType.UNICODE_StringArray:
+                     case CLogEncodingType.PointerArray:
+                     case CLogEncodingType.GUIDArray:
+                     case CLogEncodingType.Int16Array:
+                     case CLogEncodingType.UInt16Array:
+                     case CLogEncodingType.Int8Array:
+                         clogArgCountForMacroAlignment += 2;
 
-                        // Verify the input argument contains CLOG_ARRAY - this will aid in debugging
-                        if (!arg.VariableInfo.UserSpecifiedUnModified.Contains("CLOG_ARRAY"))
-                        {
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains an non-byte array type that is not using the CLOG_ARRAY macro");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_ARRAY(length, pointer)");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegExX}");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Arg: ");
-                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.VariableInfo.UserSuppliedTrimmed);
-                            throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_ARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
-                        }
+                         // Verify the input argument contains CLOG_ARRAY - this will aid in debugging
+                         if (!arg.VariableInfo.UserSpecifiedUnModified.Contains("CLOG_ARRAY"))
+                         {
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Trace ID '{decodedTraceLine.UniqueId}' contains an non-byte array type that is not using the CLOG_ARRAY macro");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    Please encode the following argument with CLOG_ARRAY(length, pointer)");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"// {decodedTraceLine.match.MatchedRegExX}");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failing Arg: ");
+                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, arg.VariableInfo.UserSuppliedTrimmed);
+                             throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_ARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
+                         }
 
-                        break;*/
+                         break;*/
                     default:
                         clogArgCountForMacroAlignment++;
                         break;

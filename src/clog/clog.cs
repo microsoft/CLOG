@@ -14,7 +14,6 @@ Abstract:
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using clog.TraceEmitterModules;
 using clogutils;
@@ -177,7 +176,7 @@ namespace clog
 
                             CLogSTDOUT stdout = new CLogSTDOUT();
                             fullyDecodedMacroEmitter.AddClogModule(stdout);
-                            
+
                             CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                             fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
@@ -297,7 +296,7 @@ namespace clog
                     }
                     catch (CLogHandledException e)
                     {
-                        if(null != currentFile)
+                        if (null != currentFile)
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failure in file : {currentFile}");
                         e.PrintDiagnostics();
                         return -2;

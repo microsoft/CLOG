@@ -19,7 +19,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
-using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
 {
