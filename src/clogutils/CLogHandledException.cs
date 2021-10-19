@@ -49,6 +49,7 @@ namespace clogutils
             EncodedArgNumberInvalid = 30,
             SidecarFileVersionMismatch = 31,
             SidecarCorrupted = 32
+			ConfigFileMissingProfile = 33
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -109,6 +110,8 @@ namespace clogutils
                     return "Must specify conversion from CLOG Type to Language Type in config file";
                 case ExceptionType.SidecarFileVersionMismatch:
                     return "Invalid sidecar file version and unable to update - consider updating clog or correcting the version number";
+				case ExceptionType.ConfigFileMissingProfile:
+                    return "CLOG config file is missing the specified configuration;  please update your clog_config file";
                 case ExceptionType.SidecarCorrupted:
                     return "Sidecar cannot be opened;  it seems to be corrupted - consider deleting and rebuilding, or locating the source of the corruption";
             }

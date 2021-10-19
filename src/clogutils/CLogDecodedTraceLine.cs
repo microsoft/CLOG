@@ -99,6 +99,8 @@ namespace clogutils
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
+            if(!macro.MacroConfiguration.ContainsKey(configFile.ProfileName))
+                throw new CLogEnterReadOnlyModeException("MissingProfile:" + configFile.ProfileName + " in macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
             return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
         }
 

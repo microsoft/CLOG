@@ -155,7 +155,7 @@ namespace clog2text_lttng
             customDecoder = customDecoder.Substring(0, customDecoder.Length - member.Length - 1);
 
             var newType = _codeAssembly.GetType(customDecoder);
-            var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
+            var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);            
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {
