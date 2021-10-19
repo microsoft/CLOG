@@ -151,262 +151,242 @@
             {
               "EncodingType": "ByteArray",
               "CType": "CLOG_PTR",
+              "JavaType": null,
               "DefinationEncoding": "!BYTEARRAY!"
-            },
-            {
-              "EncodingType": "Int32Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!INT32ARRAY!"
-            },
-            {
-              "EncodingType": "Int64Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!INT64ARRAY!"
-            },
-            {
-              "EncodingType": "Int16Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!INT16ARRAY!"
-            },
-            {
-              "EncodingType": "Int8Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!INT8ARRAY!"
-            },
-            {
-              "EncodingType": "UInt32Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!UINT32ARRAY!"
-            },
-            {
-              "EncodingType": "UInt64Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!UINT64ARRAY!"
-            },
-            {
-              "EncodingType": "UInt16Array",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!UINT16ARRAY!"
-            },
-            {
-              "EncodingType": "UNICODE_StringArray",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!UNICODESTRINGARRAY!"
-            },
-            {
-              "EncodingType": "ANSI_StringArray",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!ANSISTRINGARRAY!"
-            },
-            {
-              "EncodingType": "PointerArray",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!POINTERARRAY!"
-            },
-            {
-              "EncodingType": "GUIDArray",
-              "CType": "CLOG_PTR",
-              "DefinationEncoding": "!GUIDARRAY!"
-            },
-            {
-              "EncodingType": "Struct",
-              "CType": "unsigned long int",
-              "DefinationEncoding": "!STRUCT!"
             },
             {
               "EncodingType": "Int32",
               "CType": "int",
+              "JavaType": null,
               "DefinationEncoding": "d"
             },
             {
               "EncodingType": "Int8",
               "CType": "signed char",
+              "JavaType": null,
               "DefinationEncoding": "hhd"
             },
             {
               "EncodingType": "Int8",
               "CType": "signed char",
+              "JavaType": null,
               "DefinationEncoding": "hhi"
             },
             {
               "EncodingType": "UInt8",
               "CType": "unsigned char",
+              "JavaType": null,
               "DefinationEncoding": "hhu"
             },
             {
               "EncodingType": "UInt8",
               "CType": "unsigned char",
+              "JavaType": null,
               "DefinationEncoding": "hhx"
             },
             {
               "EncodingType": "UInt8",
               "CType": "unsigned char",
+              "JavaType": null,
               "DefinationEncoding": "hhX"
             },
             {
               "EncodingType": "UInt16",
               "CType": "unsigned short",
+              "JavaType": null,
               "DefinationEncoding": "hu"
             },
             {
               "EncodingType": "UInt16",
               "CType": "unsigned short",
+              "JavaType": null,
               "DefinationEncoding": "hx"
             },
             {
               "EncodingType": "UInt16",
               "CType": "unsigned short",
+              "JavaType": null,
               "DefinationEncoding": "hX"
             },
             {
               "EncodingType": "Int32",
               "CType": "long int",
+              "JavaType": null,
               "DefinationEncoding": "ld"
             },
             {
               "EncodingType": "Int64",
               "CType": "long long int",
+              "JavaType": null,
               "DefinationEncoding": "lld"
             },
             {
               "EncodingType": "Int64",
               "CType": "long long int",
+              "JavaType": null,
               "DefinationEncoding": "lli"
             },
             {
               "EncodingType": "UInt64",
               "CType": "unsigned long long int",
+              "JavaType": null,
               "DefinationEncoding": "llu"
             },
             {
               "EncodingType": "UInt64",
               "CType": "unsigned long long int",
+              "JavaType": null,
               "DefinationEncoding": "llx"
             },
             {
               "EncodingType": "UInt64",
               "CType": "unsigned long long int",
+              "JavaType": null,
               "DefinationEncoding": "llX"
             },
             {
               "EncodingType": "Int32",
               "CType": "long int",
+              "JavaType": null,
               "DefinationEncoding": "li"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned long int",
+              "JavaType": null,
               "DefinationEncoding": "lu"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned long int",
+              "JavaType": null,
               "DefinationEncoding": "lx"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned long int",
+              "JavaType": null,
               "DefinationEncoding": "lX"
             },
             {
               "EncodingType": "UNICODE_String",
               "CType": "const wchar_t *",
+              "JavaType": null,
               "DefinationEncoding": "ls"
             },
             {
               "EncodingType": "Int64",
               "CType": "size_t",
+              "JavaType": null,
               "DefinationEncoding": "zd"
             },
             {
               "EncodingType": "Int64",
               "CType": "size_t",
+              "JavaType": null,
               "DefinationEncoding": "zi"
             },
             {
               "EncodingType": "UInt64",
               "CType": "size_t",
+              "JavaType": null,
               "DefinationEncoding": "zu"
             },
             {
               "EncodingType": "UInt64",
               "CType": "size_t",
+              "JavaType": null,
               "DefinationEncoding": "zx"
             },
             {
               "EncodingType": "UInt64",
               "CType": "size_t",
+              "JavaType": null,
               "DefinationEncoding": "zX"
             },
             {
               "EncodingType": "Int64",
               "CType": "ptrdiff_t",
+              "JavaType": null,
               "DefinationEncoding": "td"
             },
             {
               "EncodingType": "Int64",
               "CType": "ptrdiff_t",
+              "JavaType": null,
               "DefinationEncoding": "ti"
             },
             {
               "EncodingType": "UInt64",
               "CType": "ptrdiff_t",
+              "JavaType": null,
               "DefinationEncoding": "tu"
             },
             {
               "EncodingType": "UInt64",
               "CType": "ptrdiff_t",
+              "JavaType": null,
               "DefinationEncoding": "tx"
             },
             {
               "EncodingType": "UInt64",
               "CType": "ptrdiff_t",
+              "JavaType": null,
               "DefinationEncoding": "tX"
             },
             {
               "EncodingType": "Int32",
               "CType": "int",
+              "JavaType": null,
               "DefinationEncoding": "i"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned int",
+              "JavaType": null,
               "DefinationEncoding": "u"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned int",
+              "JavaType": null,
               "DefinationEncoding": "x"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned int",
+              "JavaType": null,
               "DefinationEncoding": "4.4x"
             },
             {
               "EncodingType": "UInt32",
               "CType": "unsigned int",
+              "JavaType": null,
               "DefinationEncoding": "X"
             },
             {
               "EncodingType": "UInt8",
               "CType": "char",
+              "JavaType": null,
               "DefinationEncoding": "c",
               "CustomDecoder": "defaults.clog_config.Types.DecodeChar"
             },
             {
               "EncodingType": "ANSI_String",
               "CType": "const char *",
+              "JavaType": null,
               "DefinationEncoding": "s"
             },
             {
               "EncodingType": "UNICODE_String",
               "CType": "const wchar_t *",
+              "JavaType": null,
               "DefinationEncoding": "S"
             },
             {
               "EncodingType": "Pointer",
               "CType": "CLOG_PTR",
+              "JavaType": null,
               "DefinationEncoding": "p",
               "CustomDecoder": "defaults.clog_config.Types.DecodePointer"
             }

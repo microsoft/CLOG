@@ -42,6 +42,10 @@ Version:
 #define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
 #endif
 
+#define CLOG_ARRAY_HELPER(length, pointer) pointer, length
+#define CLOG_ARRAY(length, pointer) CLOG_ARRAY_HELPER(length, pointer)
+#define CLOG_STRUCT_HELPER(numFields) numFields
+#define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
 typedef const void * CLOG_PTR;
 typedef const unsigned char CLOG_UINT8;
 typedef const char CLOG_INT8;
