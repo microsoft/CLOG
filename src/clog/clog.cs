@@ -301,6 +301,28 @@ namespace clog
                         e.PrintDiagnostics();
                         return -2;
                     }
+                    catch (Exception e)
+                    {
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"---------------------------------------------------------------------------");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"CLOG has crashed processing : {currentFile}.");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   if you're reading this, we consider seeing this message a bug.  Even if the message");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   you're about to read is sufficient to diagnose, we'd like to improve the user experience");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   please consider filing a bug, with repro files and --verboseErrors");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"");
+                        CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Exception:");
+
+                        if (!options.VerboseErrors)
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    " + e.Message);
+                            return -1; 
+                        }
+                        else
+                        {
+                            CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, e.ToString());
+                        }
+
+                    }
 
                     return 0;
                 }, err =>

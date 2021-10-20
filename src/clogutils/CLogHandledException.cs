@@ -48,7 +48,7 @@ namespace clogutils
             InvalidNameFormatInTypeSpcifier = 29,
             EncodedArgNumberInvalid = 30,
             SidecarFileVersionMismatch = 31,
-            SidecarCorrupted = 32
+            SidecarCorrupted = 32,
 			ConfigFileMissingProfile = 33
         }
 

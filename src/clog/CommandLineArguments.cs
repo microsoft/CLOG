@@ -110,6 +110,14 @@ namespace clog
             get;
             set;
         }
+
+        [Option("verboseErrors", Required = false, Default = false, HelpText = "[OPTIONAL] Set this to see exceptions information, should you encouter a bug in CLOG")]
+        public bool VerboseErrors
+        {
+            get;
+            set;
+        }
+
         public string GetOutputFileName(string inputFile)
         {
             string ret = Path.Combine(this.OutputDirectory, Path.GetFileName(inputFile));
