@@ -109,7 +109,7 @@ namespace clog.TraceEmitterModules
                 sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
             }
             sourceFile.AppendLine($"#include \"{Path.GetFileName(_clogFile)}\"");
-        }
+    }
 
 
         public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)

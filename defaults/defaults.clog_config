@@ -126,6 +126,11 @@
         "DefinationEncoding": "hx",
       },
       {
+        "EncodingType": "Int16",
+        "CType": "short",
+        "DefinationEncoding": "hd",
+      },
+      {
         "EncodingType": "UInt16",
         "CType": "unsigned short",
         "DefinationEncoding": "hX",

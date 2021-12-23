@@ -1,0 +1,168 @@
+<instrumentationManifest xmlns="http://schemas.microsoft.com/win/2004/08/events">
+  <instrumentation xmlns:ut="http://manifests.microsoft.com/win/2004/08/windows/networkevents" xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
+      <provider
+        guid="{7EBE92EB-B7AE-4720-B842-FA8798950838}"
+        messageFileName="clogsample.exe"
+        name="CLOG-SAMPLE-MANIFEST"
+        resourceFileName="clogsample.exe"
+        symbol="CLOG_SAMPLE_PROVIDER">
+        <templates>
+          <template
+            tid="template_" />
+          <template
+            tid="template_sz_">
+            <data
+              name="arg2"
+              inType="win:AnsiString" />
+          </template>
+          <template
+            tid="template_ui8_binary_">
+            <data
+              name="arg2_len"
+              inType="win:UInt8" />
+            <data
+              name="arg2"
+              length="arg2_len"
+              inType="win:Binary" />
+          </template>
+          <template
+            tid="template_ui8_">
+            <data
+              name="arg2"
+              inType="win:UInt8" />
+          </template>
+          <template
+            tid="template_i32_">
+            <data
+              name="arg2"
+              inType="win:Int32" />
+          </template>
+          <template
+            tid="template_ptr_i32_sz_ui8_ui32_i16_i64_">
+            <data
+              name="arg1"
+              inType="win:Pointer" />
+            <data
+              name="arg3"
+              inType="win:Int32" />
+            <data
+              name="arg4"
+              inType="win:AnsiString" />
+            <data
+              name="arg5"
+              inType="win:UInt8" />
+            <data
+              name="arg6"
+              inType="win:UInt32" />
+            <data
+              name="arg7"
+              inType="win:Int16" />
+            <data
+              name="arg8"
+              inType="win:Int64" />
+          </template>
+        </templates>
+        <events>
+          <event
+            message="$(string.CLOG.LAUNCHED)"
+            value="1"
+            symbol="LAUNCHED"
+            template="template_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.LAUNCHED2)"
+            value="2"
+            symbol="LAUNCHED2"
+            template="template_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.LAUNCHED4)"
+            value="3"
+            symbol="LAUNCHED4"
+            template="template_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATA_STRING)"
+            value="4"
+            symbol="DATA_STRING"
+            template="template_sz_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATABYTEARRAY)"
+            value="5"
+            symbol="DATABYTEARRAY"
+            template="template_ui8_binary_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATACHAR)"
+            value="6"
+            symbol="DATACHAR"
+            template="template_ui8_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATAINT)"
+            value="7"
+            symbol="DATAINT"
+            template="template_i32_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATAINT5)"
+            value="8"
+            symbol="DATAINT5"
+            template="template_i32_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.INSTANCE_TEST)"
+            value="9"
+            symbol="INSTANCE_TEST"
+            template="template_ptr_i32_sz_ui8_ui32_i16_i64_"
+            level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATABYTEARRAY_2)"
+            value="10"
+            symbol="DATABYTEARRAY_2"
+            template="template_ui8_binary_"
+            level="win:Informational" />
+        </events>
+      </provider>
+    </events>
+  </instrumentation>
+  <localization>
+    <resources
+      culture="en-US">
+      <stringTable>
+        <string
+          id="CLOG.LAUNCHED"
+          value="Hello world - we just started here with no args" />
+        <string
+          id="CLOG.LAUNCHED2"
+          value="Hello world - we just started here with no args" />
+        <string
+          id="CLOG.LAUNCHED4"
+          value="Hello world - we just started here with no args" />
+        <string
+          id="CLOG.DATA_STRING"
+          value="I am string %1=hello" />
+        <string
+          id="CLOG.DATABYTEARRAY"
+          value="%1" />
+        <string
+          id="CLOG.DATACHAR"
+          value="This is a char: %1; it should equal a" />
+        <string
+          id="CLOG.DATAINT"
+          value="This is an int: %1;  it should be 1234" />
+        <string
+          id="CLOG.DATAINT5"
+          value="This is an int: %1;  it should be 1234" />
+        <string
+          id="CLOG.INSTANCE_TEST"
+          value="[%1] 1:%2 2:%3 3:%4 4:%5 5:%6 6:%7 - you should see 1 2 3 4 5 6" />
+        <string
+          id="CLOG.DATABYTEARRAY_2"
+          value="BYTE ARRAY CUSTOM TYPE - %1" />
+      </stringTable>
+    </resources>
+  </localization>
+</instrumentationManifest>

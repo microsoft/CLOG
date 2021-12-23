@@ -1,21 +1,35 @@
 {
   "Version": 2,
   "EventBundlesV2": {
-    "LAUNCHED": {
-      "ModuleProperites": {},
-      "TraceString": "Hello world - we just started here is an int=%d",
-      "UniqueId": "LAUNCHED",
+    "DATA_STRING": {
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "4",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "2. I am string %s=hello",
+      "UniqueId": "DATA_STRING",
       "splitArgs": [
         {
-          "DefinationEncoding": "d",
+          "DefinationEncoding": "s",
           "MacroVariableName": "arg2"
         }
       ],
       "macroName": "TraceInfo"
     },
     "DATABYTEARRAY": {
-      "ModuleProperites": {},
-      "TraceString": "%!BYTEARRAY!",
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "5",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "3. This is a byte array with a custom decoder = %!BYTEARRAY!",
       "UniqueId": "DATABYTEARRAY",
       "splitArgs": [
         {
@@ -26,8 +40,15 @@
       "macroName": "TraceInfo"
     },
     "DATACHAR": {
-      "ModuleProperites": {},
-      "TraceString": "This is a char: %c",
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "6",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "4. This is a char: %c; it should equal a",
       "UniqueId": "DATACHAR",
       "splitArgs": [
         {
@@ -38,8 +59,15 @@
       "macroName": "TraceInfo"
     },
     "DATAINT": {
-      "ModuleProperites": {},
-      "TraceString": "This is an int: %d",
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "7",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "5. This is an int: %d;  it should be 1234",
       "UniqueId": "DATAINT",
       "splitArgs": [
         {
@@ -49,9 +77,35 @@
       ],
       "macroName": "TraceInfo"
     },
+    "DATAINT5": {
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "8",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "6. This is an int: %d;  it should be 1234",
+      "UniqueId": "DATAINT5",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceInfo"
+    },
     "INSTANCE_TEST": {
-      "ModuleProperites": {},
-      "TraceString": "[%p]1:%d 2:%s 3:%c 4:%u 5:%u 6:%u",
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "9",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "[%p] 1. 1:%d 2:%s 3:%c 4:%u 5:%hd 6:%lld - you should see 1 2 3 4 5 6",
       "UniqueId": "INSTANCE_TEST",
       "splitArgs": [
         {
@@ -75,23 +129,71 @@
           "MacroVariableName": "arg6"
         },
         {
-          "DefinationEncoding": "u",
+          "DefinationEncoding": "hd",
           "MacroVariableName": "arg7"
         },
         {
-          "DefinationEncoding": "u",
+          "DefinationEncoding": "lld",
           "MacroVariableName": "arg8"
         }
       ],
       "macroName": "TraceInstanceInfo"
+    },
+    "INT_ERROR": {
+      "ModuleProperites": {},
+      "TraceString": "7. this is an error %d",
+      "UniqueId": "INT_ERROR",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2"
+        }
+      ],
+      "macroName": "TraceError"
+    },
+    "INT_ERROR_2": {
+      "ModuleProperites": {},
+      "TraceString": "8. this is an error %d with a string %s",
+      "UniqueId": "INT_ERROR_2",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2"
+        },
+        {
+          "DefinationEncoding": "s",
+          "MacroVariableName": "arg3"
+        }
+      ],
+      "macroName": "TraceError"
     }
   },
   "ConfigFile": {
     "MacroConfigurations": {
-      "lttng_plus": {
+      "lttng": {
         "Modules": [
           {
             "ExportModule": "LTTNG",
+            "CustomSettings": {}
+          }
+        ]
+      },
+      "etw_info": {
+        "Modules": [
+          {
+            "ExportModule": "MANIFESTED_ETW",
+            "CustomSettings": {
+              "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+              "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+              "Level": "win:Informational"
+            }
+          }
+        ]
+      },
+      "etw_errors": {
+        "Modules": [
+          {
+            "ExportModule": "TRACELOGGING",
             "CustomSettings": {}
           }
         ]
@@ -113,24 +215,50 @@
         "EncodedPrefix": null,
         "EncodedArgNumber": 1,
         "MacroConfiguration": {
-          "linux": "lttng_plus",
+          "linux": "lttng",
           "macos": "empty",
           "stubs": "empty",
           "windows_kernel": "empty",
-          "windows": "empty"
+          "windows": "etw_info"
         },
         "CustomSettings": null
       },
       {
         "MacroName": "TraceInstanceInfo",
-        "EncodedPrefix": "[%p]",
+        "EncodedPrefix": "[%p] ",
         "EncodedArgNumber": 2,
         "MacroConfiguration": {
-          "linux": "lttng_plus",
+          "linux": "lttng",
           "macos": "empty",
           "stubs": "empty",
           "windows_kernel": "empty",
-          "windows": "empty"
+          "windows": "etw_info"
+        },
+        "CustomSettings": null
+      },
+      {
+        "MacroName": "TraceError",
+        "EncodedPrefix": null,
+        "EncodedArgNumber": 1,
+        "MacroConfiguration": {
+          "linux": "lttng",
+          "macos": "empty",
+          "stubs": "empty",
+          "windows_kernel": "empty",
+          "windows": "etw_errors"
+        },
+        "CustomSettings": null
+      },
+      {
+        "MacroName": "TraceInstanceError",
+        "EncodedPrefix": "[%p] ",
+        "EncodedArgNumber": 2,
+        "MacroConfiguration": {
+          "linux": "lttng",
+          "macos": "empty",
+          "stubs": "empty",
+          "windows_kernel": "empty",
+          "windows": "etw_errors"
         },
         "CustomSettings": null
       }
@@ -201,6 +329,12 @@
               "CType": "unsigned short",
               "JavaType": null,
               "DefinationEncoding": "hx"
+            },
+            {
+              "EncodingType": "Int16",
+              "CType": "short",
+              "JavaType": null,
+              "DefinationEncoding": "hd"
             },
             {
               "EncodingType": "UInt16",
@@ -401,29 +535,44 @@
   "ModuleUniqueness": {
     "TraceInformation": [
       {
-        "UniquenessHash": "1ba94e38-7860-c45a-131c-13e183be74c5",
-        "TraceID": "LAUNCHED",
-        "EncodingString": "Hello world - we just started here is an int=%d"
+        "UniquenessHash": "cd0737ad-4546-9d2c-6890-1132b9b30214",
+        "TraceID": "DATA_STRING",
+        "EncodingString": "2. I am string %s=hello"
       },
       {
-        "UniquenessHash": "368386b1-58a0-bc3e-cf2b-bdcdb5f8a12e",
+        "UniquenessHash": "32847a97-a325-9319-c339-fe21e3428571",
         "TraceID": "DATABYTEARRAY",
-        "EncodingString": "%!BYTEARRAY!"
+        "EncodingString": "3. This is a byte array with a custom decoder = %!BYTEARRAY!"
       },
       {
-        "UniquenessHash": "73633e68-7dc6-9310-40dd-35accdad6932",
+        "UniquenessHash": "231b0811-0852-d02c-e48d-01554d92d7d6",
         "TraceID": "DATACHAR",
-        "EncodingString": "This is a char: %c"
+        "EncodingString": "4. This is a char: %c; it should equal a"
       },
       {
-        "UniquenessHash": "348407f0-f2f5-c1de-a153-4005cce7a5ce",
+        "UniquenessHash": "94b6f09a-1a05-c2da-82ea-8cca90a2fd12",
         "TraceID": "DATAINT",
-        "EncodingString": "This is an int: %d"
+        "EncodingString": "5. This is an int: %d;  it should be 1234"
       },
       {
-        "UniquenessHash": "6fe4b3c0-ad93-cd49-fc8b-e30c268668f4",
+        "UniquenessHash": "30926746-3fa4-1934-c3dc-5c25217666dd",
+        "TraceID": "DATAINT5",
+        "EncodingString": "6. This is an int: %d;  it should be 1234"
+      },
+      {
+        "UniquenessHash": "7c626bda-19d6-8240-ec6e-0271f541602b",
         "TraceID": "INSTANCE_TEST",
-        "EncodingString": "[%p]1:%d 2:%s 3:%c 4:%u 5:%u 6:%u"
+        "EncodingString": "[%p] 1. 1:%d 2:%s 3:%c 4:%u 5:%hd 6:%lld - you should see 1 2 3 4 5 6"
+      },
+      {
+        "UniquenessHash": "0df07de0-3380-500a-02b5-85c45e74d3a3",
+        "TraceID": "INT_ERROR",
+        "EncodingString": "7. this is an error %d"
+      },
+      {
+        "UniquenessHash": "7aff5a89-7dec-e219-e250-098606338503",
+        "TraceID": "INT_ERROR_2",
+        "EncodingString": "8. this is an error %d with a string %s"
       }
     ]
   }

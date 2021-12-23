@@ -10,4 +10,4 @@ set(SOURCES
     Program.cs)
 
 
-DOT_NET_BUILD(CLOG2TEXT_LTTNG clog2text_lttng.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog2text_lttng.csproj ${SOURCES})
+DOT_NET_BUILD(CLOG2TEXT_LTTNG clog2text_lttng.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog2text_lttng.csproj net6.0 ${SOURCES})

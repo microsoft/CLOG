@@ -123,21 +123,21 @@ namespace clog2text_lttng
                     break;
 
                 case CLogEncodingType.UInt8:
-                    args[0] = (byte)value.AsInt32;
+                    args[0] = (byte)value.AsUInt8;
                     break;
 
                 case CLogEncodingType.ByteArray:
-                    /*case CLogEncodingType.UInt64Array:
-                    case CLogEncodingType.Int32Array:
-                    case CLogEncodingType.UInt32Array:
-                    case CLogEncodingType.Int64Array:
-                    case CLogEncodingType.ANSI_StringArray:
-                    case CLogEncodingType.UNICODE_StringArray:
-                    case CLogEncodingType.PointerArray:
-                    case CLogEncodingType.GUIDArray:
-                    case CLogEncodingType.Int16Array:
-                    case CLogEncodingType.UInt16Array:
-                    case CLogEncodingType.Int8Array:*/
+                /*case CLogEncodingType.UInt64Array:
+                case CLogEncodingType.Int32Array:
+                case CLogEncodingType.UInt32Array:
+                case CLogEncodingType.Int64Array:
+                case CLogEncodingType.ANSI_StringArray:
+                case CLogEncodingType.UNICODE_StringArray:
+                case CLogEncodingType.PointerArray:
+                case CLogEncodingType.GUIDArray:
+                case CLogEncodingType.Int16Array:
+                case CLogEncodingType.UInt16Array:
+                case CLogEncodingType.Int8Array:*/
                     args[0] = value.AsBinary;
                     break;
 

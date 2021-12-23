@@ -26,8 +26,7 @@ namespace clog.TraceEmitterModules
         private readonly Dictionary<Guid, ManifestInformation> _providerCache = new Dictionary<Guid, ManifestInformation>();
 
         public XmlDocument doc = new XmlDocument();
-        private XmlElement _stringTable;
-
+        
         public string xmlFileName;
         private static string _ModuleName = "MANIFESTED_ETW";
         private bool _dirty = false;
@@ -124,20 +123,14 @@ namespace clog.TraceEmitterModules
             }
 
             //
-            // Only allow a hash one time for now....
-            //
-            if (manifest.knownHashes.Contains(hash))
-            {
-                return;
-            }
-
-            manifest.knownHashes.Add(hash);
-
-            //
             //  See if our event already exists - if it does we do not want to add it a second time
             //
             List<XmlElement> toRemove = new List<XmlElement>();
             XmlElement newEvent = null;
+
+            if(null == manifest.events)
+                throw new CLogEnterReadOnlyModeException("ManifestedETW does not contain 'events' node", CLogHandledException.ExceptionType.ManifestedETWFileDoesntContainEvents, decodedTraceLine.match);
+
 
             foreach (var p in manifest.events.ChildNodes)
             {
@@ -178,15 +171,19 @@ namespace clog.TraceEmitterModules
 
 
                 //
-                // Set the string 
+                // Set the string
                 //
-                if (moduleSettings.CustomSettings.ContainsKey("EmitString") && moduleSettings.CustomSettings["EmitString"].Equals("1"))
+                bool setString = true;
+                if (moduleSettings.CustomSettings.ContainsKey("EmitString") && moduleSettings.CustomSettings["EmitString"].Equals("0"))
+                    setString = false;
+
+                if(setString)
                 {
                     string stringName = "CLOG." + hash;
                     string manifestString = MapCLOGStringToManifestString(decodedTraceLine);
 
-                    var stringEntry = doc.CreateElement("string", manifest.events.NamespaceURI);
-                    _stringTable.AppendChild(stringEntry);
+                    var stringEntry = doc.CreateElement("string", manifest.stringTable.NamespaceURI);
+                    manifest.stringTable.AppendChild(stringEntry);
                     _dirty = true;
                     SetAttribute(stringEntry, "id", stringName);
                     SetAttribute(stringEntry, "value", manifestString);
@@ -303,72 +300,82 @@ namespace clog.TraceEmitterModules
                 throw new CLogEnterReadOnlyModeException("Output Manifest Missing", CLogHandledException.ExceptionType.ETWManifestNotFound, null);
             }
 
-            doc.PreserveWhitespace = true;
-            doc.Load(xmlFileName);
-
-            XmlElement assembly = doc["assembly"];
-
-            if (null == assembly)
+            try
             {
-                assembly = doc["instrumentationManifest"];
-            }
 
-            var instrumentation = assembly["instrumentation"];
-            var rootEvents = instrumentation["events"];
+                doc.PreserveWhitespace = true;
+                doc.Load(xmlFileName);
 
-            var stringEvents = assembly["localization"];
-            foreach (var culture in stringEvents.ChildNodes)
-            {
-                if (!(culture is XmlElement))
+                XmlElement assembly = doc["assembly"];
+                XmlElement stringTable = null;
+
+                if (null == assembly)
                 {
-                    continue;
+                    assembly = doc["instrumentationManifest"];
                 }
 
-                XmlElement pe = (XmlElement)culture;
-                if (pe.Name == "resources")
+                var instrumentation = assembly["instrumentation"];
+                var rootEvents = instrumentation["events"];
+
+                var stringEvents = assembly["localization"];
+                foreach (var culture in stringEvents.ChildNodes)
                 {
-                    if (!pe.HasAttribute("culture"))
+                    if (!(culture is XmlElement))
                     {
                         continue;
                     }
 
-                    string attr = pe.GetAttribute("culture");
+                    XmlElement pe = (XmlElement)culture;
+                    if (pe.Name == "resources")
+                    {
+                        if (!pe.HasAttribute("culture"))
+                        {
+                            continue;
+                        }
 
-                    if (!attr.Equals("en-US"))
-                        continue;
+                        string attr = pe.GetAttribute("culture");
 
-                    XmlElement stringTable = pe["stringTable"];
-                    _stringTable = stringTable;
+                        if (!attr.Equals("en-US"))
+                            continue;
+
+                        stringTable = pe["stringTable"];
+                    }
                 }
-            }
 
-            foreach (var p in rootEvents.ChildNodes)
+                foreach (var p in rootEvents.ChildNodes)
+                {
+                    if (!(p is XmlElement))
+                    {
+                        continue;
+                    }
+
+                    XmlElement pe = (XmlElement)p;
+
+                    if (pe.Name == "provider")
+                    {
+                        if (!pe.HasAttribute("guid"))
+                        {
+                            continue;
+                        }
+
+                        string attr = pe.GetAttribute("guid");
+                        Guid id = new Guid(attr);
+
+                        if (!_providerCache.ContainsKey(id))
+                        {
+                            _providerCache[id] = new ManifestInformation(doc, pe, stringTable);
+                        }
+                    }
+                }
+
+                _inited = true;
+
+            }
+            catch(Exception)
             {
-                if (!(p is XmlElement))
-                {
-                    continue;
-                }
-
-                XmlElement pe = (XmlElement)p;
-
-                if (pe.Name == "provider")
-                {
-                    if (!pe.HasAttribute("guid"))
-                    {
-                        continue;
-                    }
-
-                    string attr = pe.GetAttribute("guid");
-                    Guid id = new Guid(attr);
-
-                    if (!_providerCache.ContainsKey(id))
-                    {
-                        _providerCache[id] = new ManifestInformation(doc, pe);
-                    }
-                }
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Error processing ETW manifest {xmlFileName}");
+                throw;
             }
-
-            _inited = true;
         }
 
         private ManifestInformation FindProviderCache(Guid providerId)
@@ -427,7 +434,23 @@ namespace clog.TraceEmitterModules
                 throw new CLogEnterReadOnlyModeException("WontWriteWhileInReadonlyMode:ETWManifest", CLogHandledException.ExceptionType.WontWriteInReadOnlyMode, match);
             }
 
-            doc.Save(xmlFileName);
+            //
+            // Devs prefer XML that is readable in their editor - make an attempt to format their XML in a way that diffs okay
+            //
+            StringBuilder stringBuilder = new StringBuilder();
+            System.Xml.Linq.XElement element = System.Xml.Linq.XElement.Parse(doc.InnerXml);
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = true;
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+
+            using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+            {
+                element.Save(xmlWriter);
+            }
+            File.WriteAllText(xmlFileName, stringBuilder.ToString());
+
             _dirty = false;
         }
 
@@ -657,7 +680,10 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      cmd.exe:   set CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      PowerShell: $env:CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      BASH: export CLOG_DEVELOPMENT_MODE=1");
 
                     throw new CLogEnterReadOnlyModeException("ETWManifestTypeMismatch", CLogHandledException.ExceptionType.ETWTypeMismatch, traceLine.match);
                 }
@@ -698,7 +724,11 @@ namespace clog.TraceEmitterModules
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, "Recommended Course of action:");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  1. (best) from within the manifest, delete the template ({templateId}) from your event ({eventId})");
                     CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  2. cleanup your template to be in this format");
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"  3. set the environment variable CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      cmd.exe:   set CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      PowerShell: $env:CLOG_DEVELOPMENT_MODE=1");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      BASH: export CLOG_DEVELOPMENT_MODE=1");
+
 
                     foreach (var t in listofArgsAsSpecifiedBySourceFile)
                     {
@@ -714,6 +744,7 @@ namespace clog.TraceEmitterModules
             }
 
 
+
             //
             // Store our metadata into the side car
             //
@@ -725,7 +756,6 @@ namespace clog.TraceEmitterModules
         {
             public string Name { get; set; }
             public string Type { get; set; }
-
             public string LengthOfSelf { get; set; }
             public string Hash { get; set; }
             public CLogFileProcessor.CLogVariableBundle ArgBundle { get; set; }
@@ -734,13 +764,14 @@ namespace clog.TraceEmitterModules
         private class ManifestInformation
         {
             public readonly XmlElement events;
-            public readonly HashSet<string> knownHashes = new HashSet<string>();
             public readonly XmlElement templates;
+            public readonly XmlElement stringTable;
 
-            public ManifestInformation(XmlDocument doc, XmlElement provider)
+            public ManifestInformation(XmlDocument doc, XmlElement provider, XmlElement strngTable)
             {
                 events = provider["events"];
                 templates = provider["templates"];
+                stringTable = strngTable;
             }
         }
     }

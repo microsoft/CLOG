@@ -31,6 +31,8 @@ namespace clogutils.MacroDefinations
 
         [JsonProperty] public bool ClassFunctionEncoding { get; set; }
 
+        public bool NoEncodingOk { get; set; }
+
         [JsonProperty] public string MacroNameConversionName { get; set; }
 
 

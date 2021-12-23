@@ -11,15 +11,18 @@ function(DOT_NET_BUILD)
     set(DEPENDENCY_NAME ${ARGV0})
     set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${ARGV1})
     set(PROJECT_PATH ${ARGV2})
+    set(DOTNET_FRAMEWORK ${ARGV3})
+    list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
 
-    #message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
-    #message(STATUS "PROJECT : ${PROJECT_PATH}")
-    #message(STATUS "PRODUCES : ${DEST_BINARY}")
-    #message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
-    #message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}")
+    message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
+    message(STATUS "PROJECT : ${PROJECT_PATH}")
+    message(STATUS "PRODUCES : ${DEST_BINARY}")
+    message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
+    message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}")
+    message(STATUS "DOTNET_FRAMEWORK : ${DOTNET_FRAMEWORK}")
 
     foreach(arg IN LISTS ARGV)
         #message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
@@ -32,7 +35,7 @@ function(DOT_NET_BUILD)
         COMMENT
             "build CLOG, if this fails with nuget packages inspect your nuget.config and make sure nuget.org is present (add from command line using : dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org)"
         COMMAND
-            dotnet publish ${PROJECT_PATH} -o ${CLOG_ARTIFACT_DIR} -f net5.0
+            dotnet publish ${PROJECT_PATH} -o ${CLOG_ARTIFACT_DIR} -f ${DOTNET_FRAMEWORK}
         DEPENDS
             ${PROJECT_PATH}
         DEPENDS
@@ -47,14 +50,15 @@ function(DOT_NET_LIBRARY_BUILD)
     set(DEPENDENCY_NAME ${ARGV0})
     set(DEST_BINARY ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}/${ARGV1})
     set(PROJECT_PATH ${ARGV2})
+
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
     list(REMOVE_AT ARGV 0)
 
-    #message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
-    #message(STATUS "PROJECT : ${PROJECT_PATH}")
-    #message(STATUS "PRODUCES : ${DEST_BINARY}")
-    #message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
+    ##message(STATUS "---------------------- GENERATING : ${DEPENDENCY_NAME} -------------------")
+    ##message(STATUS "PROJECT : ${PROJECT_PATH}")
+    ##message(STATUS "PRODUCES : ${DEST_BINARY}")
+    ##message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}/${DOTNET_RUNTIME}")
 
     foreach(arg IN LISTS ARGV)
         #message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")
@@ -81,6 +85,10 @@ add_subdirectory(src/clog)
 add_subdirectory(src/clogutils)
 
 if (NOT APPLE)
-    add_subdirectory(src/clog2text/clog2text_windows)
     add_subdirectory(src/clog2text/clog2text_lttng)
+    add_subdirectory(src/clog2text/clog2text_udiag)
+endif()
+
+if (WIN32)
+    add_subdirectory(src/clog2text/clog2text_windows)
 endif()

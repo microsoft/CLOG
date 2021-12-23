@@ -57,7 +57,18 @@ namespace clogutils
                 string encodedString = "";
 
                 List<string> splitArgs = new List<string>();
-                if (inspect.ClassFunctionEncoding)
+                if(inspect.NoEncodingOk)
+                {
+                    args = m.Groups["args"].ToString();
+
+                    splitArgs = new List<string>(SplitWithEscapedQuotes(args, ','));
+
+                    if (0 != args.Length && inspect.EncodedArgNumber >= splitArgs.Count)
+                    {
+                        throw new CLogHandledException("EncodedArgNumberTooLarge", CLogHandledException.ExceptionType.EncodedArgNumberInvalid, null);
+                    }
+                }
+                else if (inspect.ClassFunctionEncoding)
                 {
                     uid = m.Groups["methodname"].ToString();
                     args = m.Groups["args"].ToString();
@@ -200,7 +211,7 @@ namespace clogutils
                     {
                         if (null != e.Type)
                         {
-                            switch (e.Type.EncodingType)
+                            switch(e.Type.EncodingType)
                             {
                                 case CLogEncodingType.ByteArray:
                                     ret += "p";
@@ -223,10 +234,10 @@ namespace clogutils
                 get
                 {
                     string ret = "";
-                    int idx = 0;
-                    foreach (var e in encodings)
+                    int idx = 1;
+                    foreach(var e in encodings)
                     {
-                        if (null != e.Type)
+                        if(null != e.Type)
                         {
                             //ret += e.Type.DefinationEncoding;
                             ret += idx;
@@ -271,7 +282,7 @@ namespace clogutils
 
                 if ('%' == argString[i])
                 {
-                    pieces += argCount++;
+                    pieces += (argCount++) + 1; ;
 
                     CLogTypeContainer newNode = new CLogTypeContainer();
                     newNode.LeadingString = prefixString;
@@ -383,7 +394,7 @@ namespace clogutils
         {
             string userArgs = String.Empty;
 
-            if (!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
+            if (macroDefination.NoEncodingOk)
                 userArgs = "";
             else
                 userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
@@ -437,7 +448,7 @@ namespace clogutils
                         bundle.TypeNode = type;
                         finalArgs.Add(bundle);
                     }
-                    else if (!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
+                    else if(!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
                     {
 
                     }
@@ -449,7 +460,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
                             throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
                         }
-
+                         
                         CLogTypeContainer item = types.Dequeue();
                         var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
 
@@ -553,10 +564,7 @@ namespace clogutils
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine($"ERROR: cant process {match}");
-                            Console.WriteLine(e);
-
-                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", CLogHandledException.ExceptionType.InvalidInput, match.Value);
+                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", CLogHandledException.ExceptionType.InvalidInput, match.Value, e);
                         }
                     }
 

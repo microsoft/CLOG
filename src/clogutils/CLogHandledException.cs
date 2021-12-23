@@ -49,7 +49,8 @@ namespace clogutils
             EncodedArgNumberInvalid = 30,
             SidecarFileVersionMismatch = 31,
             SidecarCorrupted = 32,
-			ConfigFileMissingProfile = 33
+			ConfigFileMissingProfile = 33,
+            ManifestedETWFileDoesntContainEvents = 34
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -101,19 +102,21 @@ namespace clogutils
                 case ExceptionType.InvalidUniqueId:
                     return "CLOG Unique IDs must be alphanumeric and 47 or fewer characters";
                 case ExceptionType.WontWriteInReadOnlyMode:
-                    return "Wont write while in readonly mode.  --readOnly was specified as a command line argument.  If you're in a development mode, you can set the environment CLOG_DEVELOPMENT_MODE such that manifests and sidecars will be automatically updated";
+                    return "Wont write while in readonly mode, because --readOnly was (correctly!) specified as a command line argument.\n\nIf you're in a development mode, you can set the environment CLOG_DEVELOPMENT_MODE such that manifests and sidecars will be automatically updated \n\nEG:\n    cmd.exe:   set CLOG_DEVELOPMENT_MODE=1\n    PowerShell: $env:CLOG_DEVELOPMENT_MODE=1\n    BASH: export CLOG_DEVELOPMENT_MODE=1\n\nDO NOTE.  YOU NEED TO BE AWARE THAT ADDING CONTENT TO A SIDECAR IS ALWAYS OK.  HOWEVER DELETING AND EDITING MAY CAUSE PROBLEMS IN DECODE.  BE VERY CAREFUL - even correcting spelling errors in a shipping event can have problems. \n\n***INSTEAD OF EDITING EVENTS PLEASE CHANGE THE EVENT_ID,  TAKING A FRESH EVENT***\n\n\n\n";
                 case ExceptionType.RequiredConfigParameterUnspecified:
                     return "A required configuration parameter was not specified in the configuration file - this will be a user specified option required for a chosen event module";
                 case ExceptionType.InvalidInputFile:
                     return "Invalid input file";
                 case ExceptionType.UndefinedTypeToLanguageMapping:
                     return "Must specify conversion from CLOG Type to Language Type in config file";
-                case ExceptionType.SidecarFileVersionMismatch:
+  				case ExceptionType.SidecarFileVersionMismatch:
                     return "Invalid sidecar file version and unable to update - consider updating clog or correcting the version number";
 				case ExceptionType.ConfigFileMissingProfile:
                     return "CLOG config file is missing the specified configuration;  please update your clog_config file";
                 case ExceptionType.SidecarCorrupted:
                     return "Sidecar cannot be opened;  it seems to be corrupted - consider deleting and rebuilding, or locating the source of the corruption";
+                case ExceptionType.ManifestedETWFileDoesntContainEvents:
+                    return "ETW manifest must contain 'events' child node for CLOG to parent new individual events";
             }
 
             return "Uknown Error";
@@ -133,24 +136,27 @@ namespace clogutils
 
         public Exception Exception { get; set; }
 
-        public void PrintDiagnostics()
-        {
+        public void PrintDiagnostics(bool printFullException = true)
+        {            
             CLogErrors.PrintMatchDiagnostic(TraceLine);
+
+            if (!String.IsNullOrEmpty(InfoString))
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Info : " + InfoString);
 
             try
             {
                 string fileLine = CLogConsoleTrace.GetFileLine(TraceLine);
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}: {TranslateExceptionTypeToErrorMessage(Type)}");
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{Exception}");
+                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{fileLine}: fatal error CLOG{(int)Type}:\n\n{TranslateExceptionTypeToErrorMessage(Type)}");
 
+                if(printFullException)
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{Exception}");
+                else
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"{Exception.Message}");
             }
             catch (Exception)
             {
                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   ERR: TraceLine failure");
             }
-
-            if (!String.IsNullOrEmpty(InfoString))
-                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"   Info : " + InfoString);
         }
     }
 }

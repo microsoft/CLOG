@@ -70,7 +70,7 @@ namespace clogutils
                 case CLogEncodingType.UInt8:
                     return arg.AsUInt8.ToString();
                 case CLogEncodingType.ByteArray:
-                    return arg.ToString();/*
+                    return "UNSPECIFIED DECODER FOR BINARY TYPE";/*
                 case CLogEncodingType.UserEncodingString:
                     return arg.AsInt32.ToString();
                 case CLogEncodingType.UniqueAndDurableIdentifier:

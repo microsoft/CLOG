@@ -8,14 +8,23 @@
         }
       ]
     },
-    "etw": {
+    "etw_info": {
       "Modules": [
         {
           "ExportModule": "MANIFESTED_ETW",
           "CustomSettings": {
-            "ETWManifestFile": "clog_examples.man",
-            "ETW_Provider": "6b6c1d19-db92-4787-81fd-70ac01e3ea7f",
+            "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+            "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
             "Level": "win:Informational"
+          }
+        }
+      ]
+    },
+    "etw_errors": {
+      "Modules": [
+        {
+          "ExportModule": "TRACELOGGING",
+          "CustomSettings": {
           }
         }
       ]
@@ -40,19 +49,43 @@
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "etw"
+        "windows": "etw_info"
       }
     },
     {
       "MacroName": "TraceInstanceInfo",
-      "EncodedPrefix": "[%p]",
+      "EncodedPrefix": "[%p] ",
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
         "linux": "lttng",
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "etw"
+        "windows": "etw_info"
+      }
+    },
+     {
+      "MacroName": "TraceError",
+      "EncodedPrefix": null,
+      "EncodedArgNumber": 1,
+      "MacroConfiguration": {
+        "linux": "lttng",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "etw_errors"
+      }
+    },
+    {
+      "MacroName": "TraceInstanceError",
+      "EncodedPrefix": "[%p] ",
+      "EncodedArgNumber": 2,
+      "MacroConfiguration": {
+        "linux": "lttng",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "etw_errors"
       }
     }
   ],

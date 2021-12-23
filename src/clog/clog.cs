@@ -168,8 +168,6 @@ namespace clog
                             CLogDTraceOutputModule dtrace = new CLogDTraceOutputModule();
                             fullyDecodedMacroEmitter.AddClogModule(dtrace);
 
-                            CLogSystemTapModule systemTap = new CLogSystemTapModule();
-                            fullyDecodedMacroEmitter.AddClogModule(systemTap);
 
                             CLogSysLogModule syslog = new CLogSysLogModule();
                             fullyDecodedMacroEmitter.AddClogModule(syslog);
@@ -298,7 +296,7 @@ namespace clog
                     {
                         if (null != currentFile)
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Failure in file : {currentFile}");
-                        e.PrintDiagnostics();
+                        e.PrintDiagnostics(options.VerboseErrors);
                         return -2;
                     }
                     catch (Exception e)

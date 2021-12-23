@@ -40,6 +40,10 @@ namespace clog2text_lttng
                 {
                     string key = traceLine.Substring(startIndex, lastEqual - startIndex).Trim();
                     string value = traceLine.Substring(lastEqual + 1, i - lastEqual - 1).Trim();
+
+                    if (value.StartsWith("\"") && value.EndsWith("\""))
+                        value = value.Substring(1, value.Length - 2);
+                        
                     ret[key] = new LTTNGClogEvent(value);
                     piece = "";
                     startIndex = i + 1;
@@ -143,7 +147,6 @@ namespace clog2text_lttng
                             outputfile.Close();
                         }
                     }
-                    Console.WriteLine($"Decoded {lines} in {DateTimeOffset.Now - startTime}");
                     return 0;
                 }
                 catch (CLogHandledException e)
@@ -230,6 +233,10 @@ namespace clog2text_lttng
                 AsString = value;
             }
 
+            public override string ToString()
+            {
+                return "BUG";
+            }
             public string AsString
             {
                 get;

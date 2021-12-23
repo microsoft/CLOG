@@ -142,21 +142,12 @@ namespace clog2text_windows
                                             continue;
                                         }
 
-                                        Dictionary<string, string> argMap;
-
-                                        if (e.IsTraceLogging)
+                                        Dictionary<string, string> argMap = new Dictionary<string, string>();
+                                        foreach (var arg in args)
                                         {
-                                            argMap = new Dictionary<string, string>();
-                                            foreach (var arg in args)
-                                            {
-                                                argMap[arg.Key] = arg.Key;
-                                            }
+                                            argMap[arg.Key] = arg.Key;
                                         }
-                                        else
-                                        {
-                                            argMap = sidecar.GetTracelineMetadata(bundle, "MANIFESTED_ETW");
-                                        }
-
+                                        
                                         var types = CLogFileProcessor.BuildTypes(sidecar.ConfigFile, null, bundle.TraceString, null, out CLogFileProcessor.DecomposedString clean);
 
                                         if (0 == types.Length)
@@ -237,7 +228,7 @@ namespace clog2text_windows
                         e.PrintDiagnostics();
                         return -2;
                     }
-                }, err =>
+        }, err =>
                         {
                             Console.WriteLine("Bad Args : " + err);
                             return -1;

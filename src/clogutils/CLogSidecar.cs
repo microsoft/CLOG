@@ -115,7 +115,7 @@ namespace clogutils
                     throw new CLogEnterReadOnlyModeException($"Invalid sidecar file version {ret.Version}, our max version is 2 - consider updating CLOG", CLogHandledException.ExceptionType.SidecarFileVersionMismatch, null);
                 return ret;
             }
-            catch (System.Exception e)
+            catch(System.Exception e)
             {
                 throw new CLogEnterReadOnlyModeException($"Invalid sidecar file version - it looks corrupted", CLogHandledException.ExceptionType.SidecarCorrupted, null, e);
             }

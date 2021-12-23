@@ -42,7 +42,7 @@ namespace clogutils
         {
             get
             {
-                return !Synthesized &&
+                return !Synthesized && 
                         (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
                         EncodingType != CLogEncodingType.UserEncodingString);
             }

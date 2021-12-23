@@ -100,7 +100,11 @@ namespace clogutils
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
             if(!macro.MacroConfiguration.ContainsKey(configFile.ProfileName))
-                throw new CLogEnterReadOnlyModeException("MissingProfile:" + configFile.ProfileName + " in macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+                throw new CLogEnterReadOnlyModeException("MissingProfile:" + configFile.ProfileName + " used by macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+
+            if (!configFile.MacroConfigurations.ContainsKey(macro.MacroConfiguration[configFile.ProfileName]))
+                throw new CLogEnterReadOnlyModeException("MissingConfiguration:" + macro.MacroConfiguration[configFile.ProfileName] + " in profile=" + configFile.ProfileName + ", used by macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+
             return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
         }
 
