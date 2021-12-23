@@ -154,7 +154,7 @@ namespace syslog2clog
 
                         CLogFileProcessor processor = new CLogFileProcessor(configFile);
                         SysLogToClog converter = new SysLogToClog();
-
+                                             
                         string content = File.ReadAllText(options.InputFile);
                         string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
 
