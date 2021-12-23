@@ -19,10 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "converters", "converters", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslog2clog", "src\converters\syslog2clog\syslog2clog.csproj", "{E1FA7999-5C45-46B1-9E83-5467264F928E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "manifested2clog", "src\converters\manifested2clog\manifested2clog.csproj", "{A8C76D37-6C7C-4617-8A05-7469C07E294D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clog2text_udiag", "src\clog2text\clog2text_udiag\clog2text_udiag.csproj", "{A9D4DA06-7428-4639-BFD0-69D63CCD8F3E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
