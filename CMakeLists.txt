@@ -86,7 +86,6 @@ add_subdirectory(src/clogutils)
 
 if (NOT APPLE)
     add_subdirectory(src/clog2text/clog2text_lttng)
-    add_subdirectory(src/clog2text/clog2text_udiag)
 endif()
 
 if (WIN32)
