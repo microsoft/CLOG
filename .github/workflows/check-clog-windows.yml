@@ -1,4 +1,4 @@
-name: CLOG
+name: WINDOWS_TEST_BUILD
 
 on:
   push:

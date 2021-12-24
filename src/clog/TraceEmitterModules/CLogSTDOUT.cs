@@ -122,10 +122,10 @@ namespace clog.TraceEmitterModules
                         printf += "%u";
                         break;
                     case CLogEncodingType.Int64:
-                        printf += "%ld";
+                        printf += "%lld";
                         break;
                     case CLogEncodingType.UInt64:
-                        printf += "%lu";
+                        printf += "%llu";
                         break;
                     case CLogEncodingType.ANSI_String:
                         printf += "%s";

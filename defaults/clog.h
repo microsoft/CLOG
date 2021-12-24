@@ -18,7 +18,7 @@ Version:
 #define LOG_ADDR_LEN(x) sizeof(x)
 #endif
 
-// Legacy, used only for byte arrays
+// Used to define BYTE Array types
 #ifndef CLOG_BYTEARRAY_HELPER
 #define CLOG_BYTEARRAY_HELPER(length, pointer) pointer, length
 #endif
@@ -26,26 +26,6 @@ Version:
 #define CLOG_BYTEARRAY(length, pointer) CLOG_BYTEARRAY_HELPER(length, pointer)
 #endif
 
-// Used for other array types
-#ifndef CLOG_ARRAY_HELPER
-#define CLOG_ARRAY_HELPER(length, pointer) pointer, length
-#endif
-#ifndef CLOG_ARRAY
-#define CLOG_ARRAY(length, pointer) CLOG_ARRAY_HELPER(length, pointer)
-#endif
-
-// Used for declaring the next N fields are structs
-#ifndef CLOG_STRUCT_HELPER
-#define CLOG_STRUCT_HELPER(numFields) numFields
-#endif
-#ifndef CLOG_STRUCT
-#define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
-#endif
-
-#define CLOG_ARRAY_HELPER(length, pointer) pointer, length
-#define CLOG_ARRAY(length, pointer) CLOG_ARRAY_HELPER(length, pointer)
-#define CLOG_STRUCT_HELPER(numFields) numFields
-#define CLOG_STRUCT(numFields) CLOG_STRUCT_HELPER(numFields)
 typedef const void * CLOG_PTR;
 typedef const unsigned char CLOG_UINT8;
 typedef const char CLOG_INT8;

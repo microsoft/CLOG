@@ -1,4 +1,4 @@
-name: CLOG
+name: LINUX_TEST_BUILD
 
 on:
   push:
