@@ -1,10 +1,31 @@
 {
   "MacroConfigurations": {
-    "lttng_plus": {
+    "lttng": {
       "Modules": [
         {
           "ExportModule": "LTTNG",
           "CustomSettings": {}
+        }
+      ]
+    },
+    "etw_info": {
+      "Modules": [
+        {
+          "ExportModule": "MANIFESTED_ETW",
+          "CustomSettings": {
+            "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+            "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+            "Level": "win:Informational"
+          }
+        }
+      ]
+    },
+    "etw_errors": {
+      "Modules": [
+        {
+          "ExportModule": "TRACELOGGING",
+          "CustomSettings": {
+          }
         }
       ]
     },
@@ -24,23 +45,47 @@
       "EncodedPrefix": null,
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
-        "linux": "lttng_plus",
+        "linux": "lttng",
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "empty"
+        "windows": "etw_info"
       }
     },
     {
       "MacroName": "TraceInstanceInfo",
-      "EncodedPrefix": "[%p]",
+      "EncodedPrefix": "[%p] ",
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
-        "linux": "lttng_plus",
+        "linux": "lttng",
         "macos": "empty",
         "stubs": "empty",
         "windows_kernel": "empty",
-        "windows": "empty"
+        "windows": "etw_info"
+      }
+    },
+     {
+      "MacroName": "TraceError",
+      "EncodedPrefix": null,
+      "EncodedArgNumber": 1,
+      "MacroConfiguration": {
+        "linux": "lttng",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "etw_errors"
+      }
+    },
+    {
+      "MacroName": "TraceInstanceError",
+      "EncodedPrefix": "[%p] ",
+      "EncodedArgNumber": 2,
+      "MacroConfiguration": {
+        "linux": "lttng",
+        "macos": "empty",
+        "stubs": "empty",
+        "windows_kernel": "empty",
+        "windows": "etw_errors"
       }
     }
   ],

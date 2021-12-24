@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
-using System.Runtime.InteropServices;
 using clogutils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -51,6 +50,9 @@ namespace clog2text_lttng
 
         public void PrepareAssemblyCompileIfNecessary()
         {
+            if (null == CustomTypeDecoder)
+                return;
+
             if (null != _codeAssembly)
                 return;
 
@@ -95,10 +97,18 @@ namespace clog2text_lttng
 
         public bool Decode(CLogEncodingCLogTypeSearch type, IClogEventArg value, CLogLineMatch traceLine, out string decodedValue)
         {
+            decodedValue = "ERROR:" + type.CustomDecoder;
+
             //
             // Compiling also caches the assembly
             //
             PrepareAssemblyCompileIfNecessary();
+
+            //
+            // If we dont have a specified decoder, indicate that by returning false (we could not decode)
+            //
+            if (null == _codeAssembly)
+                return true;
 
             object[] args = new object[1];
 
@@ -113,11 +123,11 @@ namespace clog2text_lttng
                     break;
 
                 case CLogEncodingType.UInt8:
-                    args[0] = (byte)value.AsInt32;
+                    args[0] = (byte)value.AsUInt8;
                     break;
 
                 case CLogEncodingType.ByteArray:
-                case CLogEncodingType.UInt64Array:
+                /*case CLogEncodingType.UInt64Array:
                 case CLogEncodingType.Int32Array:
                 case CLogEncodingType.UInt32Array:
                 case CLogEncodingType.Int64Array:
@@ -127,7 +137,7 @@ namespace clog2text_lttng
                 case CLogEncodingType.GUIDArray:
                 case CLogEncodingType.Int16Array:
                 case CLogEncodingType.UInt16Array:
-                case CLogEncodingType.Int8Array:
+                case CLogEncodingType.Int8Array:*/
                     args[0] = value.AsBinary;
                     break;
 
@@ -145,8 +155,7 @@ namespace clog2text_lttng
             customDecoder = customDecoder.Substring(0, customDecoder.Length - member.Length - 1);
 
             var newType = _codeAssembly.GetType(customDecoder);
-            var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);
-            decodedValue = "ERROR:" + type.CustomDecoder;
+            var instance = _typesInterface = _codeAssembly.CreateInstance(customDecoder);            
 
             if (!_compiledConverterFunctions.ContainsKey(type.CustomDecoder))
             {

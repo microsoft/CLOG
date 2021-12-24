@@ -51,7 +51,7 @@ namespace syslog2clog
             set;
         }
 
-        [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix")]
+        [Option("scopePrefix", SetName = "build", Required = false, HelpText = "scope prefix;  this value will prefix CLOG functions() and helps to provide scope.  Typically this value is reused by an entire module or directory (your choice)")]
         public string ScopePrefix
         {
             get;

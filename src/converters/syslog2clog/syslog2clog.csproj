@@ -23,5 +23,5 @@
  <ItemGroup>
    <ProjectReference Include="..\..\clogutils\clogutils.csproj" />
  </ItemGroup>
-  
+
 </Project>

@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -26,6 +26,9 @@ namespace clogutils
         public string CType { get; set; }
 
         [JsonProperty]
+        public string JavaType { get; set; }
+
+        [JsonProperty]
         public string DefinationEncoding { get; set; }
 
         [JsonProperty]
@@ -39,7 +42,7 @@ namespace clogutils
         {
             get
             {
-                return !Synthesized &&
+                return !Synthesized && 
                         (EncodingType != CLogEncodingType.UniqueAndDurableIdentifier &&
                         EncodingType != CLogEncodingType.UserEncodingString);
             }

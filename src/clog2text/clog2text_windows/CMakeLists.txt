@@ -10,4 +10,4 @@ set(SOURCES
     Program.cs)
 
 
-DOT_NET_BUILD(CLOG2TEXT_WINDOWS clog2text_windows.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog2text_windows.csproj ${SOURCES})
+DOT_NET_BUILD(CLOG2TEXT_WINDOWS clog2text_windows.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog2text_windows.csproj netcoreapp3.1 ${SOURCES})

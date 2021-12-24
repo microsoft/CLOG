@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -56,6 +56,8 @@ namespace clog.TraceEmitterModules
 
         public void InitHeader(StringBuilder header)
         {
+            string justFile = Path.GetFileName(_lttngHeaderFileName);
+
             header.AppendLine("#undef TRACEPOINT_PROVIDER");
             header.AppendLine($"#define TRACEPOINT_PROVIDER {_lttngProviderName}");
 
@@ -66,7 +68,7 @@ namespace clog.TraceEmitterModules
             }
 
             header.AppendLine("#undef TRACEPOINT_INCLUDE");
-            header.AppendLine($"#define TRACEPOINT_INCLUDE \"{_lttngHeaderFileName}\"");
+            header.AppendLine($"#define TRACEPOINT_INCLUDE \"{justFile}\"");
 
             header.AppendLine($"#if !defined(DEF_{_lttngProviderName}) || defined(TRACEPOINT_HEADER_MULTI_READ)");
             header.AppendLine($"#define DEF_{_lttngProviderName}");
@@ -76,7 +78,7 @@ namespace clog.TraceEmitterModules
             header.AppendLine("#define __int64 __int64_t");
 
 
-            header.AppendLine($"#include \"{_lttngHeaderFileName}\"");
+            header.AppendLine($"#include \"{justFile}\"");
             header.AppendLine("#endif");
 
 
@@ -93,7 +95,6 @@ namespace clog.TraceEmitterModules
             }
 
             File.WriteAllText(_lttngHeaderFileName, lttngFile.ToString());
-
             if (_lttngDynamicTracepoint)
             {
                 sourceFile.AppendLine("#ifdef BUILDING_TRACEPOINT_PROVIDER");
@@ -107,9 +108,8 @@ namespace clog.TraceEmitterModules
                 sourceFile.AppendLine("#define TRACEPOINT_CREATE_PROBES");
                 sourceFile.AppendLine("#define TRACEPOINT_DEFINE");
             }
-
-            sourceFile.AppendLine($"#include \"{Path.GetFullPath(_clogFile)}\"");
-        }
+            sourceFile.AppendLine($"#include \"{Path.GetFileName(_clogFile)}\"");
+    }
 
 
         public void TraceLineDiscovered(string sourceFile, CLogOutputInfo outputInfo, CLogDecodedTraceLine decodedTraceLine, CLogSidecar sidecar, StringBuilder macroPrefix, StringBuilder inline, StringBuilder function)

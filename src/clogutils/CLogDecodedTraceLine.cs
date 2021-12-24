@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -10,8 +10,6 @@ Abstract:
 --*/
 
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
@@ -25,7 +23,7 @@ namespace clogutils
         [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
 
         public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
-            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args, string cleanedString)
+            CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args, CLogFileProcessor.DecomposedString decompString)
         {
             SourceFile = sourceFile;
             macro = mac;
@@ -35,15 +33,19 @@ namespace clogutils
             TraceString = userString;
             splitArgs = args;
             TraceStringNoPrefix = userStringNoPrefix;
-            CleanedString = cleanedString;
+
+            DecomposedString = decompString;
         }
 
         [JsonProperty]
         public string TraceString { get; private set; }
 
-        public string CleanedString { get; private set; }
+        public CLogFileProcessor.DecomposedString DecomposedString;
+
+        public string CleanedString { get { return DecomposedString.AsManifestedETWEncoding; } }
 
         public string TraceStringNoPrefix { get; private set; }
+
 
         [JsonProperty]
         public string UniqueId { get; private set; }
@@ -97,6 +99,12 @@ namespace clogutils
 
         public CLogConfigurationProfile GetMacroConfigurationProfile()
         {
+            if(!macro.MacroConfiguration.ContainsKey(configFile.ProfileName))
+                throw new CLogEnterReadOnlyModeException("MissingProfile:" + configFile.ProfileName + " used by macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+
+            if (!configFile.MacroConfigurations.ContainsKey(macro.MacroConfiguration[configFile.ProfileName]))
+                throw new CLogEnterReadOnlyModeException("MissingConfiguration:" + macro.MacroConfiguration[configFile.ProfileName] + " in profile=" + configFile.ProfileName + ", used by macro=" + macro.MacroName, CLogHandledException.ExceptionType.RequiredConfigParameterUnspecified, match);
+
             return configFile.MacroConfigurations[macro.MacroConfiguration[configFile.ProfileName]];
         }
 

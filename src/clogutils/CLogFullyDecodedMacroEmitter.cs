@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -13,9 +13,7 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using clogutils;
 using clogutils.ConfigFile;
 using clogutils.MacroDefinations;
 
@@ -38,7 +36,6 @@ namespace clogutils
         {
             _inputSourceFile = inputSourceFile;
             _sidecar = sidecar;
-            _sourceFile.AppendLine($"// CLOG generated {DateTimeOffset.Now}");
             _sourceFile.AppendLine("#include <clog.h>");
         }
 
@@ -61,10 +58,9 @@ namespace clogutils
         {
             r = null;
 
-            /*
-            if (_knownHashes.ContainsKey(decodedTraceLine.UniqueId) && _knownHashes[decodedTraceLine.UniqueId] == decodedTraceLine.
+            string uniqueHash = (decodedTraceLine.UniqueId + "|" + outputInfo.OutputFileName).ToUpper();
+            if (_knownHashes.Contains(uniqueHash))
                 return;
-            */
 
             string argsString = "";
             int clogArgCountForMacroAlignment = 0; // decodedTraceLine.splitArgs.Length + 1;
@@ -96,7 +92,7 @@ namespace clogutils
                             throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_BYTEARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
                         }
                         break;
-                    case CLogEncodingType.Int32Array:
+                   /* case CLogEncodingType.Int32Array:
                     case CLogEncodingType.UInt32Array:
                     case CLogEncodingType.Int64Array:
                     case CLogEncodingType.UInt64Array:
@@ -122,7 +118,7 @@ namespace clogutils
                             throw new CLogEnterReadOnlyModeException("ByteArrayNotUsingCLOG_ARRAY", CLogHandledException.ExceptionType.ArrayMustUseMacro, decodedTraceLine.match);
                         }
 
-                        break;
+                        break;*/
                     default:
                         clogArgCountForMacroAlignment++;
                         break;
@@ -133,7 +129,7 @@ namespace clogutils
             string implSignature = $" clogTraceImpl_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}(";
 
             string macroName = $"_clog_{clogArgCountForMacroAlignment}_ARGS_TRACE_{decodedTraceLine.UniqueId}";
-            _headerFile.AppendLine($"#ifndef {macroName}");
+
 
             if (-1 != decodedTraceLine.macro.EncodedArgNumber)
             {
@@ -162,7 +158,7 @@ namespace clogutils
                         implSignature += $", {v.CType} {arg.VariableInfo.IndexBasedName}";
                         argsString += $", {arg.VariableInfo.IndexBasedName}";
 
-                        if (v.EncodingType == CLogEncodingType.ByteArray ||
+                        if (v.EncodingType == CLogEncodingType.ByteArray /*||
                             v.EncodingType == CLogEncodingType.Int32Array ||
                             v.EncodingType == CLogEncodingType.UInt32Array ||
                             v.EncodingType == CLogEncodingType.Int64Array ||
@@ -173,7 +169,7 @@ namespace clogutils
                             v.EncodingType == CLogEncodingType.GUIDArray ||
                             v.EncodingType == CLogEncodingType.Int16Array ||
                             v.EncodingType == CLogEncodingType.UInt16Array ||
-                            v.EncodingType == CLogEncodingType.Int8Array)
+                            v.EncodingType == CLogEncodingType.Int8Array*/)
                         {
                             implSignature += $", int {arg.VariableInfo.IndexBasedName}_len";
                             argsString += $", {arg.VariableInfo.IndexBasedName}_len";
@@ -199,9 +195,6 @@ namespace clogutils
 
             StringBuilder macroBody = new StringBuilder();
 
-            _headerFile.AppendLine("");
-            _headerFile.AppendLine("");
-            _headerFile.AppendLine("");
             _headerFile.AppendLine("/*----------------------------------------------------------");
             _headerFile.AppendLine($"// Decoder Ring for {decodedTraceLine.UniqueId}");
             _headerFile.AppendLine($"// {decodedTraceLine.TraceString}");
@@ -216,6 +209,7 @@ namespace clogutils
             }
 
             _headerFile.AppendLine("----------------------------------------------------------*/");
+            _headerFile.AppendLine($"#ifndef {macroName}");
 
             //
             // BUGBUG: not fully implemented - the intent of 'implSignature' is to give a turn key
@@ -249,7 +243,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, $"        UniquenessHash:{existingTraceInfo.UniquenessHash}");
 
                             _sidecar.RemoveTraceLine(existingTraceInfo);
-                            _knownHashes.Remove(decodedTraceLine.UniqueId);
+                            _knownHashes.Remove(uniqueHash);
                             _sidecar.TraceLineDiscovered(_inputSourceFile, outputInfo, decodedTraceLine, _sidecar, _headerFile,
                                 macroBody,
                                 _sourceFile);
@@ -281,9 +275,13 @@ namespace clogutils
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "    typo in a trace string) - have two options to override/refresh the signature check");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "   Force/Clobber the event signature - indicating you desire breaking the uniqueness contract");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) frome this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    1. remove UniquenessHash ({existingTraceInfo.UniquenessHash}) from this TraceID({existingTraceInfo.TraceID}) in file {decodedTraceLine.configFile.FilePath}");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"    2. specify the --overwriteHashCollisions command line argument (good if you're making lots of changes that are all safe)");
-                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"    3. set the environment variable CLOG_DEVELOPMENT_MODE=1  ($env:CLOG_DEVELOPMENT_MODE=1)");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"    3. set the environment variable CLOG_DEVELOPMENT_MODE=1");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      cmd.exe:   set CLOG_DEVELOPMENT_MODE=1");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      PowerShell: $env:CLOG_DEVELOPMENT_MODE=1");
+                                CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Tip, $"      BASH: export CLOG_DEVELOPMENT_MODE=1");
+
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, "");
                                 CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Wrn, "    The signature for the previously defined event:");
@@ -297,7 +295,7 @@ namespace clogutils
                         }
                     }
 
-                    if (!_knownHashes.Contains(decodedTraceLine.UniqueId))
+                    if (!_knownHashes.Contains(uniqueHash))
                     {
                         _sidecar.InsertTraceLine(module, decodedTraceLine);
 
@@ -312,7 +310,7 @@ namespace clogutils
                 }
             }
 
-            _knownHashes.Add(decodedTraceLine.UniqueId);
+            _knownHashes.Add(uniqueHash);
             _headerFile.AppendLine(macroBody.ToString());
             _headerFile.AppendLine("#endif");
             _headerFile.AppendLine("");

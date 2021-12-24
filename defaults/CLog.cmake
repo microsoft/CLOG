@@ -23,7 +23,7 @@ function(CLOG_GENERATE_TARGET)
     foreach(arg IN LISTS ARGV)
         get_filename_component(RAW_FILENAME ${arg} NAME)
         set(ARG_CLOG_OUTPUT_DIR ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library})
-	    set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${RAW_FILENAME}.clog.h)
+        set(ARG_CLOG_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${RAW_FILENAME}.clog.h)
         set(ARG_CLOG_C_FILE ${CMAKE_CLOG_OUTPUT_DIRECTORY}/${library}/${library}_${RAW_FILENAME}.clog.h.c)
 
         # message(STATUS ">>>>>>> CLOG Source File = ${RAW_FILENAME}")
