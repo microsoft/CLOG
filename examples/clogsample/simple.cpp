@@ -22,6 +22,7 @@ Abstract:
 #include "clog_examples.h"
 #include <TraceLoggingProvider.h>  // The native TraceLogging API
 
+
 // Forward-declare the clog_hTrace variable that you will use for tracing in this component
 TRACELOGGING_DECLARE_PROVIDER( clog_hTrace );
 
