@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -11,11 +11,8 @@ Abstract:
 --*/
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using clogutils;
-using clogutils.MacroDefinations;
 
 namespace clog.TraceEmitterModules
 {

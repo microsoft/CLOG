@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -39,8 +39,7 @@ namespace syslog2clog
                         ++idx;
                     }
 
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"{idx}. <skip the reset in this file and save");
-
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Std, $"{idx}. <skip the rest in this file and save>");
 
                     string choice = null;
                     while (String.IsNullOrEmpty(choice))
@@ -155,16 +154,9 @@ namespace syslog2clog
 
                         CLogFileProcessor processor = new CLogFileProcessor(configFile);
                         SysLogToClog converter = new SysLogToClog();
-
-                        //  CLogFullyDecodedMacroEmitter fullyDecodedMacroEmitter = new CLogFullyDecodedMacroEmitter(options.InputFile, sidecar);
-
-                        // fullyDecodedMacroEmitter.AddClogModule(converter);
-
+                                             
                         string content = File.ReadAllText(options.InputFile);
-                        // CLogOutputInfo outputInfo = null;
                         string output = processor.ConvertFile(configFile, null, converter, content, options.InputFile, true);
-
-                        // fullyDecodedMacroEmitter.FinishedProcessing();
 
                         if (!Directory.Exists(Path.GetDirectoryName(options.OutputFile)))
                             Directory.CreateDirectory(Path.GetDirectoryName(options.OutputFile));

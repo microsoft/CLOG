@@ -19,8 +19,6 @@ namespace clog.TraceEmitterModules
 {
     public class CLogTraceLoggingOutputModule : ICLogOutputModule
     {
-        private readonly HashSet<string> knownHashes = new HashSet<string>();
-
         public string ModuleName
         {
             get { return "TRACELOGGING"; }
@@ -47,12 +45,6 @@ namespace clog.TraceEmitterModules
             CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
 
             decodedTraceLine.macro.DecodeUniqueId(decodedTraceLine.match, decodedTraceLine.UniqueId, out hash, out hashUInt);
-            if (knownHashes.Contains(hash))
-            {
-                return;
-            }
-
-            knownHashes.Add(hash);
 
             inline.AppendLine(
                 $"__annotation(L\"Debug\", L\"CLOG\", L\"{hash}\"); \\"); //, msg, id, \"{sourceFile}\");");

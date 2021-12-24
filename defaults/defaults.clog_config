@@ -11,66 +11,6 @@
         "DefinationEncoding": "!BYTEARRAY!"
       },
       {
-        "EncodingType": "Int32Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!INT32ARRAY!"
-      },
-      {
-        "EncodingType": "UInt32Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!UINT32ARRAY!"
-      },
-      {
-        "EncodingType": "Int64Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!INT64ARRAY!"
-      },
-      {
-        "EncodingType": "UInt64Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!UINT64ARRAY!"
-      },
-      {
-        "EncodingType": "ANSI_StringArray",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!ANSISTRINGARRAY!"
-      },
-      {
-        "EncodingType": "UNICODE_StringArray",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!UNICODESTRINGARRAY!"
-      },
-      {
-        "EncodingType": "PointerArray",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!POINTERARRAY!"
-      },
-      {
-        "EncodingType": "GUIDArray",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!GUIDARRAY!"
-      },
-      {
-        "EncodingType": "Int16Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!INT16ARRAY!"
-      },
-      {
-        "EncodingType": "UInt16Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!UINT16ARRAY!"
-      },
-      {
-        "EncodingType": "Int8Array",
-        "CType": "CLOG_PTR",
-        "DefinationEncoding": "!INT8ARRAY!"
-      },
-      {
-        "EncodingType": "Struct",
-        "CType": "unsigned long int",
-        "DefinationEncoding": "!STRUCT!"
-      },
-      {
         "EncodingType": "Int32",
         "CType": "int",
         "DefinationEncoding": "d",
@@ -184,6 +124,11 @@
         "EncodingType": "UInt16",
         "CType": "unsigned short",
         "DefinationEncoding": "hx",
+      },
+      {
+        "EncodingType": "Int16",
+        "CType": "short",
+        "DefinationEncoding": "hd",
       },
       {
         "EncodingType": "UInt16",
