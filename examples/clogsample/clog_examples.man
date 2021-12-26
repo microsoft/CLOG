@@ -124,6 +124,12 @@
             symbol="DATABYTEARRAY_2"
             template="template_ui8_binary_"
             level="win:Informational" />
+          <event
+            message="$(string.CLOG.DATA_NAMED_INT)"
+            value="11"
+            symbol="DATA_NAMED_INT"
+            template="template_i32_"
+            level="win:Informational" />
         </events>
       </provider>
     </events>
@@ -162,6 +168,9 @@
         <string
           id="CLOG.DATABYTEARRAY_2"
           value="BYTE ARRAY CUSTOM TYPE - %1" />
+        <string
+          id="CLOG.DATA_NAMED_INT"
+          value="5. This is a named int: %1;  it should be 1234" />
       </stringTable>
     </resources>
   </localization>

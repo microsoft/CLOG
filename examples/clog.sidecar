@@ -167,6 +167,26 @@
         }
       ],
       "macroName": "TraceError"
+    },
+    "DATA_NAMED_INT": {
+      "ModuleProperites": {
+        "MANIFESTED_ETW": {
+          "EventID": "11",
+          "ETWManifestFile": ".\\clogsample\\clog_examples.man",
+          "ETW_Provider": "7EBE92EB-B7AE-4720-B842-FA8798950838",
+          "Level": "win:Informational"
+        }
+      },
+      "TraceString": "5. This is a named int: %{myInt,d};  it should be 1234",
+      "UniqueId": "DATA_NAMED_INT",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2",
+          "EventVariableName": "myInt"
+        }
+      ],
+      "macroName": "TraceInfo"
     }
   },
   "ConfigFile": {
@@ -574,6 +594,11 @@
         "UniquenessHash": "c6ddfba7-8698-af14-0023-2248a283f947",
         "TraceID": "DATAINT",
         "EncodingString": "5. This is a named int: %{myInt, d};  it should be 1234"
+      },
+      {
+        "UniquenessHash": "00e55ab5-2581-5789-25d5-069f2b00c9bb",
+        "TraceID": "DATA_NAMED_INT",
+        "EncodingString": "5. This is a named int: %{myInt,d};  it should be 1234"
       }
     ]
   }

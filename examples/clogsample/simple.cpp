@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     TraceInfo(DATABYTEARRAY, "3. This is a byte array with a custom decoder = %!BYTEARRAY!", CLOG_BYTEARRAY(5, (const unsigned char *)"hello"));
 
     TraceInfo(DATACHAR, "4. This is a char: %c; it should equal a", 'a');
-    TraceInfo(DATAINT, "5. This is a named int: %{myInt, d};  it should be 1234", 1234);
+    TraceInfo(DATA_NAMED_INT, "5. This is a named int: %{myInt,d};  it should be 1234", 1234);
 
     TraceInfo(DATAINT5, "6. This is an int: %d;  it should be 1234", 1234);
 

@@ -13,7 +13,7 @@ if($IsWindows) {
     move .\clogsample\Debug\* .\clogsample -Force
 }
 
-./clogsample/clogsample
+./clogsample/clogsample > test.output.txt
 if(!$?)
 {
     Write-Host "Unable to run test"
@@ -21,7 +21,7 @@ if(!$?)
     Exit
 }
 
-$diffs = Compare-Object (Get-Content ./test.output.txt) (Get-Content ../test.desired.output.txt)
+$diffs = Compare-Object (Get-Content ./test.output.txt) (Get-Content ../test.desired.output.basic.txt)
 
 Write-Host "----------------------------------------------------"
 Write-Host "Results: "

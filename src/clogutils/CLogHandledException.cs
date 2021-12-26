@@ -50,7 +50,8 @@ namespace clogutils
             SidecarFileVersionMismatch = 31,
             SidecarCorrupted = 32,
 			ConfigFileMissingProfile = 33,
-            ManifestedETWFileDoesntContainEvents = 34
+            ManifestedETWFileDoesntContainEvents = 34,
+            WhiteSpaceNotAllowed = 35
         }
 
         public static string TranslateExceptionTypeToErrorMessage(ExceptionType e)
@@ -117,6 +118,8 @@ namespace clogutils
                     return "Sidecar cannot be opened;  it seems to be corrupted - consider deleting and rebuilding, or locating the source of the corruption";
                 case ExceptionType.ManifestedETWFileDoesntContainEvents:
                     return "ETW manifest must contain 'events' child node for CLOG to parent new individual events";
+                case ExceptionType.WhiteSpaceNotAllowed:
+                    return "White Space not allowed in variable encoding ex %{name, d} is not allowed.  However %{name,d} is allowed";
             }
 
             return "Uknown Error";
@@ -137,7 +140,7 @@ namespace clogutils
         public Exception Exception { get; set; }
 
         public void PrintDiagnostics(bool printFullException = true)
-        {            
+        {
             CLogErrors.PrintMatchDiagnostic(TraceLine);
 
             if (!String.IsNullOrEmpty(InfoString))
