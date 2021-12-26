@@ -15,15 +15,17 @@ set(SOURCES
 CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB STATIC ${SOURCES})
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/inc)
 
-if (NOT WIN32)
-    add_executable(clogsample ${SOURCES})
-else()
+
+if ("${CMAKE_CLOG_CONFIG_PROFILE}" STREQUAL "windows")
     add_executable(clogsample ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/inc/clog_examples.rc)
+else()
+    add_executable(clogsample ${SOURCES})
 endif()
 
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
 
-if (NOT WIN32 AND NOT APPLE)
+
+if ("${CMAKE_CLOG_CONFIG_PROFILE}" STREQUAL "linux")
     include(FindLTTngUST)
     target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
 
@@ -37,7 +39,7 @@ if (NOT WIN32 AND NOT APPLE)
 endif()
 
 
-if(WIN32)
+if ("${CMAKE_CLOG_CONFIG_PROFILE}" STREQUAL "windows")
     message(STATUS "BUILDING CLOG SAMPLE(Windows)")
 
     add_custom_command(
@@ -52,5 +54,4 @@ if(WIN32)
 
     configure_file(clog_examples.wprp clog_examples.wprp COPYONLY)
     configure_file(clog_examples.man clog_examples.man COPYONLY)
-
 endif()
