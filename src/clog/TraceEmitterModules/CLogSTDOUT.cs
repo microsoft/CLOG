@@ -164,7 +164,7 @@ namespace clog.TraceEmitterModules
                 printf += tail;
             }
 
-            printf += "\\r\\n";
+            printf += "\\n";
 
             inline.Append($"    {printmacro}(\"{printf}\"");
             foreach (var arg in decodedTraceLine.splitArgs)
