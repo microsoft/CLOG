@@ -46,13 +46,13 @@ int main(int argc, char* argv[])
     //    and our output can be compared using simple text comparisons
     //
     char *buffer = (char *)0xAABBCCDD00110011;
-    TraceInstanceInfo(INSTANCE_TEST, buffer, "1. 1:%d 2:%s 3:%c 4:%u 5:%hd 6:%lld - you should see 1 2 3 4 5 6", 1, "2", '3', 4, 5, 6);
+    TraceInstanceInfo(INSTANCE_TEST, buffer, "1. 1:%d 2:%s 3:%c 4:%u 5:%hd 6:%lld - you should see 1 2 3 4 5 6", 1, "2", '3', 4, 5, (__int64)6);
 
     TraceInfo(DATA_STRING, "2. I am string %s=hello", "hello");
     TraceInfo(DATABYTEARRAY, "3. This is a byte array with a custom decoder = %!BYTEARRAY!", CLOG_BYTEARRAY(5, (const unsigned char *)"hello"));
 
     TraceInfo(DATACHAR, "4. This is a char: %c; it should equal a", 'a');
-    TraceInfo(DATAINT, "5. This is an int: %d;  it should be 1234", 1234);
+    TraceInfo(DATAINT, "5. This is a named int: %{myInt, d};  it should be 1234", 1234);
 
     TraceInfo(DATAINT5, "6. This is an int: %d;  it should be 1234", 1234);
 

@@ -322,6 +322,13 @@ namespace clogutils
 
                         // Skip the comma
                         i++;
+
+                        // Skip spaces
+                        while (i < argString.Length && char.IsWhiteSpace(argString[i]))
+                        {
+                            ++i;
+                        }
+
                         if (i == argString.Length)
                         {
                             throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);

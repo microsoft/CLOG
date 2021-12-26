@@ -73,8 +73,6 @@ if(!$?)
     Exit
 }
 
-#./clogsample/clogsampledynamictp
-
 if ($IsLinux) {
     lttng list --userspace | grep CLOG
     lttng list --userspace | grep CLOG
@@ -103,7 +101,6 @@ if ($IsWindows)
 
     # Intentionally run the program twice - data layer outputs some info the first time it's run, causing the test output to be wrong :/
     .\buildclog\artifacts\clog2text_windows.exe -i ./clogsample/clog_example.etl -s ../clog.sidecar
-
     .\buildclog\artifacts\clog2text_windows.exe -i ./clogsample/clog_example.etl -s ../clog.sidecar > test.output.txt
 }
 
