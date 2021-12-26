@@ -134,7 +134,7 @@ namespace clog.TraceEmitterModules
                         printf += "%S";
                         break;
                     case CLogEncodingType.Pointer:
-                        printf += "0x%lx";
+                        printf += "0x%llx";
                         break;
                     case CLogEncodingType.GUID:
                         printf += "%p";
@@ -192,7 +192,7 @@ namespace clog.TraceEmitterModules
                     case CLogEncodingType.UNICODE_String:
                         break;
                     case CLogEncodingType.Pointer:
-                        cast = "(void*)";
+                        cast = "(unsigned long long int)";
                         break;
                     case CLogEncodingType.GUID:
                         cast = "(void*)";
