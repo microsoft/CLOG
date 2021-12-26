@@ -31,11 +31,11 @@ if($diffs.Length -ne 0)
 {
     Write-Host "----------------------------------------------------"
     Write-Host "FAIL : expected results"
-    cat ../test.desired.output.txt
+    cat ../test.desired.output.basic.txt
 
     Write-Host "----------------------------------------------------"
     Write-Host "Diffs : "
-    Compare-Object (Get-Content ./test.output.txt) (Get-Content ../test.desired.output.txt)
+    Compare-Object (Get-Content ./test.output.txt) (Get-Content ../test.desired.output.basic.txt)
 
     cd ..
     Exit -1
