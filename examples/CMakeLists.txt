@@ -13,7 +13,10 @@ set(CMAKE_CLOG_GENERATE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../defaults/CLog.cmake)
 set(CMAKE_CLOG_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/clog_examples.clog_config)
 include(${CMAKE_CLOG_GENERATE_FILE})
 
-
+#
+# Allow commandline overrides of the CLOG confguration profile;  but if unspecified
+#    use a reasonable choice per OS
+#
 if ("${CMAKE_CLOG_CONFIG_PROFILE}" STREQUAL "")
     if (WIN32)
         set(CMAKE_CLOG_CONFIG_PROFILE windows)
