@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -77,7 +77,6 @@ namespace clogutils
             get;
             set;
         }
-
         public ClogSidecar_V2()
         {
             Version = 2;
@@ -95,21 +94,31 @@ namespace clogutils
 
         public static ClogSidecar_V2 FromJson(string json)
         {
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Context = new StreamingContext(StreamingContextStates.Other, json);
-
-            ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
-
-            if (1 == ret.Version)
+            try
             {
-                ClogSidecar_V1 v1 = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
-                ret = new ClogSidecar_V2();
-                ret.Version = 2;
-                ret.EventBundlesV2 = v1.EventBundlesV2;
-                ret.ConfigFile = v1.ConfigFile;
-                ret.ModuleUniqueness = CLogModuleUsageInformation_V2.ConvertFromV1(v1.ModuleUniqueness);
+                JsonSerializerSettings s = new JsonSerializerSettings();
+                s.Context = new StreamingContext(StreamingContextStates.Other, json);
+
+                ClogSidecar_V2 ret = JsonConvert.DeserializeObject<ClogSidecar_V2>(json, s);
+
+                if (1 == ret.Version)
+                {
+                    ClogSidecar_V1 v1 = ClogSidecar_V1.FromJson(json);
+                    ret = new ClogSidecar_V2();
+                    ret.Version = 2;
+                    ret.EventBundlesV2 = v1.EventBundlesV2;
+                    ret.ConfigFile = v1.ConfigFile;
+                    ret.ModuleUniqueness = CLogModuleUsageInformation_V2.ConvertFromV1(v1.ModuleUniqueness);
+                }
+
+                if (2 != ret.Version)
+                    throw new CLogEnterReadOnlyModeException($"Invalid sidecar file version {ret.Version}, our max version is 2 - consider updating CLOG", CLogHandledException.ExceptionType.SidecarFileVersionMismatch, null);
+                return ret;
             }
-            return ret;
+            catch(System.Exception e)
+            {
+                throw new CLogEnterReadOnlyModeException($"Invalid sidecar file version - it looks corrupted", CLogHandledException.ExceptionType.SidecarCorrupted, null, e);
+            }
         }
     }
 
@@ -266,7 +275,7 @@ namespace clogutils
         {
             //
             // Merge in hot values
-            // 
+            //
             foreach (var hot in HotEventBundles)
             {
                 CLogDecodedTraceLine old;
@@ -313,10 +322,8 @@ namespace clogutils
             private set { _areDirty = value; }
         }
 
-        public CLogDecodedTraceLine FindBundle(string uid)
+        public CLogDecodedTraceLine FindBundle(string name)
         {
-            string name = uid.Split(':')[1];
-
             if (!_sideCarFile.EventBundlesV2.ContainsKey(name))
             {
                 return null;

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WindowsPerformanceRecorder Version="1.0" Author="Microsoft Corporation" Copyright="Microsoft Corporation" Company="Microsoft Corporation">
+  <Profiles>
+   <SystemCollector Id="SC_HighVolume" Realtime="false">
+      <BufferSize Value="1024"/>
+      <Buffers Value="60"/>
+    </SystemCollector>
+    <EventCollector Id="EC_LowVolume" Name="LowVolume">
+      <BufferSize Value="128"/>
+      <Buffers Value="32"/>
+    </EventCollector>
+    <EventCollector Id="EC_HighVolume" Name="High Volume">
+      <BufferSize Value="1024"/>
+      <Buffers Value="64"/>
+    </EventCollector>
+
+    <SystemProvider Id="SP_SystemThreadExecution">
+      <Keywords>
+        <Keyword Value="CpuConfig"/>
+        <Keyword Value="Loader"/>
+        <Keyword Value="ProcessThread"/>
+        <Keyword Value="SampledProfile"/>
+      </Keywords>
+      <Stacks>
+        <Stack Value="SampledProfile"/>
+      </Stacks>
+    </SystemProvider>
+
+    <EventProvider Id="EP_CLOGSample" Name="7EBE92EB-B7AE-4720-B842-FA8798950838" NonPagedMemory="true" />
+
+    <Profile Id="Full.Verbose.File" Name="Full" Description="CLOGSample" LoggingMode="File" DetailLevel="Verbose">
+      <Collectors>
+        <EventCollectorId Value="EC_LowVolume">
+          <EventProviders>
+            <EventProviderId Value="EP_CLOGSample" />
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+    <Profile Id="Full.Verbose.Memory" Base="Full.Verbose.File" Name="Full" Description="CLOGSample" LoggingMode="Memory" DetailLevel="Verbose"/>
+  </Profiles>
+</WindowsPerformanceRecorder>

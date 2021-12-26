@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 s
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -11,7 +11,6 @@ Abstract:
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -58,7 +57,18 @@ namespace clogutils
                 string encodedString = "";
 
                 List<string> splitArgs = new List<string>();
-                if (inspect.ClassFunctionEncoding)
+                if(inspect.NoEncodingOk)
+                {
+                    args = m.Groups["args"].ToString();
+
+                    splitArgs = new List<string>(SplitWithEscapedQuotes(args, ','));
+
+                    if (0 != args.Length && inspect.EncodedArgNumber >= splitArgs.Count)
+                    {
+                        throw new CLogHandledException("EncodedArgNumberTooLarge", CLogHandledException.ExceptionType.EncodedArgNumberInvalid, null);
+                    }
+                }
+                else if (inspect.ClassFunctionEncoding)
                 {
                     uid = m.Groups["methodname"].ToString();
                     args = m.Groups["args"].ToString();
@@ -146,7 +156,7 @@ namespace clogutils
                     {
                         if (0 == numParan)
                         {
-                            throw new Exception("Invalid Input");
+                            throw new CLogEnterReadOnlyModeException($"Unable to split string: {info}", CLogHandledException.ExceptionType.InvalidInput, null);
                         }
 
                         --numParan;
@@ -171,15 +181,91 @@ namespace clogutils
             return ret.ToArray();
         }
 
+
+        public class DecomposedString
+        {
+            public void AddEncoding(EncodingArg arg)
+            {
+                encodings.Add(arg);
+            }
+
+            public EncodingArg CreateNewArg()
+            {
+                EncodingArg arg = new EncodingArg();
+                encodings.Add(arg);
+                return arg;
+            }
+            public class EncodingArg
+            {
+                public string Prefix { get; set; } = "";
+                public CLogEncodingCLogTypeSearch Type { get; set; }
+            }
+
+            public string AsPrintF
+            {
+                get
+                {
+                    string ret = "";
+                    int idx = 0;
+                    foreach (var e in encodings)
+                    {
+                        if (null != e.Type)
+                        {
+                            switch(e.Type.EncodingType)
+                            {
+                                case CLogEncodingType.ByteArray:
+                                    ret += "p";
+                                    break;
+                                default:
+                                    ret += e.Type.DefinationEncoding;
+                                    break;
+                            }
+
+                            ++idx;
+                        }
+                        ret += e.Prefix;
+                    }
+
+                    return ret;
+                }
+            }
+            public string AsManifestedETWEncoding
+            {
+                get
+                {
+                    string ret = "";
+                    int idx = 1;
+                    foreach(var e in encodings)
+                    {
+                        if(null != e.Type)
+                        {
+                            //ret += e.Type.DefinationEncoding;
+                            ret += idx;
+                            ++idx;
+                        }
+                        ret += e.Prefix;
+                    }
+
+                    return ret;
+                }
+            }
+
+            private List<EncodingArg> encodings = new List<EncodingArg>();
+        }
+
         public static CLogTypeContainer[] BuildTypes(CLogConfigurationFile configFile, CLogLineMatch traceLineMatch, string argString,
             string traceLine,
-            out string cleanedString)
+            out DecomposedString decompString)
         {
             List<CLogTypeContainer> ret = new List<CLogTypeContainer>();
             string pieces = string.Empty;
             int argCount = 0;
-            cleanedString = string.Empty;
+
+            decompString = new DecomposedString();
+
             string prefixString = "";
+
+            DecomposedString.EncodingArg currentArg = decompString.CreateNewArg();
 
             if (string.IsNullOrEmpty(argString))
             {
@@ -192,14 +278,17 @@ namespace clogutils
             for (int i = 0; i < argString.Length; ++i)
             {
                 pieces += argString[i];
+                currentArg.Prefix += argString[i];
 
                 if ('%' == argString[i])
                 {
-                    pieces += argCount++;
+                    pieces += (argCount++) + 1; ;
 
                     CLogTypeContainer newNode = new CLogTypeContainer();
                     newNode.LeadingString = prefixString;
                     newNode.ArgStartingIndex = i;
+
+                    currentArg = decompString.CreateNewArg();
 
                     ++i;
 
@@ -245,6 +334,7 @@ namespace clogutils
                     {
                         // 'i' will point to the final character on a match (such that i+1 is the next fresh character)
                         t = configFile.FindTypeAndAdvance(argString, traceLineMatch, ref i);
+
                     }
                     catch (CLogTypeNotFoundException)
                     {
@@ -253,6 +343,7 @@ namespace clogutils
 
                     newNode.TypeNode = t;
                     newNode.ArgLength = i - newNode.ArgStartingIndex + 1;
+                    currentArg.Type = t;
 
                     // If we found a preferred name, the next character after the type should be a closing brace
                     if (preferredName.Length != 0)
@@ -276,7 +367,9 @@ namespace clogutils
                 }
             }
 
-            cleanedString = pieces;
+            if (!pieces.Equals(decompString.AsManifestedETWEncoding))
+                throw new Exception("ETW strings dont match");
+
             return ret.ToArray();
         }
 
@@ -299,13 +392,20 @@ namespace clogutils
         private static CLogDecodedTraceLine BuildArgsFromEncodedArgsX(CLogConfigurationFile configFile, string sourcefile,
             CLogTraceMacroDefination macroDefination, CLogLineMatch traceLineMatch, string traceLine)
         {
-            string userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
-            string cleanedString;
+            string userArgs = String.Empty;
+
+            if (macroDefination.NoEncodingOk)
+                userArgs = "";
+            else
+                userArgs = macroDefination.CombinePrefixWithEncodedString(traceLineMatch.EncodingString);
+
+            CLogFileProcessor.DecomposedString decompString;
+
             //
             // Loop across all types, ignoring the ones that are not specified in the source code
             //
             Queue<CLogTypeContainer> types = new Queue<CLogTypeContainer>();
-            foreach (var type in BuildTypes(configFile, traceLineMatch, userArgs, traceLine, out cleanedString))
+            foreach (var type in BuildTypes(configFile, traceLineMatch, userArgs, traceLine, out decompString))
             {
                 if (type.TypeNode.Synthesized)
                 {
@@ -348,6 +448,10 @@ namespace clogutils
                         bundle.TypeNode = type;
                         finalArgs.Add(bundle);
                     }
+                    else if(!String.IsNullOrEmpty(macroDefination.MacroNameConversionName))
+                    {
+
+                    }
                     else
                     {
                         if (0 == types.Count)
@@ -356,7 +460,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
                             throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
                         }
-
+                         
                         CLogTypeContainer item = types.Dequeue();
                         var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
 
@@ -375,7 +479,7 @@ namespace clogutils
 
                             if (item.PreferredName.Length > configFile.MaximumVariableLength || hasBadChars)
                             {
-                                Console.WriteLine($"WARNING: {item.PreferredName} contains invalid characters (must be <= {configFile.MaximumVariableLength} characters and containing only alphanumeric plus underscore, using {info.SuggestedTelemetryName} instead");
+                                Console.WriteLine($"WARNING: {item.PreferredName} contains invalid characters (must be <= {configFile.MaximumVariableLength} characters and containing only alphanumeric plus underscore. Ignoring user specified {item.PreferredName} and  using {info.SuggestedTelemetryName} instead!");
                             }
                             else
                             {
@@ -404,7 +508,10 @@ namespace clogutils
                 throw new CLogEnterReadOnlyModeException("InvalidUniqueID", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
             }
 
-            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(traceLineMatch.UniqueID, sourcefile, userArgs, traceLineMatch.EncodingString, traceLineMatch, configFile, macroDefination, finalArgs.ToArray(), cleanedString);
+            //if(traceLineMatch.UniqueID.Length >= 47)
+            //    throw new CLogEnterReadOnlyModeException("TooManyCharacters", CLogHandledException.ExceptionType.InvalidUniqueId, traceLineMatch);
+
+            CLogDecodedTraceLine decodedTraceLine = new CLogDecodedTraceLine(traceLineMatch.UniqueID, sourcefile, userArgs, traceLineMatch.EncodingString, traceLineMatch, configFile, macroDefination, finalArgs.ToArray(), decompString);
 
             return decodedTraceLine;
         }
@@ -434,9 +541,6 @@ namespace clogutils
                         try
                         {
                             lastMatch = match;
-
-                            string[] splitArgs = SplitWithEscapedQuotes(match.Value.AllArgs, ',');
-
                             int idx = match.Value.MatchedRegExX.Index - 1;
 
                             while (idx > 0 && (contents[idx] == ' ' || contents[idx] == '\t'))
@@ -460,10 +564,7 @@ namespace clogutils
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine($"ERROR: cant process {match}");
-                            Console.WriteLine(e);
-
-                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", CLogHandledException.ExceptionType.InvalidInput, match.Value);
+                            throw new CLogEnterReadOnlyModeException("Cant Read Line Input", CLogHandledException.ExceptionType.InvalidInput, match.Value, e);
                         }
                     }
 

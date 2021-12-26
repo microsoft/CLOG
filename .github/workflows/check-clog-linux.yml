@@ -1,0 +1,31 @@
+name: LINUX_TEST_BUILD
+
+on:
+  push:
+    branches:
+    - main
+    - release/*
+  pull_request:
+    branches:
+    - main
+    - release/*
+
+jobs:
+  validate:
+    name: Validate(Linux)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - run: |
+         sudo apt-add-repository ppa:lttng/stable-2.12
+         sudo apt-get update
+         sudo apt-get install -y liblttng-ust-dev lttng-tools build-essential
+
+    - name: Build CLOG and run Tests
+      run: ./runTests.ps1
+      working-directory: ./examples
+      shell: pwsh
+
+

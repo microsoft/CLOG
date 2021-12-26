@@ -19,7 +19,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using clogutils.MacroDefinations;
 using Newtonsoft.Json;
-using static clogutils.CLogConsoleTrace;
 
 namespace clogutils.ConfigFile
 {
@@ -283,7 +282,16 @@ namespace clogutils.ConfigFile
                 }
             }
 
-            throw new CLogTypeNotFoundException("InvalidType:" + encoded, encoded, traceLineMatch);
+            //
+            // Attempt to get something for the user about the actual arg;  note this may be error prone as we are now confused
+            //   by their inputs
+            //
+            string surroundingArray = encoded.Substring(index, 15);
+            int end = surroundingArray.IndexOf("}");
+            if (-1 != end)
+                surroundingArray = surroundingArray.Substring(0, end);
+
+            throw new CLogTypeNotFoundException(encoded, "InvalidType:" + surroundingArray, traceLineMatch);
         }
 
         public CLogTraceMacroDefination[] AllKnownMacros()

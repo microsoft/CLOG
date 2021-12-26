@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -128,9 +128,8 @@ namespace clogutils
                     }
                 }
 
-                string clean;
-
-                CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out clean);
+                CLogFileProcessor.DecomposedString decompString;
+                CLogFileProcessor.CLogTypeContainer[] types = CLogFileProcessor.BuildTypes(config, null, bundle.TraceString, null, out decompString);
 
                 if (0 == types.Length)
                 {
@@ -180,7 +179,8 @@ namespace clogutils
                         {
                             if (string.IsNullOrEmpty(type.TypeNode.CustomDecoder))
                             {
-                                toPrint.Append($"{type.LeadingString}{value.AsString}");
+                                string typeForPrint = clogutils.ClogEventPrinter.AsCorrectType(type.TypeNode.EncodingType, value);
+                                toPrint.Append($"{type.LeadingString}{typeForPrint}");
                             }
                             else
                             {
@@ -220,19 +220,6 @@ namespace clogutils
             public string CPUId { get; set; }
             public string ThreadId { get; set; }
             public string ProcessId { get; set; }
-        }
-
-        public interface IClogEventArg
-        {
-            string AsString { get; }
-
-            int AsInt32 { get; }
-
-            uint AsUInt32 { get; }
-
-            ulong AsPointer { get; }
-
-            byte[] AsBinary { get; }
         }
     }
 }

@@ -13,12 +13,17 @@ set(SOURCES
 # as a normal cmake target dependency
 #
 CLOG_GENERATE_TARGET(CLOGSAMPLE_LIB STATIC ${SOURCES})
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/inc)
 
-add_executable(clogsample ${SOURCES})
+if (NOT WIN32)
+    add_executable(clogsample ${SOURCES})
+else()
+    add_executable(clogsample ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/inc/clog_examples.rc)
+endif()
+
 target_link_libraries(clogsample CLOGSAMPLE_LIB)
 
 if (NOT WIN32 AND NOT APPLE)
-
     include(FindLTTngUST)
     target_link_libraries(clogsample ${LTTNGUST_LIBRARIES})
 
@@ -29,5 +34,23 @@ if (NOT WIN32 AND NOT APPLE)
 
     add_library(clogsampletracepointprovider SHARED $<TARGET_OBJECTS:CLOGSAMPLE_DYNLIB.provider>)
     target_link_libraries(clogsampletracepointprovider ${LTTNGUST_LIBRARIES})
+endif()
+
+
+if(WIN32)
+    message(STATUS "BUILDING CLOG SAMPLE(Windows)")
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/inc/clog_examples.h
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/inc/clog_examples.rc
+        DEPENDS clog_examples.man
+        COMMAND mc.exe -um -h ${CMAKE_CURRENT_BINARY_DIR}/inc -r ${CMAKE_CURRENT_BINARY_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/clog_examples.man)
+
+    set_property(SOURCE simple.cpp APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/inc/clog_examples.h)
+    target_include_directories(clogsample PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/inc)
+    add_definitions(-DCLOG_ETW)
+
+    configure_file(clog_examples.wprp clog_examples.wprp COPYONLY)
+    configure_file(clog_examples.man clog_examples.man COPYONLY)
 
 endif()

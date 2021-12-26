@@ -40,6 +40,10 @@ namespace clog2text_lttng
                 {
                     string key = traceLine.Substring(startIndex, lastEqual - startIndex).Trim();
                     string value = traceLine.Substring(lastEqual + 1, i - lastEqual - 1).Trim();
+
+                    if (value.StartsWith("\"") && value.EndsWith("\""))
+                        value = value.Substring(1, value.Length - 2);
+                        
                     ret[key] = new LTTNGClogEvent(value);
                     piece = "";
                     startIndex = i + 1;
@@ -90,59 +94,66 @@ namespace clog2text_lttng
             return o.MapResult(
                        options =>
             {
-                string sidecarJson = File.ReadAllText(options.SideCarFile);
-                CLogSidecar textManifest = CLogSidecar.FromJson(sidecarJson);
-
-                TextReader file = Console.In;
-
-                if (!string.IsNullOrEmpty(options.BabelTrace))
-                {
-                    file = new StreamReader(options.BabelTrace);
-                }
-
-
-                string line;
-                LTTNGEventDecoder lttngDecoder = new LTTNGEventDecoder(textManifest);
-                int lines = 0;
-                StreamWriter outputfile = null;
-                if (!String.IsNullOrEmpty(options.OutputFile))
-                    outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
-
-                DateTimeOffset startTime = DateTimeOffset.Now;
-
                 try
                 {
-                    while (!string.IsNullOrEmpty(line = file.ReadLine()))
+                    string sidecarJson = File.ReadAllText(options.SideCarFile);
+                    CLogSidecar textManifest = CLogSidecar.FromJson(sidecarJson);
+
+                    TextReader file = Console.In;
+
+                    if (!string.IsNullOrEmpty(options.BabelTrace))
                     {
-                        ++lines;
-                        if (0 == lines % 10000)
+                        file = new StreamReader(options.BabelTrace);
+                    }
+
+
+                    string line;
+                    LTTNGEventDecoder lttngDecoder = new LTTNGEventDecoder(textManifest);
+                    int lines = 0;
+                    StreamWriter outputfile = null;
+                    if (!String.IsNullOrEmpty(options.OutputFile))
+                        outputfile = new StreamWriter(new FileStream(options.OutputFile, FileMode.Create));
+
+                    DateTimeOffset startTime = DateTimeOffset.Now;
+
+                    try
+                    {
+                        while (!string.IsNullOrEmpty(line = file.ReadLine()))
                         {
-                            Console.WriteLine($"Line : {lines}");
+                            ++lines;
+                            if (0 == lines % 10000)
+                            {
+                                Console.WriteLine($"Line : {lines}");
+                            }
+                            Dictionary<string, IClogEventArg> valueBag;
+                            EventInformation ei;
+                            CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
+                            DecodeAndTraceToConsole(outputfile, bundle, line, textManifest.ConfigFile, valueBag, ei, options.ShowTimestamps, options.ShowCPUInfo);
                         }
-                        Dictionary<string, IClogEventArg> valueBag;
-                        EventInformation ei;
-                        CLogDecodedTraceLine bundle = lttngDecoder.DecodedTraceLine(line, out ei, out valueBag);
-                        DecodeAndTraceToConsole(outputfile, bundle, line, textManifest.ConfigFile, valueBag, ei, options.ShowTimestamps, options.ShowCPUInfo);
                     }
-                }
-                catch (Exception e)
-                {
-                    CLogConsoleTrace.TraceLine(TraceType.Err, "ERROR : " + e);
-                    if (null != outputfile)
+                    catch (Exception e)
                     {
-                        outputfile.WriteLine("ERROR : " + e);
+                        CLogConsoleTrace.TraceLine(TraceType.Err, "ERROR : " + e);
+                        if (null != outputfile)
+                        {
+                            outputfile.WriteLine("ERROR : " + e);
+                        }
                     }
-                }
-                finally
-                {
-                    if (null != outputfile)
+                    finally
                     {
-                        outputfile.Flush();
-                        outputfile.Close();
+                        if (null != outputfile)
+                        {
+                            outputfile.Flush();
+                            outputfile.Close();
+                        }
                     }
+                    return 0;
                 }
-                Console.WriteLine($"Decoded {lines} in {DateTimeOffset.Now - startTime}");
-                return 0;
+                catch (CLogHandledException e)
+                {
+                    e.PrintDiagnostics();
+                    return -2;
+                }
             }, err =>
             {
                 Console.WriteLine("Bad Args : " + err);
@@ -197,7 +208,8 @@ namespace clog2text_lttng
                     ei.ProcessId = Convert.ToInt64(cpuArgs["vpid"].AsString).ToString("x");
                 }
 
-                CLogDecodedTraceLine bundle = _sidecar.FindBundle(args["name"].AsString);
+                string name = args["name"].AsString.Split(':')[1];
+                CLogDecodedTraceLine bundle = _sidecar.FindBundle(name);
 
                 string fields = args["event.fields"].AsString.Substring(1, args["event.fields"].AsString.Length - 2).Trim();
 
@@ -221,9 +233,62 @@ namespace clog2text_lttng
                 AsString = value;
             }
 
+            public override string ToString()
+            {
+                return "BUG";
+            }
             public string AsString
             {
                 get;
+            }
+
+            public Int64 AsInt64
+            {
+                get
+                {
+                    var ret = Convert.ToInt64(AsString);
+                    return ret;
+                }
+            }
+
+            public System.UInt64 AsUInt64
+            {
+                get
+                {
+                    var ret = Convert.ToUInt64(AsString);
+                    return ret;
+                }
+            }
+            public System.Int16 AsInt16
+            {
+                get
+                {
+                    var ret = Convert.ToInt16(AsString);
+                    return ret;
+                }
+            }
+            public System.UInt16 AsUInt16
+            {
+                get
+                {
+                    var ret = Convert.ToUInt16(AsString);
+                    return ret;
+                }
+            }
+            public sbyte AsInt8
+            {
+                get
+                {
+                    return Convert.ToSByte(AsUInt8);
+                }
+            }
+            public byte AsUInt8
+            {
+                get
+                {
+                    var ret = Convert.ToByte(AsString);
+                    return ret;
+                }
             }
 
             public int AsInt32
