@@ -1,0 +1,25 @@
+name: WINDOWS_TEST_BUILD_PRINTF
+
+on:
+  push:
+    branches:
+    - main
+    - release/*
+
+  pull_request:
+    branches:
+    - main
+    - release/*
+
+jobs:
+  validate:
+    name: Validate(Windows)
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build CLOG and run Tests
+      run: ./runTests_stdio.ps1
+      working-directory: ./examples
+      shell: pwsh
