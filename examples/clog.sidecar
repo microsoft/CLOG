@@ -166,6 +166,19 @@
         }
       ],
       "macroName": "TraceError"
+    },
+    "DATA_NAMED_INT": {
+      "ModuleProperites": {},
+      "TraceString": "5. This is a named int: %{myInt,d};  it should be 1234",
+      "UniqueId": "DATA_NAMED_INT",
+      "splitArgs": [
+        {
+          "DefinationEncoding": "d",
+          "MacroVariableName": "arg2",
+          "EventVariableName": "myInt"
+        }
+      ],
+      "macroName": "TraceInfo"
     }
   },
   "ConfigFile": {
@@ -198,6 +211,14 @@
           }
         ]
       },
+      "printf": {
+        "Modules": [
+          {
+            "ExportModule": "STDOUT",
+            "CustomSettings": {}
+          }
+        ]
+      },
       "empty": {
         "Modules": []
       }
@@ -216,10 +237,8 @@
         "EncodedArgNumber": 1,
         "MacroConfiguration": {
           "linux": "lttng",
-          "macos": "empty",
-          "stubs": "empty",
-          "windows_kernel": "empty",
-          "windows": "etw_info"
+          "windows": "etw_info",
+          "printf": "printf"
         },
         "CustomSettings": null
       },
@@ -229,10 +248,8 @@
         "EncodedArgNumber": 2,
         "MacroConfiguration": {
           "linux": "lttng",
-          "macos": "empty",
-          "stubs": "empty",
-          "windows_kernel": "empty",
-          "windows": "etw_info"
+          "windows": "etw_info",
+          "printf": "printf"
         },
         "CustomSettings": null
       },
@@ -242,10 +259,8 @@
         "EncodedArgNumber": 1,
         "MacroConfiguration": {
           "linux": "lttng",
-          "macos": "empty",
-          "stubs": "empty",
-          "windows_kernel": "empty",
-          "windows": "etw_errors"
+          "windows": "etw_errors",
+          "printf": "printf"
         },
         "CustomSettings": null
       },
@@ -255,10 +270,8 @@
         "EncodedArgNumber": 2,
         "MacroConfiguration": {
           "linux": "lttng",
-          "macos": "empty",
-          "stubs": "empty",
-          "windows_kernel": "empty",
-          "windows": "etw_errors"
+          "windows": "etw_errors",
+          "printf": "printf"
         },
         "CustomSettings": null
       }
@@ -573,6 +586,11 @@
         "UniquenessHash": "7aff5a89-7dec-e219-e250-098606338503",
         "TraceID": "INT_ERROR_2",
         "EncodingString": "8. this is an error %d with a string %s"
+      },
+      {
+        "UniquenessHash": "00e55ab5-2581-5789-25d5-069f2b00c9bb",
+        "TraceID": "DATA_NAMED_INT",
+        "EncodingString": "5. This is a named int: %{myInt,d};  it should be 1234"
       }
     ]
   }
