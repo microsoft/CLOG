@@ -13,7 +13,7 @@ on:
 
 jobs:
   validate:
-    name: Validate(Windows)
+    name: Validate(Windows-stdio)
     runs-on: windows-latest
     steps:
     - name: Checkout repository
