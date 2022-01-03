@@ -22,5 +22,3 @@ jobs:
       run: ./runTests_stdio.ps1
       working-directory: ./examples
       shell: pwsh
-
-
