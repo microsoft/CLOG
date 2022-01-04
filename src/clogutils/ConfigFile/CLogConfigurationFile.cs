@@ -264,6 +264,9 @@ namespace clogutils.ConfigFile
             int tempIndex = index;
             CLogEncodingCLogTypeSearch ret = null;
 
+            //
+            // First scan the type encoders in our main config file
+            //
             if (null != (ret = TypeEncoders.FindTypeAndAdvance(encoded, traceLineMatch, ref tempIndex)))
             {
                 InUseTypeEncoders.AddType(ret);
@@ -271,6 +274,10 @@ namespace clogutils.ConfigFile
                 return ret;
             }
 
+            //
+            //  If we're unable to locate the type, iterate across each of our chained configs - note this is
+            //     recursive;  such allowing for heirarchies
+            //
             foreach (var config in ChainedConfigurations)
             {
                 tempIndex = index;

@@ -134,7 +134,7 @@ namespace clog.TraceEmitterModules
                         printf += "%S";
                         break;
                     case CLogEncodingType.Pointer:
-                        printf += "%p";
+                        printf += "0x%llx";
                         break;
                     case CLogEncodingType.GUID:
                         printf += "%p";
@@ -152,7 +152,7 @@ namespace clog.TraceEmitterModules
                         printf += "%d";
                         break;
                     case CLogEncodingType.ByteArray:
-                        printf += "%p";
+                        printf += "[Not_Supported]";
                         break;
                 }
             }
@@ -163,6 +163,8 @@ namespace clog.TraceEmitterModules
                 string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
                 printf += tail;
             }
+
+            printf += "\\n";
 
             inline.Append($"    {printmacro}(\"{printf}\"");
             foreach (var arg in decodedTraceLine.splitArgs)
@@ -190,7 +192,7 @@ namespace clog.TraceEmitterModules
                     case CLogEncodingType.UNICODE_String:
                         break;
                     case CLogEncodingType.Pointer:
-                        cast = "(void*)";
+                        cast = "(unsigned long long int)";
                         break;
                     case CLogEncodingType.GUID:
                         cast = "(void*)";
@@ -208,8 +210,8 @@ namespace clog.TraceEmitterModules
                         //cast = "(int)";
                         break;
                     case CLogEncodingType.ByteArray:
-                        cast = "(void*)";
-                        break;
+                        //cast = "(void*)";
+                        continue;
                 }
                 inline.Append($", {cast}(" + arg.MacroVariableName + ")");
             }

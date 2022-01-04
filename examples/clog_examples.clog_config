@@ -29,6 +29,15 @@
         }
       ]
     },
+    "printf": {
+      "Modules": [
+        {
+          "ExportModule": "STDOUT",
+          "CustomSettings": {
+          }
+        }
+      ]
+    },
     "empty": {
       "Modules": []
     },
@@ -46,10 +55,8 @@
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
         "linux": "lttng",
-        "macos": "empty",
-        "stubs": "empty",
-        "windows_kernel": "empty",
-        "windows": "etw_info"
+        "windows": "etw_info",
+        "printf": "printf"
       }
     },
     {
@@ -58,10 +65,8 @@
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
         "linux": "lttng",
-        "macos": "empty",
-        "stubs": "empty",
-        "windows_kernel": "empty",
-        "windows": "etw_info"
+        "windows": "etw_info",
+        "printf": "printf"
       }
     },
      {
@@ -70,10 +75,8 @@
       "EncodedArgNumber": 1,
       "MacroConfiguration": {
         "linux": "lttng",
-        "macos": "empty",
-        "stubs": "empty",
-        "windows_kernel": "empty",
-        "windows": "etw_errors"
+        "windows": "etw_errors",
+        "printf": "printf"
       }
     },
     {
@@ -82,10 +85,8 @@
       "EncodedArgNumber": 2,
       "MacroConfiguration": {
         "linux": "lttng",
-        "macos": "empty",
-        "stubs": "empty",
-        "windows_kernel": "empty",
-        "windows": "etw_errors"
+        "windows": "etw_errors",
+        "printf": "printf"
       }
     }
   ],

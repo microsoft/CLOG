@@ -272,7 +272,7 @@ namespace clogutils
                 return new CLogTypeContainer[0];
             }
 
-            // Make surew e start and stop with a quote - this prevents L"" (unicode) as well as other oddities that seem to be 'okay' in WPP but shoudlnt be okay
+            // Make sure we start and stop with a quote - this prevents L"" (unicode) as well as other oddities that seem to be 'okay' in WPP but shoudlnt be okay
             argString = argString.Trim();
 
             for (int i = 0; i < argString.Length; ++i)
@@ -306,9 +306,9 @@ namespace clogutils
                         while (',' != argString[i])
                         {
                             // If we find a closing brace or a space before finding the comma, it's a parsing error
-                            if ('}' == argString[i] || ' ' == argString[i])
+                            if ('}' == argString[i] || char.IsWhiteSpace(argString[i]))
                             {
-                                throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
+                                throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.WhiteSpaceNotAllowed, traceLineMatch);
                             }
 
                             preferredName += argString[i];
@@ -322,6 +322,11 @@ namespace clogutils
 
                         // Skip the comma
                         i++;
+
+                        // Don't allow white spaces after comma
+                        if(char.IsWhiteSpace(argString[i]))
+                              throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.WhiteSpaceNotAllowed, traceLineMatch);
+
                         if (i == argString.Length)
                         {
                             throw new CLogEnterReadOnlyModeException("InvalidNameFormatInTypeSpcifier", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
@@ -341,10 +346,6 @@ namespace clogutils
                         throw;
                     }
 
-                    newNode.TypeNode = t;
-                    newNode.ArgLength = i - newNode.ArgStartingIndex + 1;
-                    currentArg.Type = t;
-
                     // If we found a preferred name, the next character after the type should be a closing brace
                     if (preferredName.Length != 0)
                     {
@@ -356,6 +357,11 @@ namespace clogutils
 
                         newNode.PreferredName = preferredName;
                     }
+
+                    // Compute lengths
+                    newNode.TypeNode = t;
+                    newNode.ArgLength = i - newNode.ArgStartingIndex + 1;
+                    currentArg.Type = t;
 
                     prefixString = "";
 
@@ -460,7 +466,7 @@ namespace clogutils
                             CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Event Descriptor : {userArgs}");
                             throw new CLogEnterReadOnlyModeException("TooFewArguments", CLogHandledException.ExceptionType.TooFewArguments, traceLineMatch);
                         }
-                         
+
                         CLogTypeContainer item = types.Dequeue();
                         var info = VariableInfo.X(traceLineMatch.Args[i], vars[i].Item2, i);
 
