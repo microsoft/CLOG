@@ -11,9 +11,6 @@ on:
     - release/*
 
 jobs:
-  validate:
-    name: Validate(Linux)
-y
   node-docker:
     runs-on: ubuntu-latest
     containe:
