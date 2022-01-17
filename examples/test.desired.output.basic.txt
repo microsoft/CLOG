@@ -6,3 +6,4 @@
 6. This is an int: 1234;  it should be 1234
 7. this is an error 123456
 8. this is an error 80 with a string ouch!
+9. This trace has no args

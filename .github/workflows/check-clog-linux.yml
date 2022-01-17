@@ -1,4 +1,4 @@
-name: LINUX_TEST_BUILD
+name: LINUX_TEST_BUILD_LTTNG
 
 on:
   push:

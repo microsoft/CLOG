@@ -193,7 +193,10 @@ namespace clog
             {
                 if (string.IsNullOrEmpty(this.ConfigurationProfile))
                 {
-                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, "Please specify both the side car to update, and the configuration file that contains a reference to the new type processor");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"Please verify the sidecar, configuration file, and profile are all correct");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    SideCar: {this.SidecarFile}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Configuration File: {this.ConfigurationFile}");
+                    CLogConsoleTrace.TraceLine(CLogConsoleTrace.TraceType.Err, $"    Configuration Profile: {this.ConfigurationProfile}");
                     return false;
                 }
             }

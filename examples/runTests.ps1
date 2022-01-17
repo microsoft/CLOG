@@ -48,8 +48,8 @@ if($IsWindows) {
     dir
 
     wevtutil.exe um clog_examples.man
-
     wevtutil.exe im clog_examples.man
+
     if(!$?) {
         Write-Host "Manifest registration failed"
         Exit -5

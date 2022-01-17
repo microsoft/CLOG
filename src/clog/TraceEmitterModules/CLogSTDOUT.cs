@@ -157,11 +157,17 @@ namespace clog.TraceEmitterModules
                 }
             }
 
-            // Print the remainder of user text
+            //
+            // Print the remainder of user text (the tail end);  if there are no types at all then 'TraceString' is just a constant string
+            //
             if (types.Length >= 1)
             {
                 string tail = decodedTraceLine.TraceString.Substring(types[types.Length - 1].ArgStartingIndex + types[types.Length - 1].ArgLength);
                 printf += tail;
+            }
+            else
+            {
+                printf += decodedTraceLine.TraceString;
             }
 
             printf += "\\n";

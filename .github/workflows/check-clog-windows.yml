@@ -1,4 +1,4 @@
-name: WINDOWS_TEST_BUILD
+name: WINDOWS_TEST_BUILD_ETW
 
 on:
   push:

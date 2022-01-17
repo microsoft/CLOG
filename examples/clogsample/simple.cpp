@@ -59,6 +59,9 @@ int main(int argc, char* argv[])
     TraceError(INT_ERROR, "7. this is an error %d", 123456);
     TraceError(INT_ERROR_2, "8. this is an error %d with a string %s", 80, "ouch!");
 
+    TraceError(NO_ARGS, "9. This trace has no args");
+
+
     #ifdef CLOG_ETW
         EventUnregisterCLOG_SAMPLE_MANIFEST();
         TraceLoggingUnregister(clog_hTrace);
