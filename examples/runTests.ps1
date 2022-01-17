@@ -17,27 +17,27 @@ if ($IsLinux) {
     if(!$?)
     {
         Write-Host "LTTNG Create failed"
-        Exit
+        Exit -1
     }
 
     lttng enable-event --userspace CLOG_*
     if(!$?)
     {
         Write-Host "LTTNG enable-event failed"
-        Exit
+        Exit -2
     }
 
     lttng add-context --userspace --type=vpid --type=vtid
     if(!$?)
     {
         Write-Host "LTTNG add-context failed"
-        Exit
+        Exit -3
     }
     lttng start
     if(!$?)
     {
         Write-Host "LTTNG start failed"
-        Exit
+        Exit -4
     }
 }
 
@@ -45,12 +45,14 @@ if($IsWindows) {
     move .\clogsample\Debug\* .\clogsample -Force
 
     cd .\clogsample
+    dir
+
     wevtutil.exe um clog_examples.man
 
     wevtutil.exe im clog_examples.man
     if(!$?) {
         Write-Host "Manifest registration failed"
-        Exit
+        Exit -5
     } else {
         Write-Host "ETW Manifest installed"
     }
@@ -60,7 +62,7 @@ if($IsWindows) {
     if(!$?)
     {
         Write-Host "WPR wouldnt start"
-        Exit
+        Exit -6
     }
 
     cd ..
@@ -70,7 +72,7 @@ if($IsWindows) {
 if(!$?)
 {
     Write-Host "Unable to run test"
-    Exit
+    Exit -7
 }
 
 if ($IsLinux) {
@@ -94,7 +96,7 @@ if ($IsWindows)
     if(!$?)
     {
         Write-Host "WPR stop failed"
-        Exit
+        Exit -8
     }
 
     cd ..
@@ -121,7 +123,7 @@ if($diffs.Length -ne 0)
     Compare-Object (Get-Content ./test.output.txt) (Get-Content ../test.desired.output.txt)
 
     cd ..
-    Exit -1
+    Exit -9
 }
 else
 {
