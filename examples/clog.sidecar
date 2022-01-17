@@ -186,6 +186,13 @@
         }
       ],
       "macroName": "TraceInfo"
+    },
+    "NO_ARGS": {
+      "ModuleProperites": {},
+      "TraceString": "9. This trace has no args",
+      "UniqueId": "NO_ARGS",
+      "splitArgs": [],
+      "macroName": "TraceError"
     }
   },
   "ConfigFile": {
@@ -598,6 +605,11 @@
         "UniquenessHash": "00e55ab5-2581-5789-25d5-069f2b00c9bb",
         "TraceID": "DATA_NAMED_INT",
         "EncodingString": "5. This is a named int: %{myInt,d};  it should be 1234"
+      },
+      {
+        "UniquenessHash": "047bd97d-e78c-6e56-2f56-512c2382056e",
+        "TraceID": "NO_ARGS",
+        "EncodingString": "9. This trace has no args"
       }
     ]
   }
