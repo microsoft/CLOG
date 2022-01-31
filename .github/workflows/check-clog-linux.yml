@@ -18,6 +18,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
     - run: |
          sudo apt-add-repository ppa:lttng/stable-2.12
          sudo apt-get update
@@ -27,5 +32,3 @@ jobs:
       run: ./runTests.ps1
       working-directory: ./examples
       shell: pwsh
-
-
