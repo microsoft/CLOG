@@ -34,7 +34,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
-          languages: cpp,csharp
+          languages: cpp #,csharp
           config-file: ./.github/codeql/codeql-config.yml
 
       # Build
