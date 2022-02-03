@@ -88,7 +88,7 @@ API abstractions not a sufficient solution to our problems, due to performance. 
 
 ## Supported Runtimes
 
-The build .NET clog tools can be ran on both .NET 6 and .NET Core 3.1. In order to build, .NET 6 is required.
+The build .NET clog tools can be ran on .NET 6. In order to build, .NET 6 is required.
 
 # Contributing
 
