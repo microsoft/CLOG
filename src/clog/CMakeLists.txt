@@ -9,4 +9,4 @@ set(SOURCES
     clog.cs
     CommandLineArguments.cs)
 
-DOT_NET_BUILD(CLOG_EXE clog.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog.csproj net5.0 ${SOURCES})
+DOT_NET_BUILD(CLOG_EXE clog.exe ${CMAKE_CURRENT_SOURCE_DIR}/clog.csproj net6.0 ${SOURCES})

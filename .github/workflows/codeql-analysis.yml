@@ -26,10 +26,15 @@ jobs:
           fetch-depth: 2
           submodules: 'recursive'
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
-          languages: cpp,csharp
+          languages: cpp #,csharp
           config-file: ./.github/codeql/codeql-config.yml
 
       # Build
