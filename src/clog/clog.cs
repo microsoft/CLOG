@@ -175,6 +175,9 @@ namespace clog
                             CLogSTDOUT stdout = new CLogSTDOUT();
                             fullyDecodedMacroEmitter.AddClogModule(stdout);
 
+                            CLogDiagTrace diagTrace = new CLogDiagTrace();
+                            fullyDecodedMacroEmitter.AddClogModule(diagTrace);
+
                             CLogManifestedETWOutputModule manifestedEtwOutput = new CLogManifestedETWOutputModule(options.ReadOnly);
                             fullyDecodedMacroEmitter.AddClogModule(manifestedEtwOutput);
 
