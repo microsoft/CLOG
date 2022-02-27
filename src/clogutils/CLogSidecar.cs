@@ -25,7 +25,7 @@ namespace clogutils
         [JsonProperty] public int Version { get; set; }
 
         [JsonProperty]
-        public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
+        public SortedDictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new SortedDictionary<string, CLogDecodedTraceLine>();
 
         [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
 
@@ -67,7 +67,7 @@ namespace clogutils
         [JsonProperty] public int Version { get; set; }
 
         [JsonProperty]
-        public Dictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new Dictionary<string, CLogDecodedTraceLine>();
+        public SortedDictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new SortedDictionary<string, CLogDecodedTraceLine>();
 
         [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
 
@@ -85,6 +85,8 @@ namespace clogutils
 
         public string ToJson()
         {
+            ModuleUniqueness.Sort();
+
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Formatting = Formatting.Indented;
             this.Version = 2;
@@ -126,7 +128,7 @@ namespace clogutils
     {
         private string _sidecarFileName;
 
-        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> ModuleTraceData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+        private SortedDictionary<string, Dictionary<string, Dictionary<string, string>>> ModuleTraceData = new SortedDictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
         private ClogSidecar_V2 _sideCarFile;
 
