@@ -20,7 +20,7 @@ namespace clogutils
     [JsonObject(MemberSerialization.OptIn)]
     public class CLogDecodedTraceLine
     {
-        [JsonProperty] public Dictionary<string, Dictionary<string, string>> ModuleProperites = new Dictionary<string, Dictionary<string, string>>();
+        [JsonProperty] public SortedDictionary<string, SortedDictionary<string, string>> ModuleProperites = new SortedDictionary<string, SortedDictionary<string, string>>();
 
         public CLogDecodedTraceLine(string uniqueId, string sourceFile, string userString, string userStringNoPrefix, CLogLineMatch m, CLogConfigurationFile c,
             CLogTraceMacroDefination mac, CLogFileProcessor.CLogVariableBundle[] args, CLogFileProcessor.DecomposedString decompString)
@@ -142,7 +142,7 @@ namespace clogutils
 
             if (!ModuleProperites.ContainsKey(module))
             {
-                ModuleProperites[module] = new Dictionary<string, string>();
+                ModuleProperites[module] = new SortedDictionary<string, string>();
             }
 
             ModuleProperites[module][key] = value;

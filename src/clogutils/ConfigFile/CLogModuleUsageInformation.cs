@@ -36,6 +36,11 @@ namespace clogutils.ConfigFile
             }
             return ret;
         }
+
+        public void Sort()
+        {
+            TraceInformation.Sort((a, b) => a.TraceID.CompareTo(b.TraceID));
+        }
     }
 
 

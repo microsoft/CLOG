@@ -101,7 +101,7 @@ namespace clog2text_windows
 
                                         foreach (var b in sidecar.EventBundlesV2)
                                         {
-                                            Dictionary<string, string> keys;
+                                            SortedDictionary<string, string> keys;
 
                                             if (!e.IsTraceLogging)
                                             {
