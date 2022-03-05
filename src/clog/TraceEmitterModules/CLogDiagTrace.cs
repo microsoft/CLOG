@@ -335,9 +335,15 @@ namespace clog.TraceEmitterModules
 
             }
 
+            //
+            // BUGBUG : I'm not sure why we're adding 8 bytes to the end?  
+            //
 	        if (!hasAnyDefs)
             {
                 structDef.AppendLine("    DIAG_TRACE_POINTER unused;");
+                decodedTraceLine.AddConfigFileProperty(ModuleName, $"unused", currentOffset.ToString());
+                decodedTraceLine.AddConfigFileProperty(ModuleName, $"unused_Len", "4");
+                currentOffset += 8;
             }
 
 
