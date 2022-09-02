@@ -41,6 +41,7 @@ function(CLOG_GENERATE_TARGET)
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${arg}
             DEPENDS ${CMAKE_CLOG_CONFIG_FILE}
             DEPENDS ${CMAKE_CLOG_EXTRA_DEPENDENCIES}
+            DEPENDS ${CLOG_EXE}
             COMMENT "CLOG: clog --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar --inputFiles ${CMAKE_CURRENT_SOURCE_DIR}/${arg} --outputDirectory ${ARG_CLOG_OUTPUT_DIR}"
             COMMAND ${CLOG_EXE} --readOnly ${ARG_CLOG_DYNAMIC_TRACEPOINT} -p ${CMAKE_CLOG_CONFIG_PROFILE} --scopePrefix ${library} -c ${CMAKE_CLOG_CONFIG_FILE} -s ${CMAKE_CLOG_SIDECAR_DIRECTORY}/clog.sidecar --inputFiles ${CMAKE_CURRENT_SOURCE_DIR}/${arg} --outputDirectory ${ARG_CLOG_OUTPUT_DIR}
         )
