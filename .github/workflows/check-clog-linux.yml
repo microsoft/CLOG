@@ -12,7 +12,7 @@ on:
 
 jobs:
   validate:
-    name: Validate(Linux)
+    name: Validate(Linux LTTNG)
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
