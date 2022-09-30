@@ -23,6 +23,7 @@ function(DOT_NET_BUILD)
     message(STATUS "DOTNET_RUNTIME : ${DOTNET_RUNTIME}")
     message(STATUS "OUTPUTDIR : ${CLOG_ARTIFACT_DIR}")
     message(STATUS "DOTNET_FRAMEWORK : ${DOTNET_FRAMEWORK}")
+    message(STATUS "BUILD WITH :  dotnet publish ${PROJECT_PATH} -o ${CLOG_ARTIFACT_DIR} -f ${DOTNET_FRAMEWORK}")
 
     foreach(arg IN LISTS ARGV)
         #message(STATUS "FILE : ${CMAKE_CURRENT_BINARY_DIR}/${arg}")

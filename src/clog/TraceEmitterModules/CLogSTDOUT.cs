@@ -57,8 +57,17 @@ namespace clog.TraceEmitterModules
             CLogExportModuleDefination moduleSettings = decodedTraceLine.GetMacroConfigurationProfile().FindExportModule(ModuleName);
 
             string printmacro;
+            string forceCastArg;
+            bool forceCast = false;
+
             if (!moduleSettings.CustomSettings.TryGetValue("PrintMacro", out printmacro))
                 printmacro = "printf";
+
+            if (moduleSettings.CustomSettings.TryGetValue("ForceCast", out forceCastArg))
+            {
+                if(0 == forceCastArg.CompareTo("1"))
+                    forceCast = true;
+            }
 
             if (!emittedHeader)
             {
@@ -122,10 +131,10 @@ namespace clog.TraceEmitterModules
                         printf += "%u";
                         break;
                     case CLogEncodingType.Int64:
-                        printf += "%lld";
+                        printf += "%ld";
                         break;
                     case CLogEncodingType.UInt64:
-                        printf += "%llu";
+                        printf += "%lu";
                         break;
                     case CLogEncodingType.ANSI_String:
                         printf += "%s";
@@ -182,20 +191,26 @@ namespace clog.TraceEmitterModules
                 switch (arg.TypeNode.EncodingType)
                 {
                     case CLogEncodingType.Int32:
-                        //cast = "(int)";
+                        if(forceCast)
+                            cast = "(int)";
                         break;
                     case CLogEncodingType.UInt32:
-                        //cast = "(unsigned int)";
+                        if(forceCast)
+                            cast = "(unsigned int)";
                         break;
                     case CLogEncodingType.Int64:
-                        //cast = "(__int64)";
+                        if(forceCast)
+                            cast = "(long)";
                         break;
                     case CLogEncodingType.UInt64:
-                        //cast = "(unsigned __int64)";
+                        if(forceCast)
+                            cast = "(unsigned long)";
                         break;
                     case CLogEncodingType.ANSI_String:
                         break;
                     case CLogEncodingType.UNICODE_String:
+                        if(forceCast)
+                            cast = "(const wchar_t *)";
                         break;
                     case CLogEncodingType.Pointer:
                         cast = "(unsigned long long int)";
@@ -204,19 +219,24 @@ namespace clog.TraceEmitterModules
                         cast = "(void*)";
                         break;
                     case CLogEncodingType.Int16:
-                        //cast = "(__int16)";
+                        if(forceCast)
+                            cast = "(short)";
                         break;
                     case CLogEncodingType.UInt16:
-                        //cast = "(unsigned __int16)";
+                        if(forceCast)
+                            cast = "(unsigned short)";
                         break;
                     case CLogEncodingType.Int8:
-                        //cast = "(int)";
+                        if(forceCast)
+                            cast = "(int)";
                         break;
                     case CLogEncodingType.UInt8:
-                        //cast = "(int)";
+                        if(forceCast)
+                            cast = "(int)";
                         break;
                     case CLogEncodingType.ByteArray:
-                        //cast = "(void*)";
+                        if(forceCast)
+                            cast = "(void*)";
                         continue;
                 }
                 inline.Append($", {cast}(" + arg.MacroVariableName + ")");
