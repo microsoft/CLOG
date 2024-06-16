@@ -5,10 +5,28 @@ load(
     "csharp_nunit_test",
 )
 
+
 csharp_library(
     name = "clogutils",
-    srcs = ["lib.cs"],
+    srcs = [
+      #  "CLogConsoleTrace.cs",
+      #  "CLogCustomTraceEmittorFactory.cs",
+      #  "CLogDecodedTraceLine.cs",
+      #  "CLogEncodingCLogTypeSearch.cs",
+      #  "CLogEncodingType.cs",
+      #  "CLogEnterReadOnlyModeException.cs",
+      #  "CLogErrors.cs",
+      #  "CLogFileProcessor.cs",
+      #  "CLogFullyDecodedMacroEmitter.cs",
+      #  "CLogHandledException.cs",
+      #  "CLogLineMatch.cs",
+      #  "CLogSidecar.cs",
+      #  "CLogTypeNotFoundException.cs",
+      #  "CLogTypeSearchNode.cs",
+        "ICLogOutputModule.cs"
+    ],
     internals_visible_to = ["lib_test"],
     target_frameworks = ["net6.0"],
-    deps = [],
+    deps = [
+    ]
 )
