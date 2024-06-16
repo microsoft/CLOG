@@ -1,0 +1,14 @@
+load(
+    "@rules_dotnet//dotnet:defs.bzl",
+    "csharp_binary",
+    "csharp_library",
+    "csharp_nunit_test",
+)
+
+csharp_library(
+    name = "clogutils",
+    srcs = ["lib.cs"],
+    internals_visible_to = ["lib_test"],
+    target_frameworks = ["net6.0"],
+    deps = [],
+)
