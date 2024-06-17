@@ -23,10 +23,10 @@ csharp_binary(
     target_frameworks = ["net8.0"],
     deps = [
         "//src/clogutils:clogutils",
-        "@paket.example_deps//newtonsoft.json",
-        "@paket.example_deps//microsoft.codeanalysis.csharp",
-        "@paket.example_deps//basic.reference.assemblies",
-        "@paket.example_deps//microsoft.codeanalysis",
-        "@paket.example_deps//commandlineparser"
+        "@paket.clog_dependencies//newtonsoft.json",
+        "@paket.clog_dependencies//microsoft.codeanalysis.csharp",
+        "@paket.clog_dependencies//basic.reference.assemblies",
+        "@paket.clog_dependencies//microsoft.codeanalysis",
+        "@paket.clog_dependencies//commandlineparser"
     ]
 )
