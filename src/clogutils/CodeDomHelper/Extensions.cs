@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Roslyn.CodeDom
 {
-    #if false
     public static class Extensions
     {
         public static CSharpCompilation WithFrameworkReferences(this CSharpCompilation compilation, TargetFramework targetFramework) =>
@@ -17,5 +16,4 @@ namespace Roslyn.CodeDom
         };
 
     }
-    #endif
 }

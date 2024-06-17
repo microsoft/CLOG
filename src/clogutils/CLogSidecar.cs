@@ -53,15 +53,11 @@ namespace clogutils
 
         public static ClogSidecar_V1 FromJson(string json)
         {
-            #if false
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
             ClogSidecar_V1 ret = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
             return ret;
-            #else
-            return null;
-            #endif
         }
     }
 
@@ -100,7 +96,6 @@ namespace clogutils
 
         public static ClogSidecar_V2 FromJson(string json)
         {
-            #if false
             try
             {
                 JsonSerializerSettings s = new JsonSerializerSettings();
@@ -126,9 +121,6 @@ namespace clogutils
             {
                 throw new CLogEnterReadOnlyModeException($"Invalid sidecar file version - it looks corrupted", CLogHandledException.ExceptionType.SidecarCorrupted, null, e);
             }
-            #else
-            return null;
-            #endif
         }
     }
 

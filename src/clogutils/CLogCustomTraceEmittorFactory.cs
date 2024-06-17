@@ -21,7 +21,7 @@ using System.Runtime;
 using clogutils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-//using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Emit;
 using Roslyn.CodeDom;
 using static clogutils.CLogConsoleTrace;
 
@@ -32,7 +32,7 @@ namespace clog2text_lttng
         private readonly Dictionary<string, MethodInfo> _compiledConverterFunctions = new Dictionary<string, MethodInfo>();
         private readonly Dictionary<string, CLogEncodingCLogTypeSearch> _converterFunctions = new Dictionary<string, CLogEncodingCLogTypeSearch>();
         private Assembly _codeAssembly;
-        //private MemoryStream _compiledCode;
+        private MemoryStream _compiledCode;
 
         private object _typesInterface;
 
@@ -50,7 +50,6 @@ namespace clog2text_lttng
 
         public void PrepareAssemblyCompileIfNecessary()
         {
-            #if false
             if (null == CustomTypeDecoder)
                 return;
 
@@ -89,7 +88,6 @@ namespace clog2text_lttng
             }
 
             _codeAssembly = Assembly.Load(_compiledCode.GetBuffer());
-            #endif
         }
 
         internal void ConstructFromAssembly(byte[] assembly)

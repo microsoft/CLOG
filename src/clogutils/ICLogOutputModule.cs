@@ -18,6 +18,7 @@ namespace clogutils
         public string OutputFileName { get; set; }
         public string OutputDirectory { get; set; }
         public string InputFileName { get; set; }
+
     }
 
     public interface ICLogBatchingModule
