@@ -346,6 +346,7 @@ namespace clogutils.ConfigFile
 
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
+            #if false
             JsonSerializerSettings s = new JsonSerializerSettings();
             s.Context = new StreamingContext(StreamingContextStates.Other, json);
 
@@ -419,6 +420,9 @@ namespace clogutils.ConfigFile
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
             return ret;
+            #else
+            return null;
+            #endif
         }
 
         public static CLogConfigurationFile FromFileText(string fileName, string fileContents)

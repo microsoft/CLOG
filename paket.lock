@@ -5,4 +5,10 @@ STORAGE: NONE
 RESTRICTION: || (== net6.0) (== netstandard2.0)
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Newtonsoft.Json (13.0.1)
+  Newtonsoft.Json (13.0.1)
+  Microsoft.CodeAnalysis.CSharp (3.8.0)
+  Basic.Reference.Assemblies (1.0.0)
+  Microsoft.CodeAnalysis (3.8.0)
+  System.CodeDom (4.7.0)
+  CommandLineParser (2.8.0)
+    

@@ -8,3 +8,5 @@ group example_deps
     nuget Basic.Reference.Assemblies 1.0.0 
     nuget Microsoft.CodeAnalysis 3.8.0 
     nuget System.CodeDom 4.7.0 
+    nuget CommandLineParser 2.8.0
+    
