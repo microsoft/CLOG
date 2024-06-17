@@ -19,7 +19,7 @@ namespace clogutils
         public string OutputDirectory { get; set; }
         public string InputFileName { get; set; }
     }
-/*
+
     public interface ICLogBatchingModule
     {
         void FinishedBatch(CLogOutputInfo oi);
@@ -37,5 +37,5 @@ namespace clogutils
             StringBuilder macroPrefix, StringBuilder inline, StringBuilder function);
 
         void FinishedProcessing(CLogOutputInfo outputInfo, StringBuilder header, StringBuilder sourceFile);
-    }*/
+    }
 }
