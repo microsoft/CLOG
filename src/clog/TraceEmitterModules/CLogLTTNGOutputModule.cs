@@ -294,7 +294,7 @@ namespace clog.TraceEmitterModules
 
                     case CLogEncodingType.Pointer:
                         lttngFile.AppendLine(
-                            $"        ctf_integer_hex(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, {arg.VariableInfo.SuggestedTelemetryName})");
+                            $"        ctf_integer_hex(uint64_t, {arg.VariableInfo.SuggestedTelemetryName}, (uint64_t){arg.VariableInfo.SuggestedTelemetryName})");
                         break;
 
                     case CLogEncodingType.ANSI_String:
