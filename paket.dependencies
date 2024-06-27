@@ -3,10 +3,10 @@ group clog_dependencies
     storage: none
     source https://api.nuget.org/v3/index.json
 
-    nuget Newtonsoft.Json 13.0.1
-    nuget Microsoft.CodeAnalysis.CSharp 3.8.0 
-    nuget Basic.Reference.Assemblies 1.0.0 
-    nuget Microsoft.CodeAnalysis 3.8.0 
-    nuget System.CodeDom 4.7.0 
-    nuget CommandLineParser 2.8.0
+    nuget Newtonsoft.Json 13.0.3
+    nuget Microsoft.CodeAnalysis.CSharp 4.10.0 
+    nuget Basic.Reference.Assemblies 1.7.2 
+    nuget Microsoft.CodeAnalysis 4.10.0 
+    nuget System.CodeDom 8.0.0 
+    nuget CommandLineParser 2.9.1
     

@@ -1,10 +1,11 @@
 load(
     "@rules_dotnet//dotnet:defs.bzl",
-    "csharp_binary",
+    "csharp_binary","import_dll",
     "csharp_library",
     "csharp_nunit_test",
 )
 
+import_dll(name="hi", dll="System.Reflection.Emit.dll", version="1.2.3")
 
 csharp_library(
     name = "clogutils",    
@@ -39,10 +40,11 @@ csharp_library(
     visibility = ["//visibility:public"],
     target_frameworks = ["net8.0"],
     deps = [
+        ":hi",
         "@paket.clog_dependencies//newtonsoft.json",
-        "@paket.clog_dependencies//microsoft.codeanalysis.csharp",
         "@paket.clog_dependencies//basic.reference.assemblies",
-        "@paket.clog_dependencies//microsoft.codeanalysis",
-        "@paket.clog_dependencies//system.codedom"
+        "@paket.clog_dependencies//system.codedom",
+        "@paket.clog_dependencies//microsoft.codeanalysis", 
+        "@paket.clog_dependencies//microsoft.codeanalysis.csharp"
     ]
 )
