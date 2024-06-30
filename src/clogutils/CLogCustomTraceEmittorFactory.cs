@@ -32,7 +32,7 @@ namespace clog2text_lttng
         private readonly Dictionary<string, MethodInfo> _compiledConverterFunctions = new Dictionary<string, MethodInfo>();
         private readonly Dictionary<string, CLogEncodingCLogTypeSearch> _converterFunctions = new Dictionary<string, CLogEncodingCLogTypeSearch>();
         private Assembly _codeAssembly;
-        //private MemoryStream _compiledCode;
+        private MemoryStream _compiledCode;
 
         private object _typesInterface;
 
@@ -71,7 +71,7 @@ namespace clog2text_lttng
 
             _compiledCode = new MemoryStream();
 
-            EmitResult result = compilation.Emit(_compiledCode);
+            var result = compilation.Emit(_compiledCode);
 
             if (!result.Success)
             {
