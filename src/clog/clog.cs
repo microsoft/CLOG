@@ -37,25 +37,6 @@ namespace clog
     {
         private static int Main(string[] args)
         {
-
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText("");
-
-            string assemblyName = Path.GetRandomFileName();
-            var refPaths = new[] { typeof(object).GetTypeInfo().Assembly.Location, typeof(Console).GetTypeInfo().Assembly.Location, Path.Combine(Path.GetDirectoryName(typeof(GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll") };
-            MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
-
-            CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName,
-                new[] { syntaxTree },
-                references,
-                new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true));
-
-            compilation = compilation.WithFrameworkReferences(TargetFramework.NetStandard20);
-
-            var _compiledCode = new MemoryStream();
-
-            var result = compilation.Emit(_compiledCode);
-
             ParserResult<CommandLineArguments> o = Parser.Default.ParseArguments<CommandLineArguments>(args);
 
             return o.MapResult(
