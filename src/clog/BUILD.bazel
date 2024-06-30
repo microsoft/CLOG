@@ -2,6 +2,7 @@ load(
     "@rules_dotnet//dotnet:defs.bzl",
     "csharp_binary",
     "csharp_library",
+    "publish_binary",
     "csharp_nunit_test",
 )
 
@@ -9,6 +10,7 @@ load(
 csharp_binary(
     name = "clog",
     treat_warnings_as_errors = True,  # Optional: treat warnings as errors
+    winexe=True,
     srcs = [
         "clog.cs",
         "CommandLineArguments.cs",
@@ -30,4 +32,11 @@ csharp_binary(
         "@paket.clog_dependencies//commandlineparser",
         "@paket.clog_dependencies//microsoft.codeanalysis.common"
     ]
+)
+
+publish_binary(
+    name = "clogP",
+    binary = ":clog",
+    self_contained = True,
+    target_framework = "net8.0",
 )
