@@ -49,7 +49,6 @@ namespace clog2text_lttng
         }
         public void PrepareAssemblyCompileIfNecessary()
         {
-            #if false
             if (null == CustomTypeDecoder)
                 return;
 
@@ -88,8 +87,6 @@ namespace clog2text_lttng
             }
 
             _codeAssembly = Assembly.Load(_compiledCode.GetBuffer());
-            #endif
-
         }
 
         internal void ConstructFromAssembly(byte[] assembly)
