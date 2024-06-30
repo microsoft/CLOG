@@ -18,11 +18,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using clogutils.MacroDefinations;
-using Newtonsoft.Json;
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace clogutils.ConfigFile
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class CLogConfigurationFile
     {
         public static int _version = 1;
@@ -59,14 +60,14 @@ namespace clogutils.ConfigFile
             set;
         } = false;
 
-        [JsonProperty]
+        [JsonPropertyName("Version")]
         public int Version
         {
             get;
             set;
         }
 
-        [JsonProperty]
+        [JsonPropertyName("CustomTypeClogCSharpFile")]
         public string CustomTypeClogCSharpFile
         {
             get;
@@ -78,39 +79,40 @@ namespace clogutils.ConfigFile
             return !String.IsNullOrEmpty(CustomTypeClogCSharpFileContents);
         }
 
-        [JsonProperty]
+        [JsonPropertyName("CustomTypeClogCSharpFileContents")]
         public string CustomTypeClogCSharpFileContents
         {
             get;
             set;
         }
 
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(20)]
+        //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        //[DefaultValue(20)]
+        [JsonPropertyName("MaximumVariableLength")]
         public int MaximumVariableLength
         {
             get;
             set;
         }
 
-        [JsonProperty]
+        [JsonPropertyName("TypeEncoders")]
         public CLogTypeEncoder TypeEncoders
         {
             get;
             set;
         }
 
-        [JsonProperty] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
+        [JsonPropertyName("MacroConfigurations")] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
 
 
-        [JsonProperty]
+        [JsonPropertyName("SourceCodeMacros")]
         public List<CLogTraceMacroDefination> SourceCodeMacros
         {
             get;
             set;
         } = new List<CLogTraceMacroDefination>();
 
-        [JsonProperty]
+        [JsonPropertyName("ChainedConfigFiles")]
         private List<string> ChainedConfigFiles
         {
             get;
@@ -118,21 +120,21 @@ namespace clogutils.ConfigFile
         }
 
 
-        [JsonProperty]
+        [JsonPropertyName("ChainedConfigurations")]
         public List<CLogConfigurationFile> ChainedConfigurations
         {
             get;
             set;
         } = new List<CLogConfigurationFile>();
 
-        [JsonProperty]
+        [JsonPropertyName("MarkPhase")]
         public bool MarkPhase
         {
             get;
             set;
         } = false;
 
-        [JsonProperty]
+        [JsonPropertyName("EmitCFiles")]
         public bool EmitCFiles
         {
             get;
@@ -346,11 +348,7 @@ namespace clogutils.ConfigFile
 
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
-            #if false
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Context = new StreamingContext(StreamingContextStates.Other, json);
-
-            CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
+            CLogConfigurationFile ret = JsonSerializer.Deserialize<CLogConfigurationFile>(json);
             ret.FilePath = fileName;
             ret.ChainedConfigurations = new List<CLogConfigurationFile>();
 
@@ -420,10 +418,6 @@ namespace clogutils.ConfigFile
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
             return ret;
-
-            #else
-            return null;
-            #endif
         }
 
         public static CLogConfigurationFile FromFileText(string fileName, string fileContents)
@@ -475,9 +469,9 @@ namespace clogutils.ConfigFile
         {
             SerializeChainedConfigurations = persistChainedFiles;
 
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
-            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            JsonSerializerOptions s = new JsonSerializerOptions();
+            s.WriteIndented = true;
+            string me = JsonSerializer.Serialize(this, s);
             return me;
         }
 
