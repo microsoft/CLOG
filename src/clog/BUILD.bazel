@@ -27,6 +27,7 @@ csharp_binary(
         "@paket.clog_dependencies//microsoft.codeanalysis.csharp",
         "@paket.clog_dependencies//basic.reference.assemblies",
         "@paket.clog_dependencies//microsoft.codeanalysis",
-        "@paket.clog_dependencies//commandlineparser"
+        "@paket.clog_dependencies//commandlineparser",
+        "@paket.clog_dependencies//microsoft.codeanalysis.common"
     ]
 )

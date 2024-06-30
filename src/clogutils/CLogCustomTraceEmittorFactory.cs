@@ -47,7 +47,6 @@ namespace clog2text_lttng
         {
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
-
         public void PrepareAssemblyCompileIfNecessary()
         {
             #if false
