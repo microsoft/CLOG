@@ -5,7 +5,7 @@ load(
     "csharp_nunit_test",
 )
 
-import_dll(name="hi", dll="System.Reflection.Emit.dll", version="1.2.3")
+# import_dll(name="hi", dll="System.Reflection.Emit.dll", version="1.2.3")
 
 csharp_library(
     name = "clogutils",    
@@ -40,10 +40,11 @@ csharp_library(
     visibility = ["//visibility:public"],
     target_frameworks = ["net8.0"],
     deps = [
-        ":hi",
+#        ":hi",
         "@paket.clog_dependencies//newtonsoft.json",
         "@paket.clog_dependencies//basic.reference.assemblies",
         "@paket.clog_dependencies//system.codedom",
+        "@paket.clog_dependencies//microsoft.codeanalysis.common",
         "@paket.clog_dependencies//microsoft.codeanalysis", 
         "@paket.clog_dependencies//microsoft.codeanalysis.csharp"
     ]

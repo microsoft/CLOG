@@ -7,6 +7,7 @@ group clog_dependencies
     nuget Microsoft.CodeAnalysis.CSharp 4.10.0 
     nuget Basic.Reference.Assemblies 1.7.2 
     nuget Microsoft.CodeAnalysis 4.10.0 
+    nuget Microsoft.CodeAnalysis.Common 4.10.0
     nuget System.CodeDom 8.0.0 
     nuget CommandLineParser 2.9.1
     

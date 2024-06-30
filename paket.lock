@@ -9,6 +9,7 @@ NUGET
   Microsoft.CodeAnalysis.CSharp (4.10.0)
   Basic.Reference.Assemblies (1.7.2)
   Microsoft.CodeAnalysis (4.10.0)
+  Microsoft.CodeAnalysis.Common (4.10.0)  
   System.CodeDom (8.0.0)
   CommandLineParser (2.9.1)
     
