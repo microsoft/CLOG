@@ -20,17 +20,6 @@ using clogutils;
 using clogutils.ConfigFile;
 using CommandLine;
 
-using System.Linq;
-using System.Reflection;
-using System.Runtime;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-//using Microsoft.CodeAnalysis.Emit;
-using Roslyn.CodeDom;
-using static clogutils.CLogConsoleTrace;
-//using Microsoft.CodeAnalysis.Emit;
-
-
 namespace clog
 {
     internal class clog
