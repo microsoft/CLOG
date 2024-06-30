@@ -13,23 +13,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using clogutils.ConfigFile;
-using Newtonsoft.Json;
 using static clogutils.CLogConsoleTrace;
 
 namespace clogutils
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class ClogSidecar_V1
     {
-        [JsonProperty] public int Version { get; set; }
+        [JsonPropertyName("Version")] public int Version { get; set; }
 
-        [JsonProperty]
+        [JsonPropertyName("EventBundlesV2")]
         public SortedDictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new SortedDictionary<string, CLogDecodedTraceLine>();
 
-        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
+        [JsonPropertyName("ConfigFile")] public CLogConfigurationFile ConfigFile { get; set; }
 
-        [JsonProperty]
+        [JsonPropertyName("ModuleUniqueness")]
         public CLogModuleUsageInformation_V1 ModuleUniqueness
         {
             get;
@@ -44,38 +44,30 @@ namespace clogutils
 
         public string ToJson()
         {
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
             this.Version = 1;
-            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            JsonSerializerOptions s = new JsonSerializerOptions();
+            s.WriteIndented = true;
+            string me = JsonSerializer.Serialize(this, s);
             return me;
         }
 
         public static ClogSidecar_V1 FromJson(string json)
         {
-            #if false
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Context = new StreamingContext(StreamingContextStates.Other, json);
-
-            ClogSidecar_V1 ret = JsonConvert.DeserializeObject<ClogSidecar_V1>(json, s);
+            ClogSidecar_V1 ret = JsonSerializer.Deserialize<ClogSidecar_V1>(json);
             return ret;
-            #else
-            return null;
-            #endif 
         }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
     public class ClogSidecar_V2
     {
-        [JsonProperty] public int Version { get; set; }
+        [JsonPropertyName("Version")] public int Version { get; set; }
 
-        [JsonProperty]
+        [JsonPropertyName("EventBundlesV2")]
         public SortedDictionary<string, CLogDecodedTraceLine> EventBundlesV2 { get; set; } = new SortedDictionary<string, CLogDecodedTraceLine>();
 
-        [JsonProperty] public CLogConfigurationFile ConfigFile { get; set; }
+        [JsonPropertyName("ConfigFile")] public CLogConfigurationFile ConfigFile { get; set; }
 
-        [JsonProperty]
+        [JsonPropertyName("ModuleUniqueness")]
         public CLogModuleUsageInformation_V2 ModuleUniqueness
         {
             get;
@@ -91,10 +83,10 @@ namespace clogutils
         {
             ModuleUniqueness.Sort();
 
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
             this.Version = 2;
-            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            JsonSerializerOptions s = new JsonSerializerOptions();
+            s.WriteIndented = true;
+            string me = JsonSerializer.Serialize(this, s);
             return me;
         }
 
