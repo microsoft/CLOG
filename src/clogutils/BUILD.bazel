@@ -40,7 +40,7 @@ csharp_library(
     visibility = ["//visibility:public"],
     target_frameworks = ["net8.0"],
     deps = [
-#        ":hi",
+#          ":hi",
         "@paket.clog_dependencies//newtonsoft.json",
         "@paket.clog_dependencies//basic.reference.assemblies",
         "@paket.clog_dependencies//system.codedom",

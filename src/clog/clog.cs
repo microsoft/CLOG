@@ -19,6 +19,8 @@ using clog.TraceEmitterModules;
 using clogutils;
 using clogutils.ConfigFile;
 using CommandLine;
+using Microsoft.CodeAnalysis.Emit;
+
 
 namespace clog
 {
