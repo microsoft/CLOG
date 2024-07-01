@@ -1,0 +1,41 @@
+load(
+    "@rules_dotnet//dotnet:defs.bzl",
+    "csharp_binary",
+    "csharp_library",
+    "publish_binary",
+    "csharp_nunit_test",
+)
+
+
+csharp_binary(
+    name = "clog",
+    treat_warnings_as_errors = True,  # Optional: treat warnings as errors
+    srcs = [
+        "clog.cs",
+        "CommandLineArguments.cs",
+        "TraceEmitterModules/CLogSTDOUT.cs",
+        "TraceEmitterModules/CLogDTraceOutputModule.cs",
+        "TraceEmitterModules/CLogSysLog.cs",
+        "TraceEmitterModules/CLogLTTNGOutputModule.cs",
+        "TraceEmitterModules/CLogTraceLoggingOutputModule.cs",
+        "TraceEmitterModules/CLogManifestedETWOutputModule.cs"
+    ],
+    internals_visible_to = ["lib_test"],
+    target_frameworks = ["net8.0"],
+    deps = [
+        "//src/clogutils:clogutils",
+        "@paket.clog_dependencies//newtonsoft.json",
+        "@paket.clog_dependencies//microsoft.codeanalysis.csharp",
+        "@paket.clog_dependencies//basic.reference.assemblies",
+        "@paket.clog_dependencies//microsoft.codeanalysis",
+        "@paket.clog_dependencies//commandlineparser",
+        "@paket.clog_dependencies//microsoft.codeanalysis.common"
+    ]
+)
+
+publish_binary(
+    name = "clogP",
+    binary = ":clog",
+    self_contained = True,
+    target_framework = "net8.0",
+)

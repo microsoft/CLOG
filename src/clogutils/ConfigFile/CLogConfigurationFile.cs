@@ -18,11 +18,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using clogutils.MacroDefinations;
-using Newtonsoft.Json;
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace clogutils.ConfigFile
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class CLogConfigurationFile
     {
         public static int _version = 1;
@@ -59,14 +60,14 @@ namespace clogutils.ConfigFile
             set;
         } = false;
 
-        [JsonProperty]
+        [JsonPropertyName("Version")]
         public int Version
         {
             get;
             set;
         }
 
-        [JsonProperty]
+        [JsonPropertyName("CustomTypeClogCSharpFile")]
         public string CustomTypeClogCSharpFile
         {
             get;
@@ -78,61 +79,63 @@ namespace clogutils.ConfigFile
             return !String.IsNullOrEmpty(CustomTypeClogCSharpFileContents);
         }
 
-        [JsonProperty]
+        [JsonPropertyName("CustomTypeClogCSharpFileContents")]
         public string CustomTypeClogCSharpFileContents
         {
             get;
             set;
         }
 
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(20)]
+        //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        //[DefaultValue(20)]
+        [JsonPropertyName("MaximumVariableLength")]
         public int MaximumVariableLength
         {
             get;
             set;
         }
 
-        [JsonProperty]
+        [JsonPropertyName("TypeEncoders")]
         public CLogTypeEncoder TypeEncoders
         {
             get;
             set;
         }
 
-        [JsonProperty] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
+        [JsonPropertyName("MacroConfigurations")] 
+        public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
 
 
-        [JsonProperty]
+        [JsonPropertyName("SourceCodeMacros")]
         public List<CLogTraceMacroDefination> SourceCodeMacros
         {
             get;
             set;
         } = new List<CLogTraceMacroDefination>();
 
-        [JsonProperty]
-        private List<string> ChainedConfigFiles
+        [JsonPropertyName("ChainedConfigFiles")]
+        public List<string> ChainedConfigFiles
         {
             get;
             set;
         }
 
 
-        [JsonProperty]
+        [JsonPropertyName("ChainedConfigurations")]
         public List<CLogConfigurationFile> ChainedConfigurations
         {
             get;
             set;
         } = new List<CLogConfigurationFile>();
 
-        [JsonProperty]
+        [JsonPropertyName("MarkPhase")]
         public bool MarkPhase
         {
             get;
             set;
         } = false;
 
-        [JsonProperty]
+        [JsonPropertyName("EmitCFiles")]
         public bool EmitCFiles
         {
             get;
@@ -346,12 +349,20 @@ namespace clogutils.ConfigFile
 
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Context = new StreamingContext(StreamingContextStates.Other, json);
+            Console.WriteLine("Loading from file...");
+            Console.WriteLine(json);
+            
+            CLogConfigurationFile ret = JsonSerializer.Deserialize<CLogConfigurationFile>(json);
 
-            CLogConfigurationFile ret = JsonConvert.DeserializeObject<CLogConfigurationFile>(json, s);
+            Console.WriteLine("...back1: " + ret.Version);
+
+            if(null == ret)
+                Console.WriteLine("Unable to load config file");
+
             ret.FilePath = fileName;
             ret.ChainedConfigurations = new List<CLogConfigurationFile>();
+
+            Console.WriteLine("Loaded Config");
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
@@ -366,6 +377,7 @@ namespace clogutils.ConfigFile
                     ret.TypeEncoders.LoadCustomCSharp(cSharp, ret);
                 }
             }
+            Console.WriteLine("blah");
 
             //
             // Do sanity checks on the input configuration file - look for common (and easy) to make mistakes
@@ -384,13 +396,35 @@ namespace clogutils.ConfigFile
                 macros.Add(m.MacroName);
             }
 
+            Console.WriteLine("Going into chained");
+
+            if(null == ret.ChainedConfigFiles)
+                Console.WriteLine("No ChainedConfigfile");
+            else 
+                Console.WriteLine("Have chained config file");
+
             foreach (string downstream in ret.ChainedConfigFiles)
             {
+                Console.WriteLine("Processing CCF: " + downstream);
+
                 if (downstream == EmbeddedDefaultName)
                 {
                     Assembly clogUtilsAssembly = typeof(CLogConfigurationFile).Assembly;
                     string assemblyName = clogUtilsAssembly.GetName().Name;
-                    using (Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog_config"))
+                    string reousrceStreamName = $"defaults.clog_config";
+                    var embeddedStream = clogUtilsAssembly.GetManifestResourceStream(reousrceStreamName);
+
+                    if(null == embeddedStream)
+                    {
+                        Console.WriteLine($"Embedded Resource {reousrceStreamName} not found");
+                        throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Found manifest");
+                    }
+                  
+                    //using (Stream embeddedStream = embeddedStream)
                     using (StreamReader reader = new StreamReader(embeddedStream))
                     {
                         string contents = reader.ReadToEnd();
@@ -415,6 +449,7 @@ namespace clogutils.ConfigFile
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
+            Console.WriteLine("r43423432");
 
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 
@@ -470,9 +505,9 @@ namespace clogutils.ConfigFile
         {
             SerializeChainedConfigurations = persistChainedFiles;
 
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
-            string me = JsonConvert.SerializeObject(this, Formatting.Indented);
+            JsonSerializerOptions s = new JsonSerializerOptions();
+            s.WriteIndented = true;
+            string me = JsonSerializer.Serialize(this, s);
             return me;
         }
 

@@ -21,7 +21,7 @@ using System.Runtime;
 using clogutils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
+//using Microsoft.CodeAnalysis.Emit;
 using Roslyn.CodeDom;
 using static clogutils.CLogConsoleTrace;
 
@@ -47,7 +47,6 @@ namespace clog2text_lttng
         {
             return !String.IsNullOrEmpty(CustomTypeDecoder);
         }
-
         public void PrepareAssemblyCompileIfNecessary()
         {
             if (null == CustomTypeDecoder)
@@ -72,7 +71,7 @@ namespace clog2text_lttng
 
             _compiledCode = new MemoryStream();
 
-            EmitResult result = compilation.Emit(_compiledCode);
+            var result = compilation.Emit(_compiledCode);
 
             if (!result.Success)
             {

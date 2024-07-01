@@ -1,0 +1,55 @@
+load(
+    "@rules_dotnet//dotnet:defs.bzl",
+    "csharp_binary","import_dll",
+    "csharp_library",
+    "csharp_nunit_test",
+)
+
+# import_dll(name="hi", dll="System.Reflection.Emit.dll", version="1.2.3")
+
+csharp_library(
+    name = "clogutils",    
+    treat_warnings_as_errors = True,  # Optional: treat warnings as errors
+    srcs = [
+        "CLogConsoleTrace.cs",
+        "CLogCustomTraceEmittorFactory.cs",
+        "CLogDecodedTraceLine.cs",
+        "CLogEncodingCLogTypeSearch.cs",
+        "CLogEncodingType.cs",
+        "CLogEnterReadOnlyModeException.cs",
+        "CLogErrors.cs",
+        "CLogFileProcessor.cs",
+        "CLogFullyDecodedMacroEmitter.cs",
+        "CLogHandledException.cs",
+        "CLogLineMatch.cs",
+        "CLogSidecar.cs",
+        "CLogTypeNotFoundException.cs",
+        "CLogTypeSearchNode.cs",
+        "ICLogOutputModule.cs",
+        "CodeDomHelper/Extensions.cs", 
+        "CodeDomHelper/TargetFramework.cs", 
+        "ConfigFile/CLogConfigurationFile.cs", 
+        "ConfigFile/CLogModuleUsageInformation.cs", 
+        "ConfigFile/CLogTraceLineInformation.cs", 
+        "ConfigFile/CLogTypeEncoder.cs", 
+        "MacroDefinations/CLogConfigurationProfile.cs", 
+        "MacroDefinations/CLogExportModuleDefination.cs", 
+        "MacroDefinations/CLogTraceMacroDefination.cs", 
+        "MacroDefinations/CLogUniqueIDEncoder.cs"
+    ],
+    resources = [
+        "defaults.clog.cs",
+        "defaults.clog_config"
+    ],
+    visibility = ["//visibility:public"],
+    target_frameworks = ["net8.0"],
+    deps = [
+#          ":hi",
+        "@paket.clog_dependencies//newtonsoft.json",
+        "@paket.clog_dependencies//basic.reference.assemblies",
+        "@paket.clog_dependencies//system.codedom",
+        "@paket.clog_dependencies//microsoft.codeanalysis.common",
+        "@paket.clog_dependencies//microsoft.codeanalysis", 
+        "@paket.clog_dependencies//microsoft.codeanalysis.csharp"
+    ]
+)
