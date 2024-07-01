@@ -10,7 +10,6 @@ load(
 csharp_binary(
     name = "clog",
     treat_warnings_as_errors = True,  # Optional: treat warnings as errors
-    winexe=True,
     srcs = [
         "clog.cs",
         "CommandLineArguments.cs",

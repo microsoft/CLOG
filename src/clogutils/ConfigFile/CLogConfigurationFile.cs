@@ -102,7 +102,8 @@ namespace clogutils.ConfigFile
             set;
         }
 
-        [JsonPropertyName("MacroConfigurations")] public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
+        [JsonPropertyName("MacroConfigurations")] 
+        public Dictionary<string, CLogConfigurationProfile> MacroConfigurations = new Dictionary<string, CLogConfigurationProfile>();
 
 
         [JsonPropertyName("SourceCodeMacros")]
@@ -113,7 +114,7 @@ namespace clogutils.ConfigFile
         } = new List<CLogTraceMacroDefination>();
 
         [JsonPropertyName("ChainedConfigFiles")]
-        private List<string> ChainedConfigFiles
+        public List<string> ChainedConfigFiles
         {
             get;
             set;
@@ -348,9 +349,20 @@ namespace clogutils.ConfigFile
 
         private static CLogConfigurationFile FromLoadedFile(string fileName, string json)
         {
+            Console.WriteLine("Loading from file...");
+            Console.WriteLine(json);
+            
             CLogConfigurationFile ret = JsonSerializer.Deserialize<CLogConfigurationFile>(json);
+
+            Console.WriteLine("...back1: " + ret.Version);
+
+            if(null == ret)
+                Console.WriteLine("Unable to load config file");
+
             ret.FilePath = fileName;
             ret.ChainedConfigurations = new List<CLogConfigurationFile>();
+
+            Console.WriteLine("Loaded Config");
 
             if (!string.IsNullOrEmpty(ret.CustomTypeClogCSharpFile))
             {
@@ -365,6 +377,7 @@ namespace clogutils.ConfigFile
                     ret.TypeEncoders.LoadCustomCSharp(cSharp, ret);
                 }
             }
+            Console.WriteLine("blah");
 
             //
             // Do sanity checks on the input configuration file - look for common (and easy) to make mistakes
@@ -383,13 +396,35 @@ namespace clogutils.ConfigFile
                 macros.Add(m.MacroName);
             }
 
+            Console.WriteLine("Going into chained");
+
+            if(null == ret.ChainedConfigFiles)
+                Console.WriteLine("No ChainedConfigfile");
+            else 
+                Console.WriteLine("Have chained config file");
+
             foreach (string downstream in ret.ChainedConfigFiles)
             {
+                Console.WriteLine("Processing CCF: " + downstream);
+
                 if (downstream == EmbeddedDefaultName)
                 {
                     Assembly clogUtilsAssembly = typeof(CLogConfigurationFile).Assembly;
                     string assemblyName = clogUtilsAssembly.GetName().Name;
-                    using (Stream embeddedStream = clogUtilsAssembly.GetManifestResourceStream($"{assemblyName}.defaults.clog_config"))
+                    string reousrceStreamName = $"defaults.clog_config";
+                    var embeddedStream = clogUtilsAssembly.GetManifestResourceStream(reousrceStreamName);
+
+                    if(null == embeddedStream)
+                    {
+                        Console.WriteLine($"Embedded Resource {reousrceStreamName} not found");
+                        throw new CLogEnterReadOnlyModeException("ChainedConfigFileNotFound", CLogHandledException.ExceptionType.UnableToOpenChainedConfigFile, null);
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Found manifest");
+                    }
+                  
+                    //using (Stream embeddedStream = embeddedStream)
                     using (StreamReader reader = new StreamReader(embeddedStream))
                     {
                         string contents = reader.ReadToEnd();
@@ -414,6 +449,7 @@ namespace clogutils.ConfigFile
             }
 
             ret.InUseTypeEncoders = new CLogTypeEncoder();
+            Console.WriteLine("r43423432");
 
             RefreshTypeEncodersMarkBit(ret, ret.MarkPhase);
 

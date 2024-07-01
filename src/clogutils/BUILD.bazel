@@ -37,6 +37,10 @@ csharp_library(
         "MacroDefinations/CLogTraceMacroDefination.cs", 
         "MacroDefinations/CLogUniqueIDEncoder.cs"
     ],
+    resources = [
+        "defaults.clog.cs",
+        "defaults.clog_config"
+    ],
     visibility = ["//visibility:public"],
     target_frameworks = ["net8.0"],
     deps = [
