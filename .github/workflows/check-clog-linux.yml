@@ -24,7 +24,6 @@ jobs:
         dotnet-version: 6.0.x
 
     - run: |
-         sudo apt-add-repository ppa:lttng/stable-2.12
          sudo apt-get update
          sudo apt-get install -y liblttng-ust-dev lttng-tools build-essential
 
