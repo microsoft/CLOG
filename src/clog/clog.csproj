@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,7 +24,7 @@
     <ProjectReference Include="..\clogutils\clogutils.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
     <OutputPath></OutputPath>
   </PropertyGroup>
 

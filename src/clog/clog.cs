@@ -5,9 +5,9 @@
 
 Abstract:
 
-    This class implements the main configuration and setup for reading clog config files, your source code, side cars etc.
+    This class implements the main configuration and setup for reading Clog config files, your source code, side cars etc.
 
-    By implementing the main() for clog, it's mostly connecting up other clases
+    By implementing the main() for Clog, it's mostly connecting up other clases
 
 --*/
 
@@ -22,7 +22,7 @@ using CommandLine;
 
 namespace clog
 {
-    internal class clog
+    internal class Clog
     {
         private static int Main(string[] args)
         {
