@@ -21,18 +21,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 2
           submodules: 'recursive'
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@871f041373faaad213a635d9afb62905ec029bbb # v1.10.1
         with:
           dotnet-version: 8.0.x
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@231aa2c8a89117b126725a0e11897209b7118144 # v1.1.39
         with:
           languages: cpp #,csharp
           config-file: ./.github/codeql/codeql-config.yml
@@ -52,4 +52,4 @@ jobs:
          cmake --build .
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@231aa2c8a89117b126725a0e11897209b7118144 # v1.1.39
